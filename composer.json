@@ -1,0 +1,32 @@
+{
+    "name": "rsd/finance-panel",
+    "description": "RSD Finance Panel - A comprehensive client portal and finance management plugin for WordPress",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Rasoul Marzban",
+            "email": "info@rasoulmarzban.com",
+            "homepage": "https://github.com/rasolmarzban",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "RSD\\FinancePanel\\": "src/"
+        },
+        "files": [
+            "src/Helpers/functions.php"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
