@@ -151,9 +151,9 @@ $today_j = rsd_fp_today_jalali_ymd();
                         <th style="width:130px">Invoice Number</th>
                         <th>Client</th>
                         <th>Description / Period</th>
-                        <th style="text-align:left;width:160px">Total Amount (Toman)</th>
-                        <th style="text-align:left;width:160px">Paid (Toman)</th>
-                        <th style="text-align:left;width:160px">Balance (Toman)</th>
+                        <th style="text-align:left;width:160px">Total Amount (<?php echo esc_html(rsd_fp_currency_symbol()); ?>)</th>
+                        <th style="text-align:left;width:160px">Paid (<?php echo esc_html(rsd_fp_currency_symbol()); ?>)</th>
+                        <th style="text-align:left;width:160px">Balance (<?php echo esc_html(rsd_fp_currency_symbol()); ?>)</th>
                         <th>Due Date</th>
                         <th>Status</th>
                         <th style="width:220px">Actions</th>
@@ -345,7 +345,7 @@ $today_j = rsd_fp_today_jalali_ymd();
                         </div>
 
                         <div class="rsd-admin-card" style="box-shadow:none;border:1px solid #e2e8f0">
-                            <div class="rsd-admin-card-title" style="font-weight:700;margin-bottom:14px">💰 Amounts and Description (in Iranian Toman)</div>
+                            <div class="rsd-admin-card-title" style="font-weight:700;margin-bottom:14px">💰 Amounts and Description (<?php echo esc_html(rsd_fp_currency_symbol()); ?>)</div>
 
                             <div class="rsd-admin-form-row">
                                 <label>Invoice Description / Notes</label>
@@ -355,19 +355,19 @@ $today_j = rsd_fp_today_jalali_ymd();
 
                             <div class="rsd-admin-form-row rsd-admin-cols-3">
                                 <div>
-                                    <label>Subtotal (Toman, before tax) <span style="color:#ef4444">*</span></label>
+                                    <label>Subtotal (<?php echo esc_html(rsd_fp_currency_symbol()); ?>, before tax) <span style="color:#ef4444">*</span></label>
                                     <input type="number" min="0" step="1" name="subtotal" id="rsd-invoice-subtotal"
                                         dir="ltr" inputmode="numeric" value="0" required
                                         oninput="window.RSD_FP_ADMIN_INV && window.RSD_FP_ADMIN_INV.recalc()">
                                 </div>
                                 <div>
-                                    <label>Tax (Toman)</label>
+                                    <label>Tax (<?php echo esc_html(rsd_fp_currency_symbol()); ?>)</label>
                                     <input type="number" min="0" step="1" name="tax" id="rsd-invoice-tax"
                                         dir="ltr" inputmode="numeric" value="0"
                                         oninput="window.RSD_FP_ADMIN_INV && window.RSD_FP_ADMIN_INV.recalc()">
                                 </div>
                                 <div>
-                                    <label>Discount (Toman)</label>
+                                    <label>Discount (<?php echo esc_html(rsd_fp_currency_symbol()); ?>)</label>
                                     <input type="number" min="0" step="1" name="discount" id="rsd-invoice-discount"
                                         dir="ltr" inputmode="numeric" value="0"
                                         oninput="window.RSD_FP_ADMIN_INV && window.RSD_FP_ADMIN_INV.recalc()">
@@ -377,14 +377,14 @@ $today_j = rsd_fp_today_jalali_ymd();
                             <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;margin-top:10px">
                                 <div class="rsd-admin-form-row rsd-admin-cols-2">
                                     <div>
-                                        <label style="font-weight:700;color:#0369a1">Invoice Total (Toman, auto)</label>
+                                        <label style="font-weight:700;color:#0369a1">Invoice Total (<?php echo esc_html(rsd_fp_currency_symbol()); ?>, auto)</label>
                                         <div id="rsd-invoice-total-preview"
                                             style="font-family:monospace;direction:ltr;font-size:20px;font-weight:800;color:#0369a1;text-align:left;padding:6px 0">
-                                            0 <span style="font-size:13px;color:#64748b;font-weight:600">Toman</span>
+                                            0 <span style="font-size:13px;color:#64748b;font-weight:600"><?php echo esc_html(rsd_fp_currency_symbol()); ?></span>
                                         </div>
                                     </div>
                                     <div>
-                                        <label>Initial Payment on Issue (Toman)</label>
+                                        <label>Initial Payment on Issue (<?php echo esc_html(rsd_fp_currency_symbol()); ?>)</label>
                                         <input type="number" min="0" step="1" name="paid_amount" id="rsd-invoice-paid"
                                             dir="ltr" inputmode="numeric" value="0">
                                         <select name="payment_method" id="rsd-invoice-pm" style="margin-top:6px">
@@ -437,7 +437,7 @@ $today_j = rsd_fp_today_jalali_ymd();
             var ds = Number(document.getElementById('rsd-invoice-discount').value) || 0;
             var total = Math.max(0, st + tx - ds);
             var el = document.getElementById('rsd-invoice-total-preview');
-            if (el) el.innerHTML = fmt(total) + ' <span style="font-size:13px;color:#64748b;font-weight:600">Toman</span>';
+            if (el) el.innerHTML = fmt(total) + ' <span style="font-size:13px;color:#64748b;font-weight:600"><?php echo esc_html(rsd_fp_currency_symbol()); ?></span>';
         };
     })();
 </script>

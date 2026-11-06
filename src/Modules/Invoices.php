@@ -759,7 +759,7 @@ class Invoices
                         <tr>
                             <th>No.</th>
                             <th>Description</th>
-                            <th>Amount (Toman)</th>
+                            <th>Amount (<?php echo esc_html(rsd_fp_currency_symbol()); ?>)</th>
                         </tr>
                     </thead>
                     <tbody>

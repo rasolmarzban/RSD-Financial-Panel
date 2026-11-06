@@ -52,6 +52,16 @@ function rsd_fp_currency($amount)
 }
 
 /**
+ * Get the configured currency symbol (defaults to Dollar).
+ *
+ * @return string
+ */
+function rsd_fp_currency_symbol()
+{
+    return (string) \RSD\FinancePanel\Core\Plugin::get_setting('currency_symbol', '$');
+}
+
+/**
  * Get current client ID
  *
  * @return int

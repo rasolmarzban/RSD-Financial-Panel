@@ -172,9 +172,10 @@ class Admin
         $clean = [];
         $existing = get_option('rsd_fp_settings', []);
 
-        $clean['currency_symbol'] = sanitize_text_field($input['currency_symbol'] ?? 'Toman');
-        $clean['currency_position'] = in_array($input['currency_position'] ?? 'after', ['before', 'after']) ? $input['currency_position'] : 'after';
-        $clean['date_format'] = in_array($input['date_format'] ?? 'jalali', ['jalali', 'gregorian']) ? $input['date_format'] : 'jalali';
+        $currency_symbol = sanitize_text_field($input['currency_symbol'] ?? '$');
+        $clean['currency_symbol'] = in_array($currency_symbol, ['$', '€'], true) ? $currency_symbol : '$';
+        $clean['currency_position'] = in_array($input['currency_position'] ?? 'before', ['before', 'after']) ? $input['currency_position'] : 'before';
+        $clean['date_format'] = in_array($input['date_format'] ?? 'gregorian', ['jalali', 'gregorian']) ? $input['date_format'] : 'gregorian';
         $clean['items_per_page'] = absint($input['items_per_page'] ?? 20);
 
         // Auth settings

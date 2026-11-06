@@ -207,12 +207,12 @@ class Plugin
      */
     public static function format_currency($amount)
     {
-        $symbol = self::get_setting('currency_symbol', 'Toman');
-        $position = self::get_setting('currency_position', 'after');
+        $symbol = self::get_setting('currency_symbol', '$');
+        $position = self::get_setting('currency_position', 'before');
         $formatted = number_format_i18n((float) $amount, 0);
 
         if ($position === 'before') {
-            return sprintf('%s %s', $symbol, $formatted);
+            return sprintf('%s%s', $symbol, $formatted);
         }
 
         return sprintf('%s %s', $formatted, $symbol);

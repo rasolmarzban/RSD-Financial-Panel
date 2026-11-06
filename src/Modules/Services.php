@@ -144,7 +144,7 @@ class Services
                         'required' => true,
                     ],
                     'salary' => [
-                        'label'    => esc_html__('Salary (Toman)', 'rsd-finance-panel'),
+                        'label'    => esc_html__('Salary', 'rsd-finance-panel'),
                         'type'     => 'number',
                         'required' => true,
                     ],

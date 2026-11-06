@@ -175,7 +175,7 @@ $back_url = admin_url('admin.php?page=rsd-fp-invoices');
             <input type="hidden" name="user_id" value="<?php echo (int)$invoice->user_id; ?>">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
                 <div>
-                    <label style="font-size:12px;font-weight:600;color:#475569;margin-bottom:4px;display:block">Amount (Toman)</label>
+                    <label style="font-size:12px;font-weight:600;color:#475569;margin-bottom:4px;display:block">Amount (<?php echo esc_html(rsd_fp_currency_symbol()); ?>)</label>
                     <input type="number" name="amount" step="100" min="0" max="<?php echo esc_attr($outstanding); ?>"
                         value="<?php echo esc_attr($outstanding); ?>" required style="width:100%;direction:ltr">
                 </div>

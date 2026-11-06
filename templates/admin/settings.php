@@ -147,30 +147,22 @@ $cal_cats = $settings['calendar_categories'] ?? [];
         <div class="rsd-admin-card">
             <div class="rsd-admin-card-title" style="font-weight:700;margin-bottom:18px">💶 Financial & Display Settings</div>
             <div class="rsd-settings-row">
-                <label class="rsd-settings-label">Currency Symbol</label>
+                <label class="rsd-settings-label">Currency</label>
                 <div>
-                    <input type="text" name="rsd_fp_settings[currency_symbol]"
-                        value="<?php echo esc_attr($settings['currency_symbol'] ?? 'Toman'); ?>" class="regular-text">
-                    <div class="rsd-settings-desc">e.g. "Toman"</div>
+                    <select name="rsd_fp_settings[currency_symbol]">
+                        <option value="$" <?php selected($settings['currency_symbol'] ?? '$', '$'); ?>>Dollar ($)</option>
+                        <option value="€" <?php selected($settings['currency_symbol'] ?? '$', '€'); ?>>Euro (€)</option>
+                    </select>
+                    <div class="rsd-settings-desc">Default currency used for all amounts.</div>
                 </div>
             </div>
             <div class="rsd-settings-row">
                 <label class="rsd-settings-label">Currency Symbol Position</label>
                 <div>
                     <select name="rsd_fp_settings[currency_position]">
-                        <option value="after" <?php selected($settings['currency_position'] ?? 'after', 'after'); ?>>After amount (1000 Toman)</option>
-                        <option value="before" <?php selected($settings['currency_position'] ?? 'after', 'before'); ?>>Before amount (Toman 1000)</option>
+                        <option value="before" <?php selected($settings['currency_position'] ?? 'before', 'before'); ?>>Before amount ($1000)</option>
+                        <option value="after" <?php selected($settings['currency_position'] ?? 'before', 'after'); ?>>After amount (1000 $)</option>
                     </select>
-                </div>
-            </div>
-            <div class="rsd-settings-row">
-                <label class="rsd-settings-label">Date Format</label>
-                <div>
-                    <select name="rsd_fp_settings[date_format]">
-                        <option value="jalali" <?php selected($settings['date_format'] ?? 'jalali', 'jalali'); ?>>Jalali</option>
-                        <option value="gregorian" <?php selected($settings['date_format'] ?? 'jalali', 'gregorian'); ?>>Gregorian</option>
-                    </select>
-                    <div class="rsd-settings-desc">Displaying the full Jalali date requires plugins such as jDateTime.</div>
                 </div>
             </div>
             <div class="rsd-settings-row">

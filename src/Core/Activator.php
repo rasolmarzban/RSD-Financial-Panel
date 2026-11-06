@@ -152,9 +152,9 @@ class Activator
     private static function set_default_options()
     {
         $defaults = [
-            'currency_symbol'   => 'Toman',
-            'currency_position' => 'after',
-            'date_format'       => 'jalali',
+            'currency_symbol'   => '$',
+            'currency_position' => 'before',
+            'date_format'       => 'gregorian',
             'items_per_page'    => 20,
             'document_categories' => [
                 'invoice'       => esc_html__('Invoice', 'rsd-finance-panel'),
