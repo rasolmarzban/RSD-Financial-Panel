@@ -30,9 +30,9 @@ $status_colors = [
     'rejected'   => 'gray',
 ];
 $req_status_labels = [
-    'pending'   => 'در انتظار تأیید',
-    'approved'  => 'تأیید شده',
-    'rejected'  => 'رد شده',
+    'pending'   => 'Pending approval',
+    'approved'  => 'Approved',
+    'rejected'  => 'Rejected',
 ];
 $req_colors = [
     'pending'   => 'yellow',
@@ -44,14 +44,14 @@ $today = date('Y-m-d');
 <div class="rsd-admin-wrap">
     <div class="rsd-admin-header">
         <div>
-            <h1>📅 تقویم و مدیریت رویدادها</h1>
-            <p>مدیریت جلسات، سررسیدها، قرارملاقات‌ها و یادآوری‌های مالی</p>
+            <h1>📅 Calendar &amp; Events Management</h1>
+            <p>Manage financial meetings, deadlines, appointments and reminders</p>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
             <a href="<?php echo esc_url(admin_url('admin.php?page=rsd-fp-clients')); ?>"
-                class="rsd-btn-admin secondary">👥 لیست مشتریان</a>
+                class="rsd-btn-admin secondary">👥 Client List</a>
             <a href="<?php echo esc_url(admin_url('admin.php?page=rsd-fp-services')); ?>"
-                class="rsd-btn-admin secondary">🗂️ خدمات</a>
+                class="rsd-btn-admin secondary">🗂️ Services</a>
         </div>
     </div>
 
@@ -66,9 +66,9 @@ $today = date('Y-m-d');
                     <span><?php echo esc_html($cl); ?></span>
                 </div>
             <?php endforeach; ?>
-            <div style="margin-right:auto;display:flex;gap:14px;flex-wrap:wrap">
+            <div style="margin-left:auto;display:flex;gap:14px;flex-wrap:wrap">
                 <span style="color:#64748b">
-                    📊 کل رویدادها: <strong style="color:#0f172a"><?php echo (int) count($events); ?></strong>
+                    📊 Total events: <strong style="color:#0f172a"><?php echo (int) count($events); ?></strong>
                 </span>
             </div>
         </div>
@@ -79,16 +79,16 @@ $today = date('Y-m-d');
             <table class="rsd-admin-table widefat">
                 <thead>
                     <tr>
-                        <th style="width:80px">شناسه</th>
-                        <th>عنوان رویداد</th>
-                        <th>مشتری / مالک</th>
-                        <th>دسته‌بندی</th>
-                        <th>تاریخ شروع</th>
-                        <th>تاریخ پایان</th>
-                        <th>مدت</th>
-                        <th>وضعیت رویداد</th>
-                        <th>درخواست‌نما</th>
-                        <th>عملیات</th>
+                        <th style="width:80px">ID</th>
+                        <th>Event Title</th>
+                        <th>Client / Owner</th>
+                        <th>Category</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Duration</th>
+                        <th>Event Status</th>
+                        <th>Request</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -102,14 +102,14 @@ $today = date('Y-m-d');
                             $duration = '';
                             if ($start_ts && $end_ts && $end_ts > $start_ts) {
                                 $diff_mins = (int) round(($end_ts - $start_ts) / 60);
-                                if ($diff_mins < 60) $duration = $diff_mins . ' دقیقه';
+                                if ($diff_mins < 60) $duration = $diff_mins . ' min';
                                 else {
                                     $h = floor($diff_mins / 60);
                                     $m = $diff_mins % 60;
-                                    $duration = $h . ' ساعت' . ($m ? ' و ' . $m . ' دقیقه' : '');
+                                    $duration = $h . ' h' . ($m ? ' ' . $m . ' min' : '');
                                 }
                             } elseif (!empty($e->is_all_day)) {
-                                $duration = 'تمام روز';
+                                $duration = 'All day';
                             }
                             $is_doc  = (int)$e->id < 0;
                             $start_j = $start_ts ? rsd_fp_jalali_date('Y/m/d', date('Y-m-d', $start_ts)) : '';
@@ -118,7 +118,7 @@ $today = date('Y-m-d');
                             <tr style="<?php echo $is_today ? 'background:linear-gradient(90deg,#ecfeff 0%,#faf5ff 100%)' : ($is_past ? 'opacity:.7' : ''); ?>">
                                 <td><span style="font-family:monospace;font-weight:700;color:#0369a1">#<?php echo (int)$e->id; ?></span></td>
                                 <td style="color:#0f172a;font-weight:600">
-                                    <?php if ($is_today) echo '<span class="rsd-admin-badge blue" style="margin-left:6px;font-size:11px">امروز</span>'; ?>
+                                    <?php if ($is_today) echo '<span class="rsd-admin-badge blue" style="margin-left:6px;font-size:11px">Today</span>'; ?>
                                     <span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:<?php echo esc_attr($cc); ?>;margin-left:6px"></span>
                                     <?php echo esc_html($e->title); ?>
                                     <?php if (!empty($e->description)) : ?>
@@ -131,7 +131,7 @@ $today = date('Y-m-d');
                                     <div class="rsd-user-chip">
                                         <?php echo get_avatar($e->user_id, 28); ?>
                                         <div style="display:flex;flex-direction:column;gap:2px">
-                                            <span style="font-weight:600"><?php echo esc_html($e->client_name ?? 'کاربر #' . $e->user_id); ?></span>
+                                            <span style="font-weight:600"><?php echo esc_html($e->client_name ?? 'User #' . $e->user_id); ?></span>
                                             <span style="color:#64748b;font-size:11px"><?php echo esc_html(get_userdata($e->user_id)->user_email ?? ''); ?></span>
                                         </div>
                                     </div>
@@ -144,14 +144,14 @@ $today = date('Y-m-d');
                                 <td style="color:#0f172a;font-weight:600">
                                     <?php echo esc_html(date_i18n('j F Y', $start_ts)); ?>
                                     <div style="color:#64748b;font-weight:400;font-size:11px;margin-top:2px">
-                                        ساعت <?php echo esc_html(date('H:i', $start_ts)); ?>
-                                        <?php if (!empty($e->is_all_day)) echo ' (تمام روز)'; ?>
+                                        Time <?php echo esc_html(date('H:i', $start_ts)); ?>
+                                        <?php if (!empty($e->is_all_day)) echo ' (All day)'; ?>
                                     </div>
                                 </td>
                                 <td>
                                     <?php if ($end_ts) : ?>
                                         <div style="color:#475569;font-weight:600"><?php echo esc_html(date_i18n('j F Y', $end_ts)); ?></div>
-                                        <div style="color:#64748b;font-size:11px;margin-top:2px">ساعت <?php echo esc_html(date('H:i', $end_ts)); ?></div>
+                                        <div style="color:#64748b;font-size:11px;margin-top:2px">Time <?php echo esc_html(date('H:i', $end_ts)); ?></div>
                                     <?php else : ?>
                                         <span style="color:#cbd5e1">—</span>
                                     <?php endif; ?>
@@ -171,16 +171,16 @@ $today = date('Y-m-d');
                                         $rc = $req_colors[$rs] ?? 'gray';
                                         echo '<span class="rsd-admin-badge ' . $rc . '">' . esc_html($req_status_labels[$rs] ?? $rs) . '</span>';
                                     } elseif ($is_doc) {
-                                        echo '<span class="rsd-admin-badge purple" style="font-size:12px">انقضا مدرک</span>';
+                                        echo '<span class="rsd-admin-badge purple" style="font-size:12px">Document expiry</span>';
                                     } else {
-                                        echo '<span style="color:#cbd5e1;font-size:12px">مستقیم</span>';
+                                        echo '<span style="color:#cbd5e1;font-size:12px">Direct</span>';
                                     }
                                     ?>
                                 </td>
                                 <td style="display:flex;gap:6px;flex-wrap:wrap">
                                     <?php if (!empty($e->request_status) && $e->request_status === 'pending') : ?>
-                                        <button type="button" class="rsd-btn-admin small primary" style="padding:4px 10px;font-size:12px">تأیید</button>
-                                        <button type="button" class="rsd-btn-admin small danger" style="padding:4px 10px;font-size:12px">رد</button>
+                                        <button type="button" class="rsd-btn-admin small primary" style="padding:4px 10px;font-size:12px">Approve</button>
+                                        <button type="button" class="rsd-btn-admin small danger" style="padding:4px 10px;font-size:12px">Reject</button>
                                     <?php endif; ?>
                                     <button type="button"
                                         class="rsd-btn-admin small primary rsd-edit-event-btn"
@@ -189,9 +189,9 @@ $today = date('Y-m-d');
                                         data-event-title="<?php echo esc_attr($e->title); ?>"
                                         data-is-doc="<?php echo $is_doc ? '1' : '0'; ?>"
                                         data-start-j="<?php echo esc_attr($start_j); ?>"
-                                        data-end-j="<?php echo esc_attr($end_j); ?>">ویرایش</button>
+                                        data-end-j="<?php echo esc_attr($end_j); ?>">Edit</button>
                                     <button type="button" class="rsd-btn-admin small secondary" style="padding:4px 10px;font-size:12px"
-                                        data-delete-event="<?php echo (int)$e->id; ?>">حذف</button>
+                                        data-delete-event="<?php echo (int)$e->id; ?>">Delete</button>
                                 </td>
                             </tr>
                         <?php endforeach;
@@ -200,8 +200,8 @@ $today = date('Y-m-d');
                             <td colspan="10">
                                 <div class="rsd-empty">
                                     <div class="rsd-empty-icon">📅</div>
-                                    <h3>هنوز رویدادی در تقویم ثبت نشده</h3>
-                                    <p>جلسات، سررسیدها و قرارملاقات‌های مالی در این جدول نمایش داده می‌شوند.</p>
+                                    <h3>No events registered in the calendar yet</h3>
+                                    <p>Financial meetings, deadlines and appointments are shown in this table.</p>
                                 </div>
                             </td>
                         </tr>
@@ -220,7 +220,7 @@ $today = date('Y-m-d');
             <div style="display:flex;align-items:center;gap:8px">
                 <span style="font-size:20px">📅</span>
                 <h3 id="rsd-edit-event-title"
-                    style="margin:0;font-size:16px;font-weight:700;color:#0f172a">ویرایش تاریخ رویداد</h3>
+                    style="margin:0;font-size:16px;font-weight:700;color:#0f172a">Edit Event Date</h3>
             </div>
             <button type="button" id="rsd-edit-event-close"
                 style="background:transparent;border:0;font-size:20px;cursor:pointer;color:#64748b;padding:0 4px">×</button>
@@ -231,13 +231,13 @@ $today = date('Y-m-d');
 
             <div id="rsd-edit-start-row" style="margin-bottom:16px">
                 <label id="rsd-edit-start-label"
-                    style="display:block;margin-bottom:6px;font-weight:600;color:#334155;font-size:13px">تاریخ شروع (شمسی)</label>
+                    style="display:block;margin-bottom:6px;font-weight:600;color:#334155;font-size:13px">Start Date (Gregorian)</label>
                 <?php rsd_fp_render_jalali_triple('', 'rsd-edit-start', true, ''); ?>
-                <div style="margin-top:4px;font-size:11px;color:#64748b">سال، ماه و روز را از لیست‌ها انتخاب کنید</div>
+                <div style="margin-top:4px;font-size:11px;color:#64748b">Select year, month and day from the lists</div>
             </div>
 
             <div id="rsd-edit-end-row" style="margin-bottom:20px">
-                <label style="display:block;margin-bottom:6px;font-weight:600;color:#334155;font-size:13px">تاریخ پایان (شمسی — اختیاری)</label>
+                <label style="display:block;margin-bottom:6px;font-weight:600;color:#334155;font-size:13px">End Date (Gregorian — optional)</label>
                 <?php rsd_fp_render_jalali_triple('', 'rsd-edit-end', false, ''); ?>
             </div>
 
@@ -246,9 +246,9 @@ $today = date('Y-m-d');
 
             <div style="display:flex;gap:8px;justify-content:flex-end">
                 <button type="button" id="rsd-edit-event-cancel"
-                    class="rsd-btn-admin secondary">انصراف</button>
+                    class="rsd-btn-admin secondary">Cancel</button>
                 <button type="button" id="rsd-edit-event-save"
-                    class="rsd-btn-admin primary">💾 ذخیره تغییرات</button>
+                    class="rsd-btn-admin primary">💾 Save Changes</button>
             </div>
         </div>
     </div>
@@ -285,8 +285,8 @@ $today = date('Y-m-d');
             $modal.css('display', 'flex');
         }
 
-        // Jalali regex: 1300-1499 / 01-12 / 01-31
-        var jalaliRe = /^(1[34]\d{2})\/(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])$/;
+        // Gregorian regex: 1900-2099 / 01-12 / 01-31
+        var jalaliRe = /^(19|20)\d{2}\/(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])$/;
 
         $(document).on('click', '.rsd-edit-event-btn', function(e) {
             e.preventDefault();
@@ -313,12 +313,12 @@ $today = date('Y-m-d');
             }
 
             if (isDoc) {
-                $evTitle.text('ویرایش تاریخ انقضای مدرک: ' + title);
-                $startLabel.text('تاریخ انقضا (شمسی)');
+                $evTitle.text('Edit document expiry date: ' + title);
+                $startLabel.text('Expiry Date (Gregorian)');
                 $endRow.hide();
             } else {
-                $evTitle.text('ویرایش تاریخ‌های رویداد: ' + title);
-                $startLabel.text('تاریخ شروع (شمسی)');
+                $evTitle.text('Edit event dates: ' + title);
+                $startLabel.text('Start Date (Gregorian)');
                 $endRow.show();
             }
             openModal();
@@ -338,7 +338,7 @@ $today = date('Y-m-d');
             e.preventDefault();
             var $btn = $(this);
             var origT = $btn.text();
-            $btn.prop('disabled', true).text('در حال ذخیره...');
+            $btn.prop('disabled', true).text('Saving...');
 
             var evId = parseInt($evId.val(), 10) || 0;
             var isDoc = $evIsDoc.val() == 1;
@@ -347,12 +347,12 @@ $today = date('Y-m-d');
 
             if (!jalaliRe.test(sj)) {
                 $btn.prop('disabled', false).text(origT);
-                showErr(isDoc ? 'تاریخ انقضا شمسی نامعتبر است.' : 'تاریخ شروع شمسی نامعتبر است.');
+                showErr(isDoc ? 'Invalid Gregorian expiry date.' : 'Invalid Gregorian start date.');
                 return;
             }
             if (!isDoc && ej !== '' && !jalaliRe.test(ej)) {
                 $btn.prop('disabled', false).text(origT);
-                showErr('تاریخ پایان شمسی نامعتبر است.');
+                showErr('Invalid Gregorian end date.');
                 return;
             }
 
@@ -366,7 +366,7 @@ $today = date('Y-m-d');
                 $btn.prop('disabled', false).text(origT);
                 if (resp && resp.success) {
                     closeModal();
-                    var msg = (resp && resp.data && resp.data.message) || 'با موفقیت ذخیره شد.';
+                    var msg = (resp && resp.data && resp.data.message) || 'Saved successfully.';
                     $('<div>').css({
                             position: 'fixed',
                             top: 32,
@@ -388,19 +388,19 @@ $today = date('Y-m-d');
                         location.reload();
                     }, 900);
                 } else {
-                    var em = (resp && resp.data && resp.data.message) || 'خطا هنگام ذخیره‌سازی.';
+                    var em = (resp && resp.data && resp.data.message) || 'Error while saving.';
                     showErr(em);
                 }
             }, 'json').fail(function() {
                 $btn.prop('disabled', false).text(origT);
-                showErr('خطا در ارتباط با سرور.');
+                showErr('Error communicating with the server.');
             });
         });
 
         // Handle existing delete buttons (UX)
         $(document).on('click', '[data-delete-event]', function(e) {
             e.preventDefault();
-            if (!confirm('آیا از حذف این رویداد اطمینان دارید؟')) return;
+            if (!confirm('Are you sure you want to delete this event?')) return;
             var $btn = $(this);
             var evId = $btn.data('delete-event');
             $btn.prop('disabled', true).text('...');
@@ -410,9 +410,9 @@ $today = date('Y-m-d');
                 event_id: evId
             }, function(resp) {
                 if (resp && resp.success) location.reload();
-                else alert((resp && resp.data && resp.data.message) || 'خطا در حذف.');
+                else alert((resp && resp.data && resp.data.message) || 'Error deleting.');
             }, 'json').fail(function() {
-                alert('خطا در ارتباط با سرور.');
+                alert('Error communicating with the server.');
             });
         });
     })(jQuery);

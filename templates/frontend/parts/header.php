@@ -76,7 +76,7 @@ $notif_link_fn = function ($n) {
 };
 
 /**
- * Helper: icon / type label (in Persian) for a notification type key.
+ * Helper: icon / type label (in English) for a notification type key.
  *
  * @param stdClass $n
  * @return array{0:string,1:string} tuple of (icon, label)
@@ -85,37 +85,37 @@ $notif_meta_fn = function ($n) {
     $t = (string) ($n->type ?? '');
     switch ($t) {
         case 'ticket_created':
-            return ['📝', esc_html__('تیکت جدید', 'rsd-finance-panel')];
+            return ['📝', esc_html__('New Ticket', 'rsd-finance-panel')];
         case 'ticket_replied':
-            return ['💬', esc_html__('پاسخ تیکت', 'rsd-finance-panel')];
+            return ['💬', esc_html__('Ticket Reply', 'rsd-finance-panel')];
         case 'ticket_updated':
-            return ['🔄', esc_html__('بروزرسانی تیکت', 'rsd-finance-panel')];
+            return ['🔄', esc_html__('Ticket Updated', 'rsd-finance-panel')];
         case 'ticket_closed':
-            return ['✅', esc_html__('بسته‌شدن تیکت', 'rsd-finance-panel')];
+            return ['✅', esc_html__('Ticket Closed', 'rsd-finance-panel')];
         case 'invoice_created':
-            return ['📄', esc_html__('فاکتور جدید', 'rsd-finance-panel')];
+            return ['📄', esc_html__('New Invoice', 'rsd-finance-panel')];
         case 'invoice_paid':
-            return ['💳', esc_html__('پرداخت فاکتور', 'rsd-finance-panel')];
+            return ['💳', esc_html__('Invoice Payment', 'rsd-finance-panel')];
         case 'report_ready':
-            return ['🗂️', esc_html__('گزارش آماده شد', 'rsd-finance-panel')];
+            return ['🗂️', esc_html__('Report Ready', 'rsd-finance-panel')];
         case 'doc_uploaded':
-            return ['📂', esc_html__('مدرک بارگذاری شد', 'rsd-finance-panel')];
+            return ['📂', esc_html__('Document Uploaded', 'rsd-finance-panel')];
         case 'doc_requested':
-            return ['📨', esc_html__('درخواست مدرک', 'rsd-finance-panel')];
+            return ['📨', esc_html__('Document Requested', 'rsd-finance-panel')];
         case 'event_approved':
-            return ['✅', esc_html__('جلسه تأیید شد', 'rsd-finance-panel')];
+            return ['✅', esc_html__('Meeting Approved', 'rsd-finance-panel')];
         case 'event_rejected':
-            return ['❌', esc_html__('جلسه رد شد', 'rsd-finance-panel')];
+            return ['❌', esc_html__('Meeting Rejected', 'rsd-finance-panel')];
         case 'service_created':
-            return ['🏗️', esc_html__('درخواست خدمت ثبت شد', 'rsd-finance-panel')];
+            return ['🏗️', esc_html__('Service Request Submitted', 'rsd-finance-panel')];
         case 'service_status':
-            return ['🛠️', esc_html__('وضعیت خدمت تغییر کرد', 'rsd-finance-panel')];
+            return ['🛠️', esc_html__('Service Status Changed', 'rsd-finance-panel')];
         default:
-            return ['🔔', esc_html__('اعلان', 'rsd-finance-panel')];
+            return ['🔔', esc_html__('Notification', 'rsd-finance-panel')];
     }
 };
 
-$display_name = $current_user->display_name ?: esc_html('کاربر محترم', 'rsd-finance-panel');
+$display_name = $current_user->display_name ?: esc_html('Dear User', 'rsd-finance-panel');
 $initial = mb_substr($display_name, 0, 1);
 ?>
 
@@ -126,13 +126,13 @@ $initial = mb_substr($display_name, 0, 1);
             <span class="rsd-fp-user-name"><?php echo esc_html($display_name); ?>
                 <span class="rsd-fp-user-dropdown">▾</span>
             </span>
-            <span class="rsd-fp-user-role">مدیر مالی</span>
+            <span class="rsd-fp-user-role">Financial Manager</span>
         </div>
     </div>
 
     <div class="rsd-fp-header-actions">
         <div class="rsd-fp-search">
-            <input type="text" placeholder="جستجو در سامانه ...">
+            <input type="text" placeholder="Search the system ...">
             <span class="search-icon">🔍</span>
         </div>
         <div class="rsd-fp-notif-wrapper">
@@ -141,7 +141,7 @@ $initial = mb_substr($display_name, 0, 1);
                 id="rsd-notif-bell"
                 aria-haspopup="dialog"
                 aria-expanded="false"
-                title="اعلان‌ها">
+                title="Notifications">
                 🔔
                 <?php if ($all_notif_count > 0) : ?>
                     <span class="rsd-fp-badge" id="rsd-notif-badge"><?php echo esc_html($all_notif_count > 99 ? '99+' : (string) $all_notif_count); ?></span>
@@ -150,12 +150,12 @@ $initial = mb_substr($display_name, 0, 1);
                 <?php endif; ?>
             </button>
 
-            <div class="rsd-notif-dropdown" id="rsd-notif-dropdown" style="display:none" role="dialog" aria-label="اعلان‌ها">
+            <div class="rsd-notif-dropdown" id="rsd-notif-dropdown" style="display:none" role="dialog" aria-label="Notifications">
                 <div class="rsd-notif-dropdown-head">
-                    <strong><?php echo esc_html(sprintf(_n('%d اعلان خوانده‌نشده', '%d اعلان خوانده‌نشده', $all_notif_count, 'rsd-finance-panel'), $all_notif_count)); ?></strong>
+                    <strong><?php echo esc_html(sprintf(_n('%d unread notification', '%d unread notifications', $all_notif_count, 'rsd-finance-panel'), $all_notif_count)); ?></strong>
                     <?php if ($all_notif_count > 0) : ?>
-                        <button type="button" class="rsd-notif-mark-all" data-mark-all-read title="علامت‌گذاری همه به عنوان خوانده‌شده">
-                            همه را خوانده‌شده علامت بزن
+                        <button type="button" class="rsd-notif-mark-all" data-mark-all-read title="Mark all as read">
+                            Mark all as read
                         </button>
                     <?php endif; ?>
                 </div>
@@ -183,7 +183,7 @@ $initial = mb_substr($display_name, 0, 1);
                                     <div class="rsd-notif-title">
                                         <?php echo esc_html($title_plain); ?>
                                         <span class="rsd-notif-time">
-                                            <?php echo esc_html(sprintf('%s پیش', human_time_diff(strtotime($n->created_at)))); ?>
+                                            <?php echo esc_html(sprintf('%s ago', human_time_diff(strtotime($n->created_at)))); ?>
                                         </span>
                                     </div>
                                     <?php if ($msg_snippet) : ?>
@@ -193,7 +193,7 @@ $initial = mb_substr($display_name, 0, 1);
                                 <button type="button"
                                     class="rsd-notif-dismiss"
                                     data-dismiss-notif="<?php echo (int) $n->id; ?>"
-                                    title="حذف/خوانده‌شدن">
+                                    title="Delete/Mark as read">
                                     ✕
                                 </button>
                             </a>
@@ -201,8 +201,8 @@ $initial = mb_substr($display_name, 0, 1);
                     <?php else : ?>
                         <div class="rsd-notif-empty">
                             <div class="rsd-notif-empty-icon">🎉</div>
-                            <h4>همه اعلان‌ها خوانده شده‌اند</h4>
-                            <p>اعلان‌های جدید اینجا نمایش داده می‌شوند.</p>
+                            <h4>All notifications have been read</h4>
+                            <p>New notifications are displayed here.</p>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -210,7 +210,7 @@ $initial = mb_substr($display_name, 0, 1);
                 <div class="rsd-notif-dropdown-foot">
                     <a href="<?php echo esc_url(function_exists('rsd_fp_page_url') ? rsd_fp_page_url('tickets') : home_url('/finance-tickets/')); ?>"
                         style="font-size:12px;font-weight:600;color:#3b82f6">
-                        مشاهده همه پیام‌ها و تیکت‌ها ←
+                        View all messages &amp; tickets ←
                     </a>
                 </div>
             </div>

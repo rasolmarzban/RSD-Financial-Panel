@@ -61,8 +61,8 @@ class Admin
 
         // Main menu
         $this->page_hooks['dashboard'] = add_menu_page(
-            esc_html__('پنل مالی RSD', 'rsd-finance-panel'),
-            esc_html__('پرتال مالی', 'rsd-finance-panel'),
+            esc_html__('RSD Finance Panel', 'rsd-finance-panel'),
+            esc_html__('Finance Portal', 'rsd-finance-panel'),
             $capability,
             'rsd-finance-panel',
             [$this, 'render_dashboard_page'],
@@ -73,8 +73,8 @@ class Admin
         // Clients submenu
         $this->page_hooks['clients'] = add_submenu_page(
             'rsd-finance-panel',
-            esc_html__('مدیریت مشتریان', 'rsd-finance-panel'),
-            esc_html__('مشتریان', 'rsd-finance-panel'),
+            esc_html__('Manage Clients', 'rsd-finance-panel'),
+            esc_html__('Clients', 'rsd-finance-panel'),
             $capability,
             'rsd-fp-clients',
             [$this, 'render_clients_page']
@@ -83,8 +83,8 @@ class Admin
         // Documents submenu
         $this->page_hooks['documents'] = add_submenu_page(
             'rsd-finance-panel',
-            esc_html__('مدیریت مدارک', 'rsd-finance-panel'),
-            esc_html__('مدارک', 'rsd-finance-panel'),
+            esc_html__('Manage Documents', 'rsd-finance-panel'),
+            esc_html__('Documents', 'rsd-finance-panel'),
             $capability,
             'rsd-fp-documents',
             [$this, 'render_documents_page']
@@ -93,8 +93,8 @@ class Admin
         // Tickets submenu
         $this->page_hooks['tickets'] = add_submenu_page(
             'rsd-finance-panel',
-            esc_html__('مدیریت تیکت‌ها', 'rsd-finance-panel'),
-            esc_html__('تیکت‌ها', 'rsd-finance-panel'),
+            esc_html__('Manage Tickets', 'rsd-finance-panel'),
+            esc_html__('Tickets', 'rsd-finance-panel'),
             $capability,
             'rsd-fp-tickets',
             [$this, 'render_tickets_page']
@@ -103,8 +103,8 @@ class Admin
         // Invoices submenu
         $this->page_hooks['invoices'] = add_submenu_page(
             'rsd-finance-panel',
-            esc_html__('مدیریت فاکتورها', 'rsd-finance-panel'),
-            esc_html__('فاکتورها', 'rsd-finance-panel'),
+            esc_html__('Manage Invoices', 'rsd-finance-panel'),
+            esc_html__('Invoices', 'rsd-finance-panel'),
             $capability,
             'rsd-fp-invoices',
             [$this, 'render_invoices_page']
@@ -113,8 +113,8 @@ class Admin
         // Reports submenu
         $this->page_hooks['reports'] = add_submenu_page(
             'rsd-finance-panel',
-            esc_html__('مدیریت گزارش‌ها', 'rsd-finance-panel'),
-            esc_html__('گزارش‌ها', 'rsd-finance-panel'),
+            esc_html__('Manage Reports', 'rsd-finance-panel'),
+            esc_html__('Reports', 'rsd-finance-panel'),
             $capability,
             'rsd-fp-reports',
             [$this, 'render_reports_page']
@@ -123,8 +123,8 @@ class Admin
         // Services submenu
         $this->page_hooks['services'] = add_submenu_page(
             'rsd-finance-panel',
-            esc_html__('مدیریت درخواست‌های خدمات', 'rsd-finance-panel'),
-            esc_html__('درخواست‌ها', 'rsd-finance-panel'),
+            esc_html__('Manage Service Requests', 'rsd-finance-panel'),
+            esc_html__('Requests', 'rsd-finance-panel'),
             $capability,
             'rsd-fp-services',
             [$this, 'render_services_page']
@@ -133,8 +133,8 @@ class Admin
         // Calendar submenu
         $this->page_hooks['calendar'] = add_submenu_page(
             'rsd-finance-panel',
-            esc_html__('تقویم کاری', 'rsd-finance-panel'),
-            esc_html__('تقویم', 'rsd-finance-panel'),
+            esc_html__('Work Calendar', 'rsd-finance-panel'),
+            esc_html__('Calendar', 'rsd-finance-panel'),
             $capability,
             'rsd-fp-calendar',
             [$this, 'render_calendar_page']
@@ -143,8 +143,8 @@ class Admin
         // Settings submenu
         $this->page_hooks['settings'] = add_submenu_page(
             'rsd-finance-panel',
-            esc_html__('تنظیمات پلاگین', 'rsd-finance-panel'),
-            esc_html__('تنظیمات', 'rsd-finance-panel'),
+            esc_html__('Plugin Settings', 'rsd-finance-panel'),
+            esc_html__('Settings', 'rsd-finance-panel'),
             'manage_options',
             'rsd-fp-settings',
             [$this, 'render_settings_page']
@@ -172,7 +172,7 @@ class Admin
         $clean = [];
         $existing = get_option('rsd_fp_settings', []);
 
-        $clean['currency_symbol'] = sanitize_text_field($input['currency_symbol'] ?? 'تومان');
+        $clean['currency_symbol'] = sanitize_text_field($input['currency_symbol'] ?? 'Toman');
         $clean['currency_position'] = in_array($input['currency_position'] ?? 'after', ['before', 'after']) ? $input['currency_position'] : 'after';
         $clean['date_format'] = in_array($input['date_format'] ?? 'jalali', ['jalali', 'gregorian']) ? $input['date_format'] : 'jalali';
         $clean['items_per_page'] = absint($input['items_per_page'] ?? 20);
@@ -278,7 +278,7 @@ class Admin
         foreach ($columns as $k => $v) {
             $new_cols[$k] = $v;
             if ($k === 'email') {
-                $new_cols['rsd_fp_phone'] = esc_html__('شماره موبایل', 'rsd-finance-panel');
+                $new_cols['rsd_fp_phone'] = esc_html__('Mobile Number', 'rsd-finance-panel');
             }
         }
         $new_cols['rsd_fp_client'] = esc_html__('Finance Portal', 'rsd-finance-panel');
@@ -342,10 +342,10 @@ class Admin
         $nonce_action = 'rsd_fp_save_phone_' . (int)$user->ID;
 ?>
         <div id="rsd-fp-phone" style="margin-top:24px;">
-            <h3><?php \esc_html_e('اطلاعات پرتال مالی', 'rsd-finance-panel'); ?></h3>
+            <h3><?php \esc_html_e('Finance Portal Information', 'rsd-finance-panel'); ?></h3>
             <table class="form-table" role="presentation">
                 <tr>
-                    <th><label for="rsd_fp_phone"><?php \esc_html_e('شماره موبایل', 'rsd-finance-panel'); ?></label></th>
+                    <th><label for="rsd_fp_phone"><?php \esc_html_e('Mobile Number', 'rsd-finance-panel'); ?></label></th>
                     <td>
                         <input type="tel"
                             id="rsd_fp_phone"
@@ -354,9 +354,9 @@ class Admin
                             style="direction:ltr;text-align:left;"
                             maxlength="20"
                             value="<?php echo \esc_attr($phone); ?>"
-                            placeholder="مثال: 09123456789">
+                            placeholder="Example: 09123456789">
                         <p class="description">
-                            <?php \esc_html_e('شماره موبایل ۱۱ رقمی با پیشوند ۰۹. این شماره برای ورود مشتری به پرتال استفاده می‌شود.', 'rsd-finance-panel'); ?>
+                            <?php \esc_html_e('An 11-digit mobile number with the 09 prefix. This number is used for client login to the portal.', 'rsd-finance-panel'); ?>
                         </p>
                         <?php \wp_nonce_field($nonce_action, 'rsd_fp_phone_nonce'); ?>
                     </td>
@@ -456,7 +456,7 @@ class Admin
         if ($conflict) {
             Plugin::add_notice(
                 \sprintf(
-                    \esc_html__('شماره موبایل «%s» قبلاً توسط کاربر دیگری ثبت شده است. شماره موبایل ذخیره نشد.', 'rsd-finance-panel'),
+                    \esc_html__('The mobile number "%s" is already registered by another user. The mobile number was not saved.', 'rsd-finance-panel'),
                     \esc_html($phone)
                 ),
                 'error'

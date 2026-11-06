@@ -18,20 +18,20 @@ $priorities = \RSD\FinancePanel\Modules\Tickets::get_priorities();
         <?php include __DIR__ . '/parts/header.php'; ?>
 
         <div class="rsd-toolbar">
-            <h2 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">💬 پیام‌ها و تیکت‌ها</h2>
+            <h2 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">💬 Messages &amp; Tickets</h2>
             <div class="spacer"></div>
             <button type="button" class="rsd-btn rsd-btn-primary" data-modal="rsd-new-ticket-modal">
-                ➕ ثبت پیام / تیکت جدید
+                ➕ New Message / Ticket
             </button>
         </div>
 
         <div class="rsd-tabs">
-            <div class="rsd-tab active">همه تیکت‌ها (<?php echo esc_html(count($tickets)); ?>)</div>
-            <div class="rsd-tab">باز (<?php
+            <div class="rsd-tab active">All Tickets (<?php echo esc_html(count($tickets)); ?>)</div>
+            <div class="rsd-tab">Open (<?php
                 echo esc_html(count(array_filter($tickets, fn($t) => in_array($t->status, ['new', 'in_progress', 'waiting']))));
             ?>)</div>
-            <div class="rsd-tab">خوانده‌نشده</div>
-            <div class="rsd-tab">بسته‌شده</div>
+            <div class="rsd-tab">Unread</div>
+            <div class="rsd-tab">Closed</div>
         </div>
 
         <div class="rsd-card">
@@ -39,14 +39,14 @@ $priorities = \RSD\FinancePanel\Modules\Tickets::get_priorities();
                 <table class="rsd-table">
                     <thead>
                     <tr>
-                        <th>شماره تیکت</th>
-                        <th>موضوع</th>
-                        <th>دسته‌بندی</th>
-                        <th>اولویت</th>
-                        <th>تاریخ ثبت</th>
-                        <th>آخرین پاسخ</th>
-                        <th>وضعیت</th>
-                        <th>عملیات</th>
+                        <th>Ticket Number</th>
+                        <th>Subject</th>
+                        <th>Category</th>
+                        <th>Priority</th>
+                        <th>Submission Date</th>
+                        <th>Last Reply</th>
+                        <th>Status</th>
+                        <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -63,7 +63,7 @@ $priorities = \RSD\FinancePanel\Modules\Tickets::get_priorities();
                             <td><?php echo esc_html(date_i18n('j F Y', strtotime($t->created_at))); ?></td>
                             <td><?php
                                 if (!empty($t->last_reply_at)) {
-                                    echo esc_html(sprintf('%s پیش', human_time_diff(strtotime($t->last_reply_at))));
+                                    echo esc_html(sprintf('%s ago', human_time_diff(strtotime($t->last_reply_at))));
                                 } else {
                                     echo '<span style="color:#cbd5e1">-</span>';
                                 }
@@ -71,14 +71,14 @@ $priorities = \RSD\FinancePanel\Modules\Tickets::get_priorities();
                             <td><?php echo rsd_fp_status_badge($t->status); ?></td>
                             <td>
                                 <a href="<?php echo esc_url(add_query_arg(['view' => 'single', 'id' => $t->id], rsd_fp_page_url('tickets'))); ?>"
-                                   class="rsd-btn rsd-btn-sm rsd-btn-outline">مشاهده</a>
+                                   class="rsd-btn rsd-btn-sm rsd-btn-outline">View</a>
                             </td>
                         </tr>
                     <?php endforeach; else : ?>
                         <tr><td colspan="8">
                             <div class="rsd-empty"><div class="rsd-empty-icon">💬</div>
-                                <h3>هنوز تیکتی ثبت نکرده‌اید</h3>
-                                <p>برای ارتباط با کارشناسان، از دکمه «ثبت تیکت جدید» استفاده کنید.</p>
+                                <h3>You have not submitted any tickets yet</h3>
+                                <p>To contact our experts, use the "New Message / Ticket" button.</p>
                             </div>
                         </td></tr>
                     <?php endif; ?>
@@ -94,20 +94,20 @@ $priorities = \RSD\FinancePanel\Modules\Tickets::get_priorities();
 <div class="rsd-modal-backdrop" id="rsd-new-ticket-modal">
     <div class="rsd-modal">
         <div class="rsd-modal-header">
-            <div class="rsd-modal-title">ثبت پیام یا تیکت جدید</div>
+            <div class="rsd-modal-title">New Message or Ticket</div>
             <button type="button" class="rsd-modal-close">&times;</button>
         </div>
         <div class="rsd-modal-body">
             <form id="rsd-new-ticket-form">
                 <div class="rsd-form-row">
-                    <label>نوع درخواست <span class="required">*</span></label>
+                    <label>Request Type <span class="required">*</span></label>
                     <select name="type">
-                        <option value="question">ثبت سؤال</option>
-                        <option value="issue">ثبت تیکت / مشکل</option>
+                        <option value="question">Submit Question</option>
+                        <option value="issue">Submit Ticket / Issue</option>
                     </select>
                 </div>
                 <div class="rsd-form-row">
-                    <label>موضوع <span class="required">*</span></label>
+                    <label>Subject <span class="required">*</span></label>
                     <select name="category">
                         <?php foreach ($categories as $k => $v) : ?>
                             <option value="<?php echo esc_attr($k); ?>"><?php echo esc_html($v); ?></option>
@@ -115,11 +115,11 @@ $priorities = \RSD\FinancePanel\Modules\Tickets::get_priorities();
                     </select>
                 </div>
                 <div class="rsd-form-row">
-                    <label>عنوان <span class="required">*</span></label>
-                    <input type="text" name="subject" required placeholder="خلاصه موضوع">
+                    <label>Title <span class="required">*</span></label>
+                    <input type="text" name="subject" required placeholder="Subject summary">
                 </div>
                 <div class="rsd-form-row">
-                    <label>اولویت</label>
+                    <label>Priority</label>
                     <select name="priority">
                         <?php foreach ($priorities as $k => $v) : ?>
                             <option value="<?php echo esc_attr($k); ?>"><?php echo esc_html($v); ?></option>
@@ -127,18 +127,18 @@ $priorities = \RSD\FinancePanel\Modules\Tickets::get_priorities();
                     </select>
                 </div>
                 <div class="rsd-form-row">
-                    <label>توضیحات / پیام شما <span class="required">*</span></label>
+                    <label>Description / Your Message <span class="required">*</span></label>
                     <textarea name="message" rows="5" required></textarea>
                 </div>
                 <div class="rsd-form-row">
-                    <label>فایل پیوست (اختیاری)</label>
+                    <label>Attachment (optional)</label>
                     <input type="file" name="ticket_attachment" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
                 </div>
             </form>
         </div>
         <div class="rsd-modal-footer">
-            <button class="rsd-btn rsd-btn-light" data-close-modal>انصراف</button>
-            <button type="submit" form="rsd-new-ticket-form" class="rsd-btn rsd-btn-primary">ارسال پیام</button>
+            <button class="rsd-btn rsd-btn-light" data-close-modal>Cancel</button>
+            <button type="submit" form="rsd-new-ticket-form" class="rsd-btn rsd-btn-primary">Send Message</button>
         </div>
     </div>
 </div>

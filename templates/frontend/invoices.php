@@ -19,7 +19,7 @@ $methods = \RSD\FinancePanel\Modules\Invoices::get_payment_methods();
         <?php include __DIR__ . '/parts/header.php'; ?>
 
         <div class="rsd-toolbar">
-            <h2 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">💰 وضعیت صورتحساب</h2>
+            <h2 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">💰 Billing Status</h2>
             <div class="spacer"></div>
         </div>
 
@@ -27,35 +27,35 @@ $methods = \RSD\FinancePanel\Modules\Invoices::get_payment_methods();
         <div class="rsd-grid rsd-grid-4">
             <div class="rsd-stat-card stat-purple">
                 <div class="stat-label">
-                    مجموع فاکتورهای صادرشده
+                    Total Issued Invoices
                     <span class="stat-icon">📑</span>
                 </div>
                 <div class="stat-amount"><?php echo esc_html(rsd_fp_currency($stats['total_invoiced'] ?? 0)); ?></div>
-                <div class="stat-change"><?php echo esc_html(count($invoices)); ?> فاکتور</div>
+                <div class="stat-change"><?php echo esc_html(count($invoices)); ?> invoices</div>
             </div>
             <div class="rsd-stat-card stat-green">
                 <div class="stat-label">
-                    مجموع پرداخت‌های انجام‌شده
+                    Total Payments Made
                     <span class="stat-icon">💳</span>
                 </div>
                 <div class="stat-amount"><?php echo esc_html(rsd_fp_currency($stats['total_paid'] ?? 0)); ?></div>
-                <div class="stat-change"><?php echo esc_html(count($payments)); ?> تراکنش</div>
+                <div class="stat-change"><?php echo esc_html(count($payments)); ?> transactions</div>
             </div>
             <div class="rsd-stat-card stat-red">
                 <div class="stat-label">
-                    مانده بدهی فعلی شما
+                    Your Current Outstanding Balance
                     <span class="stat-icon">⚠️</span>
                 </div>
                 <div class="stat-amount"><?php echo esc_html(rsd_fp_currency($stats['debt'] ?? 0)); ?></div>
                 <div class="stat-change">
                     <?php echo ($stats['debt'] ?? 0) > 0
-                        ? esc_html__('سررسید داشته باشید', 'rsd-finance-panel')
-                        : '<span style="color:#16a34a">بدون بدهی</span>'; ?>
+                        ? esc_html__('You have amounts due', 'rsd-finance-panel')
+                        : '<span style="color:#16a34a">No debt</span>'; ?>
                 </div>
             </div>
             <div class="rsd-stat-card stat-blue">
                 <div class="stat-label">
-                    آخرین پرداخت
+                    Last Payment
                     <span class="stat-icon">🗓️</span>
                 </div>
                 <div class="stat-amount" style="font-size:16px">
@@ -73,7 +73,7 @@ $methods = \RSD\FinancePanel\Modules\Invoices::get_payment_methods();
                     if ($last) {
                         echo esc_html(date_i18n('j F Y', strtotime($last->payment_date)));
                     } else {
-                        echo '<span style="color:#94a3b8">' . esc_html('هنوز پرداختی ثبت نشده', 'rsd-finance-panel') . '</span>';
+                        echo '<span style="color:#94a3b8">' . esc_html('No payments recorded yet', 'rsd-finance-panel') . '</span>';
                     }
                     ?>
                 </div>
@@ -81,26 +81,26 @@ $methods = \RSD\FinancePanel\Modules\Invoices::get_payment_methods();
         </div>
 
         <div class="rsd-tabs">
-            <div class="rsd-tab active" onclick="rsdTab(this,'invoices')">فاکتورها</div>
-            <div class="rsd-tab" onclick="rsdTab(this,'payments')">پرداخت‌ها</div>
+            <div class="rsd-tab active" onclick="rsdTab(this,'invoices')">Invoices</div>
+            <div class="rsd-tab" onclick="rsdTab(this,'payments')">Payments</div>
         </div>
 
         <div class="rsd-card" id="tab-invoices">
             <div class="rsd-card-header">
-                <div class="rsd-card-title"><span class="rsd-card-icon">📑</span> فاکتورهای صادرشده</div>
+                <div class="rsd-card-title"><span class="rsd-card-icon">📑</span> Issued Invoices</div>
             </div>
             <div class="rsd-table-wrap">
                 <table class="rsd-table">
                     <thead>
                     <tr>
-                        <th>شماره فاکتور</th>
-                        <th>تاریخ</th>
-                        <th>سال / ماه</th>
-                        <th>مهلت پرداخت</th>
-                        <th>مبلغ کل</th>
-                        <th>پرداخت‌شده</th>
-                        <th>وضعیت</th>
-                        <th>عملیات</th>
+                        <th>Invoice Number</th>
+                        <th>Date</th>
+                        <th>Year / Month</th>
+                        <th>Payment Due</th>
+                        <th>Total Amount</th>
+                        <th>Paid</th>
+                        <th>Status</th>
+                        <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -127,7 +127,7 @@ $methods = \RSD\FinancePanel\Modules\Invoices::get_payment_methods();
                                 <div class="cell-actions">
                                     <?php if (!empty($inv->file_path)) : ?>
                                         <a href="<?php echo esc_url($inv->file_path); ?>" target="_blank"
-                                           class="rsd-btn rsd-btn-sm rsd-btn-outline">📄 دانلود</a>
+                                           class="rsd-btn rsd-btn-sm rsd-btn-outline">📄 Download</a>
                                     <?php endif; ?>
                                 </div>
                             </td>
@@ -135,7 +135,7 @@ $methods = \RSD\FinancePanel\Modules\Invoices::get_payment_methods();
                     <?php endforeach; else : ?>
                         <tr><td colspan="8">
                             <div class="rsd-empty"><div class="rsd-empty-icon">📑</div>
-                                <h3>هنوز فاکتوری برای شما ثبت نشده است</h3>
+                                <h3>No invoices have been recorded for you yet</h3>
                             </div>
                         </td></tr>
                     <?php endif; ?>
@@ -146,19 +146,19 @@ $methods = \RSD\FinancePanel\Modules\Invoices::get_payment_methods();
 
         <div class="rsd-card" id="tab-payments" style="display:none">
             <div class="rsd-card-header">
-                <div class="rsd-card-title"><span class="rsd-card-icon">💳</span> تاریخچه پرداخت‌ها</div>
+                <div class="rsd-card-title"><span class="rsd-card-icon">💳</span> Payment History</div>
             </div>
             <div class="rsd-table-wrap">
                 <table class="rsd-table">
                     <thead>
                     <tr>
-                        <th>شماره تراکنش</th>
-                        <th>تاریخ</th>
-                        <th>مبلغ</th>
-                        <th>روش پرداخت</th>
-                        <th>مرتبط با فاکتور</th>
-                        <th>توضیحات</th>
-                        <th>رسید</th>
+                        <th>Transaction Number</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Payment Method</th>
+                        <th>Related Invoice</th>
+                        <th>Description</th>
+                        <th>Receipt</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -186,7 +186,7 @@ $methods = \RSD\FinancePanel\Modules\Invoices::get_payment_methods();
                             <td>
                                 <?php if (!empty($p->receipt_path)) : ?>
                                     <a href="<?php echo esc_url($p->receipt_path); ?>" target="_blank"
-                                       class="rsd-btn rsd-btn-sm rsd-btn-outline">مشاهده</a>
+                                       class="rsd-btn rsd-btn-sm rsd-btn-outline">View</a>
                                 <?php else : ?>
                                     <span style="color:#cbd5e1">-</span>
                                 <?php endif; ?>
@@ -195,7 +195,7 @@ $methods = \RSD\FinancePanel\Modules\Invoices::get_payment_methods();
                     <?php endforeach; else : ?>
                         <tr><td colspan="7">
                             <div class="rsd-empty"><div class="rsd-empty-icon">💳</div>
-                                <h3>تراکنش پرداختی یافت نشد</h3>
+                                <h3>No payment transactions found</h3>
                             </div>
                         </td></tr>
                     <?php endif; ?>

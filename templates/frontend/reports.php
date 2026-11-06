@@ -23,36 +23,36 @@ if (empty($years)) {
         <?php include __DIR__ . '/parts/header.php'; ?>
 
         <div class="rsd-toolbar">
-            <h2 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">📊 گزارش‌ها</h2>
+            <h2 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">📊 Reports</h2>
             <div class="spacer"></div>
         </div>
 
         <div class="rsd-toolbar">
             <form method="get" style="display:contents">
                 <select name="year" class="rsd-filter">
-                    <option value="">همه سال‌ها</option>
+                    <option value="">All Years</option>
                     <?php foreach ($years as $y) : ?>
                         <option value="<?php echo esc_attr($y); ?>"
                             <?php selected($filters['year'] ?? '', $y); ?>><?php echo esc_html($y); ?></option>
                     <?php endforeach; ?>
                 </select>
                 <select name="month" class="rsd-filter">
-                    <option value="">همه ماه‌ها</option>
+                    <option value="">All Months</option>
                     <?php foreach ($months as $k => $v) : ?>
                         <option value="<?php echo esc_attr($k); ?>"
                             <?php selected($filters['month'] ?? '', $k); ?>><?php echo esc_html($v); ?></option>
                     <?php endforeach; ?>
                 </select>
                 <select name="type" class="rsd-filter">
-                    <option value="">همه انواع</option>
+                    <option value="">All Types</option>
                     <?php foreach ($types as $k => $v) : ?>
                         <option value="<?php echo esc_attr($k); ?>"
                             <?php selected($filters['type'] ?? '', $k); ?>><?php echo esc_html($v); ?></option>
                     <?php endforeach; ?>
                 </select>
-                <button type="submit" class="rsd-btn rsd-btn-sm rsd-btn-primary">اعمال فیلتر</button>
+                <button type="submit" class="rsd-btn rsd-btn-sm rsd-btn-primary">Apply Filter</button>
                 <a href="<?php echo esc_url(remove_query_arg(['year', 'month', 'type'])); ?>"
-                    class="rsd-btn rsd-btn-sm rsd-btn-light">پاک کردن</a>
+                    class="rsd-btn rsd-btn-sm rsd-btn-light">Clear</a>
             </form>
         </div>
 
@@ -61,12 +61,12 @@ if (empty($years)) {
                 <table class="rsd-table">
                     <thead>
                         <tr>
-                            <th>عنوان گزارش</th>
-                            <th>دسته‌بندی</th>
-                            <th>دوره</th>
-                            <th>تاریخ انتشار</th>
-                            <th>توضیحات</th>
-                            <th>فایل</th>
+                            <th>Report Title</th>
+                            <th>Category</th>
+                            <th>Period</th>
+                            <th>Publish Date</th>
+                            <th>Description</th>
+                            <th>File</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -77,7 +77,7 @@ if (empty($years)) {
                                         <?php
                                         echo isset($types[$r->report_type])
                                             ? '<span class="rsd-badge rsd-badge-info">' . esc_html($types[$r->report_type]) . '</span>'
-                                            : '<span class="rsd-badge rsd-badge-secondary">سایر</span>';
+                                            : '<span class="rsd-badge rsd-badge-secondary">Other</span>';
                                         ?>
                                     </td>
                                     <td>
@@ -97,11 +97,11 @@ if (empty($years)) {
                                         <div class="cell-actions">
                                             <?php if (!empty($r->file_path)) : ?>
                                                 <a href="<?php echo esc_url($r->file_path); ?>" target="_blank"
-                                                    class="rsd-btn rsd-btn-sm rsd-btn-outline">👁 مشاهده</a>
+                                                    class="rsd-btn rsd-btn-sm rsd-btn-outline">👁 View</a>
                                                 <a href="<?php echo esc_url($r->file_path); ?>" download
-                                                    class="rsd-btn rsd-btn-sm rsd-btn-primary">⬇ دانلود</a>
+                                                    class="rsd-btn rsd-btn-sm rsd-btn-primary">⬇ Download</a>
                                             <?php else : ?>
-                                                <span style="color:#cbd5e1;font-size:11px">فایل ضمیمه نشده</span>
+                                                <span style="color:#cbd5e1;font-size:11px">No file attached</span>
                                             <?php endif; ?>
                                         </div>
                                     </td>
@@ -112,8 +112,8 @@ if (empty($years)) {
                                 <td colspan="6">
                                     <div class="rsd-empty">
                                         <div class="rsd-empty-icon">📊</div>
-                                        <h3>گزارشی با این فیلترها یافت نشد</h3>
-                                        <p>گزارش‌های تهیه‌شده برای شما اینجا نمایش داده می‌شود.</p>
+                                        <h3>No reports found with these filters</h3>
+                                        <p>Reports prepared for you are displayed here.</p>
                                     </div>
                                 </td>
                             </tr>

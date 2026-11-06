@@ -48,82 +48,82 @@ class Company_Info
     {
         return [
             'company_name' => [
-                'label'   => esc_html__('نام شرکت', 'rsd-finance-panel'),
+                'label'   => esc_html__('Company Name', 'rsd-finance-panel'),
                 'type'    => 'text',
                 'section' => 'basic',
             ],
             'brand_name' => [
-                'label'   => esc_html__('نام تجاری', 'rsd-finance-panel'),
+                'label'   => esc_html__('Brand Name', 'rsd-finance-panel'),
                 'type'    => 'text',
                 'section' => 'basic',
             ],
             'address' => [
-                'label'   => esc_html__('آدرس', 'rsd-finance-panel'),
+                'label'   => esc_html__('Address', 'rsd-finance-panel'),
                 'type'    => 'textarea',
                 'section' => 'basic',
             ],
             'registration_number' => [
-                'label'   => esc_html__('شماره ثبت', 'rsd-finance-panel'),
+                'label'   => esc_html__('Registration Number', 'rsd-finance-panel'),
                 'type'    => 'text',
                 'section' => 'basic',
             ],
             'tax_id' => [
-                'label'   => esc_html__('شماره مالیاتی', 'rsd-finance-panel'),
+                'label'   => esc_html__('Tax Number', 'rsd-finance-panel'),
                 'type'    => 'text',
                 'section' => 'basic',
             ],
             'vat_number' => [
-                'label'   => esc_html__('شماره مالیات بر ارزش افزوده', 'rsd-finance-panel'),
+                'label'   => esc_html__('VAT Number', 'rsd-finance-panel'),
                 'type'    => 'text',
                 'section' => 'basic',
             ],
             'ceo_name' => [
-                'label'   => esc_html__('نام مدیرعامل', 'rsd-finance-panel'),
+                'label'   => esc_html__('CEO Name', 'rsd-finance-panel'),
                 'type'    => 'text',
                 'section' => 'people',
             ],
             'shareholders' => [
-                'label'   => esc_html__('نام سهامداران', 'rsd-finance-panel'),
+                'label'   => esc_html__('Shareholders', 'rsd-finance-panel'),
                 'type'    => 'textarea',
                 'section' => 'people',
             ],
             'phone' => [
-                'label'   => esc_html__('شماره تلفن', 'rsd-finance-panel'),
+                'label'   => esc_html__('Phone Number', 'rsd-finance-panel'),
                 'type'    => 'text',
                 'section' => 'contact',
             ],
             'email' => [
-                'label'   => esc_html__('ایمیل', 'rsd-finance-panel'),
+                'label'   => esc_html__('Email', 'rsd-finance-panel'),
                 'type'    => 'email',
                 'section' => 'contact',
             ],
             'website' => [
-                'label'   => esc_html__('وب‌سایت', 'rsd-finance-panel'),
+                'label'   => esc_html__('Website', 'rsd-finance-panel'),
                 'type'    => 'url',
                 'section' => 'contact',
             ],
             'bank_name' => [
-                'label'   => esc_html__('نام بانک', 'rsd-finance-panel'),
+                'label'   => esc_html__('Bank Name', 'rsd-finance-panel'),
                 'type'    => 'text',
                 'section' => 'banking',
             ],
             'bank_account' => [
-                'label'   => esc_html__('شماره حساب', 'rsd-finance-panel'),
+                'label'   => esc_html__('Account Number', 'rsd-finance-panel'),
                 'type'    => 'text',
                 'section' => 'banking',
             ],
             'financial_contact_name' => [
-                'label'   => esc_html__('نام مسئول مالی', 'rsd-finance-panel'),
+                'label'   => esc_html__('Financial Contact Name', 'rsd-finance-panel'),
                 'type'    => 'text',
                 'section' => 'financial',
             ],
             'financial_contact_phone' => [
-                'label'   => esc_html__('تلفن مسئول مالی', 'rsd-finance-panel'),
+                'label'   => esc_html__('Financial Contact Phone', 'rsd-finance-panel'),
                 'type'    => 'text',
                 'section' => 'financial',
             ],
             'financial_contact_email' => [
-                'label'   => esc_html__('ایمیل مسئول مالی', 'rsd-finance-panel'),
+                'label'   => esc_html__('Financial Contact Email', 'rsd-finance-panel'),
                 'type'    => 'email',
                 'section' => 'financial',
             ],
@@ -138,11 +138,11 @@ class Company_Info
     public static function get_sections()
     {
         return [
-            'basic'     => esc_html__('اطلاعات پایه', 'rsd-finance-panel'),
-            'people'    => esc_html__('مدیران و سهامداران', 'rsd-finance-panel'),
-            'contact'   => esc_html__('اطلاعات تماس', 'rsd-finance-panel'),
-            'banking'   => esc_html__('اطلاعات بانکی', 'rsd-finance-panel'),
-            'financial' => esc_html__('مسئول مالی', 'rsd-finance-panel'),
+            'basic'     => esc_html__('Basic Information', 'rsd-finance-panel'),
+            'people'    => esc_html__('Directors and Shareholders', 'rsd-finance-panel'),
+            'contact'   => esc_html__('Contact Information', 'rsd-finance-panel'),
+            'banking'   => esc_html__('Banking Information', 'rsd-finance-panel'),
+            'financial' => esc_html__('Financial Contact', 'rsd-finance-panel'),
         ];
     }
 }

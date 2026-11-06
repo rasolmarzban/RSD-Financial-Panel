@@ -29,53 +29,14 @@
       });
   }
 
-  // --- Jalali calendar helpers (mirror dashboard.js + server PHP) ---
+  // --- Gregorian calendar helpers (mirror dashboard.js + server PHP) ---
   function gregorianPartsToJalali(gy, gm, gd) {
-    var g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-    gy = gy - 1600;
-    gm = gm - 1;
-    gd = gd - 1;
-    var gy2 = gm > 1 ? gy + 1 : gy;
-    var days = 365 * gy + Math.floor((gy2 + 3) / 4) - Math.floor((gy2 + 99) / 100) + Math.floor((gy2 + 399) / 400) + gd + g_d_m[gm];
-    var jy = -1595 + 33 * Math.floor(days / 12053);
-    days %= 12053;
-    jy += 4 * Math.floor(days / 1461);
-    days %= 1461;
-    if (days > 365) {
-      jy += Math.floor((days - 1) / 365);
-      days = (days - 1) % 365;
-    }
-    var jm, jd;
-    if (days < 186) {
-      jm = 1 + Math.floor(days / 31);
-      jd = 1 + (days % 31);
-    } else {
-      jm = 7 + Math.floor((days - 186) / 30);
-      jd = 1 + ((days - 186) % 30);
-    }
-    return [jy, jm, jd];
+    // Gregorian passthrough (kept for caller compatibility)
+    return [gy, gm, gd];
   }
   function jalaliPartsToGregorian(jy, jm, jd) {
-    jy = jy + 1595;
-    var days = -355668 + 365 * jy + Math.floor((jy - 1) / 33) * 8 + Math.floor((((jy - 1) % 33) + 3) / 4) + ((jm < 7 ? (jm - 1) * 31 : (jm - 7) * 30 + 186) + jd);
-    var gy = 400 * Math.floor(days / 146097);
-    days %= 146097;
-    if (days > 36524) {
-      gy += 100 * Math.floor(--days / 36524);
-      days %= 36524;
-      if (days >= 365) days++;
-    }
-    gy += 4 * Math.floor(days / 1461);
-    days %= 1461;
-    if (days > 365) {
-      gy += Math.floor((days - 1) / 365);
-      days = (days - 1) % 365;
-    }
-    var gd = days + 1;
-    var sal_a = [0, 31, (gy % 4 === 0 && gy % 100 !== 0) || gy % 400 === 0 ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    var gm = 0;
-    for (gm = 0; gm < 13 && gd > sal_a[gm]; gm++) gd -= sal_a[gm];
-    return [gy, gm, gd];
+    // Gregorian passthrough (kept for caller compatibility)
+    return [jy, jm, jd];
   }
   function parseJalaliToGregorian(input) {
     input = String(input || "").trim();
@@ -88,21 +49,14 @@
     }
     var m = /^(\d{4})[\-\/\.](\d{1,2})[\-\/\.](\d{1,2})$/.exec(input);
     if (!m) return "";
-    var jy = +m[1],
-      jm = +m[2],
-      jd = +m[3];
-    if (jy < 1200 || jy > 1600 || jm < 1 || jm > 12 || jd < 1 || jd > 31) return "";
-    if (jm >= 7 && jd > 30) return "";
-    if (jm === 12) {
-      var tmp = jalaliPartsToGregorian(jy, 12, 30);
-      var back = gregorianPartsToJalali(tmp[0], tmp[1], tmp[2]);
-      if (!(back[0] === jy && back[1] === 12 && back[2] === 30) && jd > 29) return "";
-    }
-    var g = jalaliPartsToGregorian(jy, jm, jd);
+    var gy = +m[1],
+      gm = +m[2],
+      gd = +m[3];
+    if (gm < 1 || gm > 12 || gd < 1 || gd > 31) return "";
     var pn = function (n) {
       return n < 10 ? "0" + n : "" + n;
     };
-    return g[0] + "-" + pn(g[1]) + "-" + pn(g[2]);
+    return gy + "-" + pn(gm) + "-" + pn(gd);
   }
 
   $(document).ready(function () {
@@ -125,7 +79,7 @@
       var $btn = $form.find('[type="submit"]');
       var orig = $btn.text();
 
-      // --- Jalali expiry_date client-side validation (for any admin AJAX form that carries the field)
+      // --- Expiry date client-side validation (for any admin AJAX form that carries the field)
       var $exp = $form.find('input[name="expiry_date"]');
       if ($exp.length) {
         var raw = $.trim($exp.val());
@@ -135,7 +89,7 @@
           if (!isGreg && !parseJalaliToGregorian(raw)) {
             $form.find(".rsd-form-msg").remove();
             $form.append(
-              '<div class="rsd-form-msg notice notice-error inline" style="padding:8px 12px;margin-top:12px">' + "فرمت تاریخ انقضا نامعتبر است. لطفاً با قالب ۱۴۰۴/۰۶/۱۵ (شمسی) وارد کنید." + "</div>",
+              '<div class="rsd-form-msg notice notice-error inline" style="padding:8px 12px;margin-top:12px">' + "Invalid expiry date format. Please enter it in the format 2025/06/15." + "</div>",
             );
             $exp.focus().select();
             return;
@@ -192,9 +146,9 @@
       var $row = $sel.closest("[data-doc-row]");
       var $titleCell = $row.find("td:eq(2)");
       var statusMeta = {
-        uploaded: { label: "ارسال‌شده", color: "green" },
-        incomplete: { label: "ناقص", color: "red" },
-        approved: { label: "تأییدشده", color: "purple" },
+        uploaded: { label: "Uploaded", color: "green" },
+        incomplete: { label: "Incomplete", color: "red" },
+        approved: { label: "Approved", color: "purple" },
       };
       var meta = statusMeta[status] || { label: status, color: "gray" };
 
@@ -208,12 +162,12 @@
           if ($badge.length) {
             $badge.removeClass("gray green red purple").addClass(meta.color).text(meta.label);
           }
-          // Sync the extra "ناقص" chip in the title column with is_incomplete
+          // Sync the extra "Incomplete" chip in the title column with is_incomplete
           var isIncomplete = !!(res && res.data && res.data.is_incomplete);
           var existingBadge = $titleCell.find(".rsd-admin-badge.red");
           if (isIncomplete) {
             if (!existingBadge.length) {
-              $titleCell.prepend('<span class="rsd-admin-badge red" style="margin-left:6px">ناقص</span> ');
+              $titleCell.prepend('<span class="rsd-admin-badge red" style="margin-left:6px">Incomplete</span> ');
             }
           } else {
             existingBadge.remove();
@@ -224,7 +178,7 @@
             alert(res.data.message);
           }
         } else {
-          var failMsg = (res && res.data && res.data.message) || "خطا در به‌روزرسانی وضعیت.";
+          var failMsg = (res && res.data && res.data.message) || "Error updating status.";
           if (window.rsdToast) {
             window.rsdToast("error", failMsg);
           } else {
@@ -240,7 +194,7 @@
       if (!docId) return;
       // The generic .rsd-confirm class already confirmed; but also allow standalone click.
       if ($(this).is(".rsd-confirm")) {
-        if (!confirm($(this).data("confirm") || "آیا برای حذف این مدرک اطمینان دارید؟")) {
+        if (!confirm($(this).data("confirm") || "Are you sure you want to delete this document?")) {
           e.preventDefault();
           return;
         }
@@ -251,7 +205,7 @@
       adminAjax("delete_document", { doc_id: docId }, function (res) {
         $btn.prop("disabled", false);
         if (res && res.success) {
-          var msg = (res.data && res.data.message) || "مدرک حذف شد.";
+          var msg = (res.data && res.data.message) || "Document deleted.";
           if (window.rsdToast) {
             window.rsdToast("success", msg);
           } else {
@@ -261,7 +215,7 @@
             location.reload();
           }, 600);
         } else {
-          var err = (res && res.data && res.data.message) || "خطا در حذف مدرک.";
+          var err = (res && res.data && res.data.message) || "Error deleting document.";
           if (window.rsdToast) {
             window.rsdToast("error", err);
           } else {
@@ -393,7 +347,7 @@
         $modal.find(".rsd-modal-title").text(title);
       } else {
         // Default based on mode
-        var def = mode === "edit" ? "ویرایش فاکتور" : "فاکتور جدید";
+        var def = mode === "edit" ? "Edit Invoice" : "New Invoice";
         if ($modal.find(".rsd-modal-title").length && !$modal.find(".rsd-modal-title").data("preserve")) {
           $modal.find(".rsd-modal-title").text(def);
         }
@@ -424,7 +378,7 @@
       }
     });
 
-    // --- Extended Jalali validation for invoice_date / due_date / payment_date in generic AJAX submit handler ---
+    // --- Extended date validation for invoice_date / due_date / payment_date in generic AJAX submit handler ---
     // (Patch the existing handler behaviour: append validation before the existing submit runs by
     //  adding a second delegated submit handler with higher priority checks that can stop propagation.)
     function rsdValidateJalaliField($form, name, label) {
@@ -437,7 +391,7 @@
       if (!parseJalaliToGregorian(raw)) {
         $form.find(".rsd-form-msg").remove();
         $form.append(
-          '<div class="rsd-form-msg notice notice-error inline" style="padding:8px 12px;margin-top:12px">' + "فرمت " + label + " نامعتبر است. لطفاً با قالب ۱۴۰۴/۰۶/۱۵ (شمسی) وارد کنید." + "</div>",
+          '<div class="rsd-form-msg notice notice-error inline" style="padding:8px 12px;margin-top:12px">' + "Invalid " + label + " format. Please enter it in the format 2025/06/15." + "</div>",
         );
         $f.focus().select();
         return false;
@@ -448,17 +402,17 @@
     $(document).on("submit", "[data-rsd-ajax-form]", function (e) {
       var $form = $(this);
       // Also validate invoice_date (required), due_date (optional), payment_date (optional)
-      if (!rsdValidateJalaliField($form, "invoice_date", "تاریخ صدور فاکتور")) {
+      if (!rsdValidateJalaliField($form, "invoice_date", "Invoice Issue Date")) {
         e.stopImmediatePropagation();
         e.preventDefault();
         return false;
       }
-      if (!rsdValidateJalaliField($form, "due_date", "تاریخ سررسید")) {
+      if (!rsdValidateJalaliField($form, "due_date", "Due Date")) {
         e.stopImmediatePropagation();
         e.preventDefault();
         return false;
       }
-      if (!rsdValidateJalaliField($form, "payment_date", "تاریخ پرداخت")) {
+      if (!rsdValidateJalaliField($form, "payment_date", "Payment Date")) {
         e.stopImmediatePropagation();
         e.preventDefault();
         return false;
@@ -485,19 +439,19 @@
       var $uid = $form.find('select[name="user_id"], input[name="user_id"]');
       if (!$uid.length || !$.trim($uid.val())) {
         $form.find(".rsd-form-msg").remove();
-        $form.append('<div class="rsd-form-msg notice notice-error inline" style="padding:8px 12px;margin-top:12px">لطفاً مشتری را انتخاب کنید.</div>');
+        $form.append('<div class="rsd-form-msg notice notice-error inline" style="padding:8px 12px;margin-top:12px">Please select a client.</div>');
         return;
       }
       var $invDate = $form.find('input[name="invoice_date"]');
       if (!$invDate.length || !$.trim($invDate.val())) {
         $form.find(".rsd-form-msg").remove();
-        $form.append('<div class="rsd-form-msg notice notice-error inline" style="padding:8px 12px;margin-top:12px">تاریخ صدور فاکتور الزامی است.</div>');
+        $form.append('<div class="rsd-form-msg notice notice-error inline" style="padding:8px 12px;margin-top:12px">Invoice issue date is required.</div>');
         return;
       }
-      // Run Jalali validation
-      if (!rsdValidateJalaliField($form, "invoice_date", "تاریخ صدور فاکتور")) return;
-      if (!rsdValidateJalaliField($form, "due_date", "تاریخ سررسید")) return;
-      if (!rsdValidateJalaliField($form, "payment_date", "تاریخ پرداخت")) return;
+      // Run date validation
+      if (!rsdValidateJalaliField($form, "invoice_date", "Invoice Issue Date")) return;
+      if (!rsdValidateJalaliField($form, "due_date", "Due Date")) return;
+      if (!rsdValidateJalaliField($form, "payment_date", "Payment Date")) return;
 
       // Decide action
       var $id = $form.find('input[name="invoice_id"]');
@@ -513,7 +467,7 @@
           var printUrl = res.data && res.data.print_url ? res.data.print_url : "";
           var html = '<div class="rsd-form-msg notice notice-success inline" style="padding:8px 12px;margin-top:12px">' + msg;
           if (printUrl) {
-            html += ' <a href="' + printUrl + '" target="_blank" class="button" style="margin-right:10px">📄 دانلود / چاپ PDF</a>';
+            html += ' <a href="' + printUrl + '" target="_blank" class="button" style="margin-right:10px">📄 Download / Print PDF</a>';
           }
           html += "</div>";
           $form.append(html);
@@ -535,7 +489,7 @@
       var invoiceId = parseInt($(this).data("invoiceId") || $(this).data("invoice-id") || "0", 10);
       if (!invoiceId) return;
       var num = String($(this).data("invoiceNumber") || "#" + invoiceId);
-      if (!confirm("آیا از حذف فاکتور " + num + " اطمینان دارید؟ این عملیات قابل بازگشت نیست.")) {
+      if (!confirm("Are you sure you want to delete invoice " + num + "? This action cannot be undone.")) {
         return;
       }
       var $btn = $(this);
@@ -543,14 +497,14 @@
       adminAjax("delete_invoice", { invoice_id: invoiceId }, function (res) {
         $btn.prop("disabled", false);
         if (res && res.success) {
-          var msg = (res.data && res.data.message) || "فاکتور با موفقیت حذف شد.";
+          var msg = (res.data && res.data.message) || "Invoice deleted successfully.";
           if (window.rsdToast) window.rsdToast("success", msg);
           else alert(msg);
           setTimeout(function () {
             location.reload();
           }, 800);
         } else {
-          var err = (res && res.data && res.data.message) || "خطا در حذف فاکتور.";
+          var err = (res && res.data && res.data.message) || "Error deleting invoice.";
           if (window.rsdToast) window.rsdToast("error", err);
           else alert(err);
         }
@@ -568,7 +522,7 @@
       }
     });
 
-    // --- Jalali Triple-select (Year / Month / Day) wiring ---
+    // --- Triple-select (Year / Month / Day) wiring ---
     function rsdTripleDateToValue(y, m, d) {
       y = String(y || "").trim();
       m = String(m || "").trim();
@@ -713,7 +667,7 @@
         }
         var $opt = rsdFindDatalistOption(this, val);
         if (!$opt) {
-          alert("مشتری انتخاب‌شده معتبر نیست. لطفاً از لیست پیشنهاد شده انتخاب کنید.");
+          alert("The selected client is not valid. Please choose from the suggested list.");
           $in.val("").focus();
           $storeInput.val("");
         }
@@ -734,7 +688,7 @@
     // --- Extend prefill to support new fields: client search, year text, triple dates ---
     // (Override placeholder that was set in generic rsdPrefillInvoiceForm above)
     var _origRsdPrefill = window.rsdPrefillInvoiceForm || null;
-    // Helper: parse hidden Jalali YYYY/MM/DD -> sync triple selects
+    // Helper: parse hidden YYYY/MM/DD -> sync triple selects
     function rsdPrefillTripleFromGregorian($form, fieldName, gregorianValue) {
       if (!$form || !$form.length) return;
       if (!gregorianValue) return;
@@ -798,18 +752,18 @@
       e.preventDefault();
       var uid = $(this).data("rsdUserId") || $(this).data("rsd-user-id") || "";
       if (!uid) return;
-      if (!confirm(RSD_FP_ADMIN.i18n.confirm || "آیا از تأیید تغییرات اطلاعات شرکت اطمینان دارید؟ پس از تأیید مقادیر جدید در فیلدهای اصلی ثبت می‌شوند.")) return;
+      if (!confirm(RSD_FP_ADMIN.i18n.confirm || "Are you sure you want to approve the company info changes? Once approved, the new values will be saved to the main fields.")) return;
       var $btn = $(this);
       $btn.prop("disabled", true).text(RSD_FP_ADMIN.i18n.saving || "...");
       adminAjax("approve_company_changes", { user_id: uid }, function (res) {
         $btn.prop("disabled", false);
         if (res && res.success) {
-          alert((res.data && res.data.message) || "تغییرات تأیید شد.");
+          alert((res.data && res.data.message) || "Changes approved.");
           setTimeout(function () {
             location.reload();
           }, 500);
         } else {
-          alert((res && res.data && res.data.message) || RSD_FP_ADMIN.i18n.error || "خطا در ثبت.");
+          alert((res && res.data && res.data.message) || RSD_FP_ADMIN.i18n.error || "Error saving.");
         }
       });
     });
@@ -818,18 +772,18 @@
       e.preventDefault();
       var uid = $(this).data("rsdUserId") || $(this).data("rsd-user-id") || "";
       if (!uid) return;
-      if (!confirm(RSD_FP_ADMIN.i18n.confirm || "آیا از رد این تغییرات اطمینان دارید؟ درخواست تغییرات پاک خواهد شد.")) return;
+      if (!confirm(RSD_FP_ADMIN.i18n.confirm || "Are you sure you want to reject these changes? The change request will be discarded.")) return;
       var $btn = $(this);
       $btn.prop("disabled", true).text(RSD_FP_ADMIN.i18n.saving || "...");
       adminAjax("reject_company_changes", { user_id: uid }, function (res) {
         $btn.prop("disabled", false);
         if (res && res.success) {
-          alert((res.data && res.data.message) || "درخواست تغییرات رد شد.");
+          alert((res.data && res.data.message) || "Change request rejected.");
           setTimeout(function () {
             location.reload();
           }, 500);
         } else {
-          alert((res && res.data && res.data.message) || RSD_FP_ADMIN.i18n.error || "خطا در ثبت.");
+          alert((res && res.data && res.data.message) || RSD_FP_ADMIN.i18n.error || "Error saving.");
         }
       });
     });

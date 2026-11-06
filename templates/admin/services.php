@@ -32,8 +32,8 @@ $back_url = admin_url('admin.php?page=rsd-fp-services');
 <div class="rsd-admin-wrap">
     <div class="rsd-admin-header">
         <div>
-            <h1>🗂️ مدیریت درخواست‌های خدمات</h1>
-            <p>پیگیری و پردازش درخواست‌های ثبت‌شده توسط مشتریان (ثبت شرکت / برند / مالی و ...)</p>
+            <h1>🗂️ Service Requests Management</h1>
+            <p>Track and process requests submitted by clients (company registration / brand / finance, etc.)</p>
         </div>
     </div>
 
@@ -41,13 +41,13 @@ $back_url = admin_url('admin.php?page=rsd-fp-services');
         <div class="rsd-admin-table-wrap">
             <table class="rsd-admin-table widefat">
                 <thead><tr>
-                    <th style="width:110px">شناسه</th>
-                    <th>نوع خدمت</th>
-                    <th>عنوان درخواست</th>
-                    <th>مشتری</th>
-                    <th>زمان ثبت</th>
-                    <th>وضعیت</th>
-                    <th style="width:130px">عملیات</th>
+                    <th style="width:110px">ID</th>
+                    <th>Service Type</th>
+                    <th>Request Title</th>
+                    <th>Client</th>
+                    <th>Submitted At</th>
+                    <th>Status</th>
+                    <th style="width:130px">Actions</th>
                 </tr></thead>
                 <tbody>
                 <?php if (!empty($services)) : foreach ($services as $s) :
@@ -78,7 +78,7 @@ $back_url = admin_url('admin.php?page=rsd-fp-services');
                             <div class="rsd-user-chip">
                                 <?php echo get_avatar($s->user_id, 28); ?>
                                 <div style="display:flex;flex-direction:column;gap:2px">
-                                    <span style="font-weight:600"><?php echo esc_html($s->client_name ?? 'کاربر #'.$s->user_id); ?></span>
+                                    <span style="font-weight:600"><?php echo esc_html($s->client_name ?? 'User #'.$s->user_id); ?></span>
                                     <span style="color:#64748b;font-size:11px"><?php echo esc_html(get_userdata($s->user_id)->user_email ?? ''); ?></span>
                                 </div>
                             </div>
@@ -93,16 +93,16 @@ $back_url = admin_url('admin.php?page=rsd-fp-services');
                         </td>
                         <td>
                             <a href="<?php echo esc_url($single_url); ?>"
-                               class="rsd-btn-admin small primary">پردازش</a>
+                               class="rsd-btn-admin small primary">Process</a>
                             <a href="<?php echo esc_url(add_query_arg(['client_id'=>$s->user_id], admin_url('admin.php?page=rsd-fp-documents'))); ?>"
-                               class="rsd-btn-admin small secondary">مدارک</a>
+                               class="rsd-btn-admin small secondary">Documents</a>
                         </td>
                     </tr>
                 <?php endforeach; else : ?>
                     <tr><td colspan="7"><div class="rsd-empty">
                         <div class="rsd-empty-icon">🗂️</div>
-                        <h3>هنوز درخواست خدمتی ثبت نشده</h3>
-                        <p>مشتریان از پرتال کاربری می‌توانند خدمات جدیدی درخواست کنند.</p>
+                        <h3>No service requests submitted yet</h3>
+                        <p>Clients can request new services from the user portal.</p>
                     </div></td></tr>
                 <?php endif; ?>
                 </tbody>

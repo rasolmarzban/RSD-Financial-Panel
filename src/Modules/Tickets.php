@@ -58,8 +58,8 @@ class Tickets
      *
      * @param int    $user_id        recipient of the notification
      * @param string $type           ticket_created / ticket_replied / ticket_updated / ticket_closed
-     * @param string $title          short one-line title (Persian)
-     * @param string $message        optional longer body (Persian)
+     * @param string $title          short one-line title
+     * @param string $message        optional longer body
      * @param int    $reference_id   ticket id
      * @return int|false
      */
@@ -106,7 +106,7 @@ class Tickets
     }
 
     /**
-     * Get ticket categories from settings (with Persian defaults)
+     * Get ticket categories from settings (with English defaults)
      *
      * @return array
      */
@@ -115,14 +115,14 @@ class Tickets
         $cats = \RSD\FinancePanel\Core\Plugin::get_setting('ticket_categories', []);
         if (empty($cats)) {
             $cats = [
-                'accounting'   => esc_html__('حسابداری', 'rsd-finance-panel'),
-                'tax'          => esc_html__('مالیات', 'rsd-finance-panel'),
-                'payroll'      => esc_html__('حقوق و دستمزد', 'rsd-finance-panel'),
-                'employees'    => esc_html__('کارکنان', 'rsd-finance-panel'),
-                'invoice'      => esc_html__('فاکتور', 'rsd-finance-panel'),
-                'documents'    => esc_html__('مدارک', 'rsd-finance-panel'),
-                'registration' => esc_html__('ثبت شرکت', 'rsd-finance-panel'),
-                'other'        => esc_html__('سایر موارد', 'rsd-finance-panel'),
+                'accounting'   => esc_html__('Accounting', 'rsd-finance-panel'),
+                'tax'          => esc_html__('Tax', 'rsd-finance-panel'),
+                'payroll'      => esc_html__('Payroll', 'rsd-finance-panel'),
+                'employees'    => esc_html__('Employees', 'rsd-finance-panel'),
+                'invoice'      => esc_html__('Invoice', 'rsd-finance-panel'),
+                'documents'    => esc_html__('Documents', 'rsd-finance-panel'),
+                'registration' => esc_html__('Company Registration', 'rsd-finance-panel'),
+                'other'        => esc_html__('Other', 'rsd-finance-panel'),
             ];
         }
         return $cats;
@@ -136,8 +136,8 @@ class Tickets
     public static function get_types()
     {
         return [
-            'question' => esc_html__('ثبت سؤال', 'rsd-finance-panel'),
-            'issue'    => esc_html__('ثبت تیکت یا مشکل', 'rsd-finance-panel'),
+            'question' => esc_html__('Ask a Question', 'rsd-finance-panel'),
+            'issue'    => esc_html__('Submit a Ticket or Issue', 'rsd-finance-panel'),
         ];
     }
 
@@ -149,12 +149,12 @@ class Tickets
     public static function get_issue_types()
     {
         return [
-            'invoice_issue'    => esc_html__('مشکل در فاکتور', 'rsd-finance-panel'),
-            'report_issue'     => esc_html__('مشکل در گزارش', 'rsd-finance-panel'),
-            'wrong_document'   => esc_html__('مدرک اشتباه', 'rsd-finance-panel'),
-            'correction_req'   => esc_html__('درخواست اصلاح', 'rsd-finance-panel'),
-            'payroll_issue'    => esc_html__('مشکل حقوق و دستمزد', 'rsd-finance-panel'),
-            'other_issue'      => esc_html__('سایر موارد', 'rsd-finance-panel'),
+            'invoice_issue'    => esc_html__('Invoice Issue', 'rsd-finance-panel'),
+            'report_issue'     => esc_html__('Report Issue', 'rsd-finance-panel'),
+            'wrong_document'   => esc_html__('Wrong Document', 'rsd-finance-panel'),
+            'correction_req'   => esc_html__('Correction Request', 'rsd-finance-panel'),
+            'payroll_issue'    => esc_html__('Payroll Issue', 'rsd-finance-panel'),
+            'other_issue'      => esc_html__('Other', 'rsd-finance-panel'),
         ];
     }
 
@@ -166,11 +166,11 @@ class Tickets
     public static function get_statuses()
     {
         return [
-            'new'         => esc_html__('جدید', 'rsd-finance-panel'),
-            'in_progress' => esc_html__('در حال بررسی', 'rsd-finance-panel'),
-            'waiting'     => esc_html__('منتظر پاسخ مشتری', 'rsd-finance-panel'),
-            'completed'   => esc_html__('انجام‌شده', 'rsd-finance-panel'),
-            'closed'      => esc_html__('بسته‌شده', 'rsd-finance-panel'),
+            'new'         => esc_html__('New', 'rsd-finance-panel'),
+            'in_progress' => esc_html__('Under Review', 'rsd-finance-panel'),
+            'waiting'     => esc_html__('Waiting for Client', 'rsd-finance-panel'),
+            'completed'   => esc_html__('Completed', 'rsd-finance-panel'),
+            'closed'      => esc_html__('Closed', 'rsd-finance-panel'),
         ];
     }
 
@@ -182,10 +182,10 @@ class Tickets
     public static function get_priorities()
     {
         return [
-            'low'      => esc_html__('کم', 'rsd-finance-panel'),
-            'normal'   => esc_html__('معمولی', 'rsd-finance-panel'),
-            'high'     => esc_html__('زیاد', 'rsd-finance-panel'),
-            'urgent'   => esc_html__('فوری', 'rsd-finance-panel'),
+            'low'      => esc_html__('Low', 'rsd-finance-panel'),
+            'normal'   => esc_html__('Normal', 'rsd-finance-panel'),
+            'high'     => esc_html__('High', 'rsd-finance-panel'),
+            'urgent'   => esc_html__('Urgent', 'rsd-finance-panel'),
         ];
     }
 
@@ -227,21 +227,21 @@ class Tickets
         $admin_email = get_option('admin_email');
         $admin_url   = self::admin_ticket_url($ticket_id);
 
-        $subject = sprintf(esc_html__('تیکت جدید: %s', 'rsd-finance-panel'), $ticket->ticket_number);
+        $subject = sprintf(esc_html__('New Ticket: %s', 'rsd-finance-panel'), $ticket->ticket_number);
         $client_user = get_user_by('id', (int) $ticket->user_id);
         $client_name = $client_user ? sprintf('%s (%s)', $client_user->display_name, $client_user->user_email) : '#' . $ticket->user_id;
 
-        $body  = "تیکت جدیدی ثبت شده است.\n\n";
-        $body .= "شماره: " . $ticket->ticket_number . "\n";
-        $body .= "موضوع: " . $ticket->subject . "\n";
-        $body .= "ثبت‌کننده: " . $client_name . "\n";
+        $body  = "A new ticket has been submitted.\n\n";
+        $body .= "Number: " . $ticket->ticket_number . "\n";
+        $body .= "Subject: " . $ticket->subject . "\n";
+        $body .= "Submitted by: " . $client_name . "\n";
         if (!empty($data['category']) && ($cats = self::get_categories()) && isset($cats[$data['category']])) {
-            $body .= "دسته‌بندی: " . $cats[$data['category']] . "\n";
+            $body .= "Category: " . $cats[$data['category']] . "\n";
         }
         if (!empty($data['priority']) && ($prios = self::get_priorities()) && isset($prios[$data['priority']])) {
-            $body .= "اولویت: " . $prios[$data['priority']] . "\n";
+            $body .= "Priority: " . $prios[$data['priority']] . "\n";
         }
-        $body .= "\nمشاهده در پنل مدیریت: " . $admin_url . "\n";
+        $body .= "\nView in admin panel: " . $admin_url . "\n";
 
         if ($admin_email) {
             @wp_mail($admin_email, $subject, $body);
@@ -249,23 +249,23 @@ class Tickets
 
         // Notifications DB row: notify admins when opened by client OR when opened by admin too
         $opened_by_admin = !empty($data['opened_by']) || user_can((int)($data['opened_by'] ?? 0), 'manage_options');
-        $title_for_admin = sprintf('تیکت جدید #%s از %s', $ticket->ticket_number, $client_user ? $client_user->display_name : 'مشتری');
-        $message_for_admin = sprintf('موضوع: %s', $ticket->subject);
+        $title_for_admin = sprintf('New ticket #%s from %s', $ticket->ticket_number, $client_user ? $client_user->display_name : 'Client');
+        $message_for_admin = sprintf('Subject: %s', $ticket->subject);
         foreach (self::get_admin_ids() as $aid) {
             self::add_notification($aid, 'ticket_created', $title_for_admin, $message_for_admin, (int)$ticket_id);
         }
 
         // Notify client if the ticket was opened by admin on their behalf
         if ($opened_by_admin) {
-            $title_for_client = sprintf('تیکت جدیدی برای شما ثبت شد #%s', $ticket->ticket_number);
-            $msg   = sprintf("مدیر تیم تیکت «%s» را برای شما ثبت کرده است. برای مشاهده روی اعلان کلیک کنید.", $ticket->subject);
+            $title_for_client = sprintf('A new ticket has been created for you #%s', $ticket->ticket_number);
+            $msg   = sprintf('The team admin created the ticket "%s" for you. Click the notification to view it.', $ticket->subject);
             self::add_notification((int) $ticket->user_id, 'ticket_created', $title_for_client, $msg, (int)$ticket_id);
             if ($client_user) {
-                $client_body  = "تیکت جدیدی توسط مدیریت برای شما ثبت شده است.\n\n";
-                $client_body .= "شماره: " . $ticket->ticket_number . "\n";
-                $client_body .= "موضوع: " . $ticket->subject . "\n\n";
-                $client_body .= "برای مشاهده به پرتال خود مراجعه کنید: " . self::client_ticket_url($ticket_id) . "\n";
-                @wp_mail($client_user->user_email, sprintf('تیکت جدید: %s', $ticket->ticket_number), $client_body);
+                $client_body  = "A new ticket has been created for you by the admin.\n\n";
+                $client_body .= "Number: " . $ticket->ticket_number . "\n";
+                $client_body .= "Subject: " . $ticket->subject . "\n\n";
+                $client_body .= "To view it, visit your portal: " . self::client_ticket_url($ticket_id) . "\n";
+                @wp_mail($client_user->user_email, sprintf('New Ticket: %s', $ticket->ticket_number), $client_body);
             }
         }
     }
@@ -295,40 +295,40 @@ class Tickets
         if ($reply_from_admin) {
             // Notify the ticket owner (client)
             $client_id = (int) $ticket->user_id;
-            $title = sprintf('پاسخ جدید به تیکت #%s', $ticket->ticket_number);
-            $msg   = sprintf('مدیریت به تیکت «%s» پاسخ داده است.', $ticket->subject);
+            $title = sprintf('New reply to ticket #%s', $ticket->ticket_number);
+            $msg   = sprintf('The admin has replied to the ticket "%s".', $ticket->subject);
             self::add_notification($client_id, 'ticket_replied', $title, $msg, (int)$ticket_id);
             $client = get_user_by('id', $client_id);
             if ($client) {
-                $body  = "پاسخ جدیدی به تیکت شما داده شده است.\n\n";
-                $body .= "شماره تیکت: " . $ticket->ticket_number . "\n";
-                $body .= "موضوع: " . $ticket->subject . "\n";
+                $body  = "A new reply has been posted to your ticket.\n\n";
+                $body .= "Ticket Number: " . $ticket->ticket_number . "\n";
+                $body .= "Subject: " . $ticket->subject . "\n";
                 if ($snippet) {
-                    $body .= "نمونه متن پاسخ:\n" . $snippet . (mb_strlen(strip_tags($data['message'] ?? '')) > 120 ? '…' : '') . "\n";
+                    $body .= "Reply snippet:\n" . $snippet . (mb_strlen(strip_tags($data['message'] ?? '')) > 120 ? '…' : '') . "\n";
                 }
-                $body .= "\nمشاهده در پرتال: " . self::client_ticket_url($ticket_id) . "\n";
-                @wp_mail($client->user_email, sprintf('پاسخ تیکت: %s', $ticket->ticket_number), $body);
+                $body .= "\nView in portal: " . self::client_ticket_url($ticket_id) . "\n";
+                @wp_mail($client->user_email, sprintf('Ticket Reply: %s', $ticket->ticket_number), $body);
             }
         } else {
             // Notify all administrators
             $replier = get_user_by('id', (int) $reply_user_id);
-            $name = $replier ? $replier->display_name : 'مشتری #' . $reply_user_id;
-            $title = sprintf('پاسخ جدید از مشتری در تیکت #%s', $ticket->ticket_number);
+            $name = $replier ? $replier->display_name : 'Client #' . $reply_user_id;
+            $title = sprintf('New reply from client on ticket #%s', $ticket->ticket_number);
             $msg   = sprintf('%s: %s', $name, $ticket->subject);
             foreach (self::get_admin_ids() as $aid) {
                 self::add_notification($aid, 'ticket_replied', $title, $msg, (int)$ticket_id);
             }
             $admin_email = get_option('admin_email');
             if ($admin_email) {
-                $body  = "پاسخ جدیدی از مشتری دریافت شد.\n\n";
-                $body .= "ثبت‌کننده: " . $name . "\n";
-                $body .= "شماره تیکت: " . $ticket->ticket_number . "\n";
-                $body .= "موضوع: " . $ticket->subject . "\n";
+                $body  = "A new reply has been received from the client.\n\n";
+                $body .= "Submitted by: " . $name . "\n";
+                $body .= "Ticket Number: " . $ticket->ticket_number . "\n";
+                $body .= "Subject: " . $ticket->subject . "\n";
                 if ($snippet) {
-                    $body .= "نمونه متن پیام:\n" . $snippet . (mb_strlen(strip_tags($data['message'] ?? '')) > 120 ? '…' : '') . "\n";
+                    $body .= "Message snippet:\n" . $snippet . (mb_strlen(strip_tags($data['message'] ?? '')) > 120 ? '…' : '') . "\n";
                 }
-                $body .= "\nپاسخ در پنل مدیریت: " . self::admin_ticket_url($ticket_id) . "\n";
-                @wp_mail($admin_email, sprintf('پاسخ تیکت: %s', $ticket->ticket_number), $body);
+                $body .= "\nReply in admin panel: " . self::admin_ticket_url($ticket_id) . "\n";
+                @wp_mail($admin_email, sprintf('Ticket Reply: %s', $ticket->ticket_number), $body);
             }
         }
     }
@@ -352,28 +352,28 @@ class Tickets
         $cats       = self::get_categories();
 
         $bits = [];
-        if (!empty($changes['status']))   $bits[] = 'وضعیت: ' . ($statuses[$changes['status']] ?? $changes['status']);
-        if (!empty($changes['priority'])) $bits[] = 'اولویت: ' . ($prios[$changes['priority']] ?? $changes['priority']);
-        if (!empty($changes['category'])) $bits[] = 'دسته‌بندی: ' . ($cats[$changes['category']] ?? $changes['category']);
-        if (!empty($changes['subject']))  $bits[] = 'موضوع تغییر کرد.';
+        if (!empty($changes['status']))   $bits[] = 'Status: ' . ($statuses[$changes['status']] ?? $changes['status']);
+        if (!empty($changes['priority'])) $bits[] = 'Priority: ' . ($prios[$changes['priority']] ?? $changes['priority']);
+        if (!empty($changes['category'])) $bits[] = 'Category: ' . ($cats[$changes['category']] ?? $changes['category']);
+        if (!empty($changes['subject']))  $bits[] = 'Subject changed.';
         if (empty($bits)) return;
 
-        $summary = implode('، ', $bits);
-        $title   = sprintf('بروزرسانی تیکت #%s', $ticket->ticket_number);
+        $summary = implode(', ', $bits);
+        $title   = sprintf('Ticket Update #%s', $ticket->ticket_number);
 
         $changed_by_admin = user_can((int)$changed_by_user_id, 'manage_options');
 
         if ($changed_by_admin) {
-            $msg = sprintf('در تیکت «%s» تغییرات زیر اعمال شد: %s', $ticket->subject, $summary);
+            $msg = sprintf('The following changes were applied to ticket "%s": %s', $ticket->subject, $summary);
             self::add_notification((int) $ticket->user_id, 'ticket_updated', $title, $msg, (int)$ticket_id);
             $client = get_user_by('id', (int)$ticket->user_id);
             if ($client) {
-                $body  = "در تیکت شما تغییراتی اعمال شد.\n\n";
-                $body .= "شماره تیکت: " . $ticket->ticket_number . "\n";
-                $body .= "موضوع: " . $ticket->subject . "\n\n";
-                $body .= "تغییرات: " . $summary . "\n\n";
-                $body .= "مشاهده: " . self::client_ticket_url($ticket_id) . "\n";
-                @wp_mail($client->user_email, sprintf('بروزرسانی تیکت: %s', $ticket->ticket_number), $body);
+                $body  = "Changes have been applied to your ticket.\n\n";
+                $body .= "Ticket Number: " . $ticket->ticket_number . "\n";
+                $body .= "Subject: " . $ticket->subject . "\n\n";
+                $body .= "Changes: " . $summary . "\n\n";
+                $body .= "View: " . self::client_ticket_url($ticket_id) . "\n";
+                @wp_mail($client->user_email, sprintf('Ticket Update: %s', $ticket->ticket_number), $body);
             }
         }
     }
@@ -391,18 +391,18 @@ class Tickets
         if (!$ticket) return;
 
         $closed_by_admin = !empty($data['closed_by']) && user_can((int)$data['closed_by'], 'manage_options');
-        $title = sprintf('تیکت #%s بسته شد', $ticket->ticket_number);
-        $msg   = sprintf('تیکت «%s» بسته شد. در صورت نیاز می‌توانید تیکت جدیدی ثبت کنید.', $ticket->subject);
+        $title = sprintf('Ticket #%s closed', $ticket->ticket_number);
+        $msg   = sprintf('The ticket "%s" has been closed. You can submit a new ticket if needed.', $ticket->subject);
 
         if ($closed_by_admin) {
             self::add_notification((int) $ticket->user_id, 'ticket_closed', $title, $msg, (int)$ticket_id);
             $client = get_user_by('id', (int)$ticket->user_id);
             if ($client) {
-                $body  = "تیکت شما بسته شد.\n\n";
-                $body .= "شماره: " . $ticket->ticket_number . "\n";
-                $body .= "موضوع: " . $ticket->subject . "\n\n";
-                $body .= "مشاهده در پرتال: " . self::client_ticket_url($ticket_id) . "\n";
-                @wp_mail($client->user_email, sprintf('تیکت بسته شد: %s', $ticket->ticket_number), $body);
+                $body  = "Your ticket has been closed.\n\n";
+                $body .= "Number: " . $ticket->ticket_number . "\n";
+                $body .= "Subject: " . $ticket->subject . "\n\n";
+                $body .= "View in portal: " . self::client_ticket_url($ticket_id) . "\n";
+                @wp_mail($client->user_email, sprintf('Ticket Closed: %s', $ticket->ticket_number), $body);
             }
             return;
         }
@@ -414,12 +414,12 @@ class Tickets
         $admin_email = get_option('admin_email');
         if ($admin_email) {
             $client = get_user_by('id', (int)$ticket->user_id);
-            $body   = "مشتری تیکت خود را بست.\n\n";
-            $body  .= "شماره: " . $ticket->ticket_number . "\n";
-            $body  .= "موضوع: " . $ticket->subject . "\n";
-            if ($client) $body .= "مشتری: " . $client->display_name . " <" . $client->user_email . ">\n";
-            $body  .= "\nمدیریت: " . self::admin_ticket_url($ticket_id) . "\n";
-            @wp_mail($admin_email, sprintf('تیکت بسته شد: %s', $ticket->ticket_number), $body);
+            $body   = "The client closed their ticket.\n\n";
+            $body  .= "Number: " . $ticket->ticket_number . "\n";
+            $body  .= "Subject: " . $ticket->subject . "\n";
+            if ($client) $body .= "Client: " . $client->display_name . " <" . $client->user_email . ">\n";
+            $body  .= "\nAdmin: " . self::admin_ticket_url($ticket_id) . "\n";
+            @wp_mail($admin_email, sprintf('Ticket Closed: %s', $ticket->ticket_number), $body);
         }
     }
 }

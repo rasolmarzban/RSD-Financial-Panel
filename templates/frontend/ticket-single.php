@@ -11,7 +11,7 @@ $active = 'tickets';
 $categories = \RSD\FinancePanel\Modules\Tickets::get_categories();
 $priorities = \RSD\FinancePanel\Modules\Tickets::get_priorities();
 if (empty($ticket)) {
-    echo '<div class="rsd-alert rsd-alert-danger">تیکت یافت نشد.</div>';
+    echo '<div class="rsd-alert rsd-alert-danger">Ticket not found.</div>';
     return;
 }
 ?>
@@ -23,13 +23,13 @@ if (empty($ticket)) {
         <div class="rsd-toolbar">
             <div>
                 <a href="<?php echo esc_url(rsd_fp_page_url('tickets')); ?>"
-                   class="rsd-btn rsd-btn-sm rsd-btn-light">← بازگشت به لیست تیکت‌ها</a>
+                   class="rsd-btn rsd-btn-sm rsd-btn-light">← Back to Tickets List</a>
             </div>
             <div class="spacer"></div>
             <?php if ($ticket->status !== 'closed') : ?>
                 <button type="button" class="rsd-btn rsd-btn-sm rsd-btn-danger rsd-confirm"
                         data-close-ticket="<?php echo (int) $ticket->id; ?>">
-                    ✕ بستن تیکت
+                    ✕ Close Ticket
                 </button>
             <?php endif; ?>
         </div>
@@ -37,18 +37,18 @@ if (empty($ticket)) {
         <div class="rsd-card" style="margin-bottom:20px">
             <div class="rsd-grid rsd-grid-3" style="margin-bottom:0">
                 <div>
-                    <div style="font-size:11px;color:#94a3b8;margin-bottom:4px">شماره تیکت</div>
+                    <div style="font-size:11px;color:#94a3b8;margin-bottom:4px">Ticket Number</div>
                     <div style="font-family:monospace;font-weight:700;color:#0369a1;font-size:15px"><?php echo esc_html($ticket->ticket_number); ?></div>
                 </div>
                 <div>
-                    <div style="font-size:11px;color:#94a3b8;margin-bottom:4px">موضوع</div>
+                    <div style="font-size:11px;color:#94a3b8;margin-bottom:4px">Subject</div>
                     <div style="font-weight:700;color:#0f172a"><?php echo esc_html($ticket->subject); ?></div>
                 </div>
                 <div style="display:flex;gap:8px;align-items:flex-start;flex-direction:column">
                     <?php echo rsd_fp_status_badge($ticket->status); ?>
                     <?php
                     echo isset($priorities[$ticket->priority])
-                        ? '<span class="rsd-badge rsd-badge-warning">اولویت: ' . esc_html($priorities[$ticket->priority]) . '</span>'
+                        ? '<span class="rsd-badge rsd-badge-warning">Priority: ' . esc_html($priorities[$ticket->priority]) . '</span>'
                         : '';
                     echo isset($categories[$ticket->category])
                         ? '<span class="rsd-badge rsd-badge-info">' . esc_html($categories[$ticket->category]) . '</span>'
@@ -60,8 +60,8 @@ if (empty($ticket)) {
 
         <div class="rsd-card">
             <div class="rsd-card-header">
-                <div class="rsd-card-title">💬 مکاتبه</div>
-                <div style="font-size:12px;color:#64748b"><?php echo esc_html(count($messages ?? [])); ?> پیام</div>
+                <div class="rsd-card-title">💬 Conversation</div>
+                <div style="font-size:12px;color:#64748b"><?php echo esc_html(count($messages ?? [])); ?> messages</div>
             </div>
 
             <div class="rsd-chat" id="rsd-chat-area">
@@ -74,7 +74,7 @@ if (empty($ticket)) {
                         <div>
                             <div style="font-size:10px;color:#94a3b8;margin-bottom:5px">
                                 <?php echo esc_html($msg->user_name); ?>
-                                · <?php echo esc_html(sprintf('%s پیش', human_time_diff(strtotime($msg->created_at)))); ?>
+                                · <?php echo esc_html(sprintf('%s ago', human_time_diff(strtotime($msg->created_at)))); ?>
                             </div>
                             <div class="rsd-chat-bubble">
                                 <?php echo nl2br(esc_html($msg->message)); ?>
@@ -93,13 +93,13 @@ if (empty($ticket)) {
                                         </div>
                                     <?php endif;
                                 endif; ?>
-                                <span class="rsd-chat-time"><?php echo esc_html(date_i18n('j F Y ، H:i', strtotime($msg->created_at))); ?></span>
+                                <span class="rsd-chat-time"><?php echo esc_html(date_i18n('j F Y, H:i', strtotime($msg->created_at))); ?></span>
                             </div>
                         </div>
                     </div>
                 <?php endforeach; else : ?>
                     <div class="rsd-empty"><div class="rsd-empty-icon">💭</div>
-                        <p>هنوز پیامی در این تیکت ثبت نشده است.</p>
+                        <p>No messages have been posted in this ticket yet.</p>
                     </div>
                 <?php endif; ?>
             </div>
@@ -107,17 +107,17 @@ if (empty($ticket)) {
 
         <?php if ($ticket->status !== 'closed') : ?>
             <div class="rsd-card" style="margin-top:20px">
-                <div class="rsd-card-title" style="margin-bottom:14px">📝 ارسال پاسخ</div>
+                <div class="rsd-card-title" style="margin-bottom:14px">📝 Send Reply</div>
                 <form id="rsd-reply-ticket-form" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="ticket_id" value="<?php echo (int) $ticket->id; ?>">
                     <div class="rsd-form-row">
-                        <textarea name="message" rows="4" placeholder="پیام خود را بنویسید..." required></textarea>
+                        <textarea name="message" rows="4" placeholder="Write your message..." required></textarea>
                     </div>
                     <div style="display:flex;align-items:center;gap:10px;justify-content:space-between">
                         <div style="font-size:11px;color:#94a3b8">
                             <input type="file" name="ticket_attachment" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx">
                         </div>
-                        <button type="submit" class="rsd-btn rsd-btn-primary">ارسال پاسخ ➡</button>
+                        <button type="submit" class="rsd-btn rsd-btn-primary">Send Reply ➡</button>
                     </div>
                 </form>
             </div>

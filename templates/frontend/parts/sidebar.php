@@ -12,26 +12,26 @@ $active = $active ?? 'dashboard';
 $current_user = $current_user ?? wp_get_current_user();
 
 $nav_items = [
-    'dashboard'    => ['label' => 'داشبورد',            'icon' => '🏠', 'url' => rsd_fp_page_url('dashboard')],
-    'documents'    => ['label' => 'مدارک',               'icon' => '📁', 'url' => rsd_fp_page_url('documents')],
-    'tickets'      => ['label' => 'پیام‌ها و تیکت‌ها',   'icon' => '💬', 'url' => rsd_fp_page_url('tickets')],
-    'company_info' => ['label' => 'اطلاعات شرکت',         'icon' => '🏢', 'url' => rsd_fp_page_url('company_info')],
-    'reports'      => ['label' => 'گزارش‌ها',            'icon' => '📊', 'url' => rsd_fp_page_url('reports')],
-    'invoices'     => ['label' => 'صورتحساب',            'icon' => '💰', 'url' => rsd_fp_page_url('invoices')],
-    'services'     => ['label' => 'خدمات جدید',          'icon' => '⚙️', 'url' => rsd_fp_page_url('services')],
-    'calendar'     => ['label' => 'تقویم و موعدها',       'icon' => '📅', 'url' => rsd_fp_page_url('calendar')],
+    'dashboard'    => ['label' => 'Dashboard',            'icon' => '🏠', 'url' => rsd_fp_page_url('dashboard')],
+    'documents'    => ['label' => 'Documents',            'icon' => '📁', 'url' => rsd_fp_page_url('documents')],
+    'tickets'      => ['label' => 'Messages & Tickets',   'icon' => '💬', 'url' => rsd_fp_page_url('tickets')],
+    'company_info' => ['label' => 'Company Information',  'icon' => '🏢', 'url' => rsd_fp_page_url('company_info')],
+    'reports'      => ['label' => 'Reports',              'icon' => '📊', 'url' => rsd_fp_page_url('reports')],
+    'invoices'     => ['label' => 'Billing',              'icon' => '💰', 'url' => rsd_fp_page_url('invoices')],
+    'services'     => ['label' => 'New Services',         'icon' => '⚙️', 'url' => rsd_fp_page_url('services')],
+    'calendar'     => ['label' => 'Calendar & Deadlines', 'icon' => '📅', 'url' => rsd_fp_page_url('calendar')],
 ];
 ?>
 
 <aside class="rsd-fp-sidebar">
     <div class="rsd-fp-sidebar-header">
         <div class="rsd-fp-logo">R</div>
-        <h3>پرتال مشتریان</h3>
-        <p>شرکت حسابداری و مشاوره مالی</p>
+        <h3>Client Portal</h3>
+        <p>Accounting &amp; Financial Consulting Company</p>
     </div>
 
     <nav class="rsd-fp-nav">
-        <span class="rsd-fp-nav-label">منو اصلی</span>
+        <span class="rsd-fp-nav-label">Main Menu</span>
         <?php foreach ($nav_items as $key => $item) : ?>
             <a href="<?php echo esc_url($item['url']); ?>"
                 class="rsd-fp-nav-item <?php echo $active === $key ? 'active' : ''; ?>">
@@ -57,15 +57,15 @@ $nav_items = [
         ?>
         <a href="<?php echo esc_url($logout_url); ?>"
             class="rsd-fp-nav-item rsd-fp-logout"
-            title="<?php esc_attr_e('خروج از حساب کاربری', 'rsd-finance-panel'); ?>">
+            title="<?php esc_attr_e('Log out of account', 'rsd-finance-panel'); ?>">
             <span class="rsd-icon">🚪</span>
-            <span><?php esc_html_e('خروج', 'rsd-finance-panel'); ?></span>
+            <span><?php esc_html_e('Logout', 'rsd-finance-panel'); ?></span>
         </a>
     </div>
 
     <div class="rsd-fp-sidebar-footer">
         <div class="rsd-fp-version">
-            نسخه <?php echo esc_html(RSD_FP_VERSION); ?> | ساخته شده با ❤️
+            Version <?php echo esc_html(RSD_FP_VERSION); ?> | Made with ❤️
         </div>
     </div>
 </aside>

@@ -310,7 +310,7 @@ class Auth
         }
 
         $page = [
-            'post_title'   => __('ورود و ثبت\u200cنام پنل مالی', 'rsd-finance-panel'),
+            'post_title'   => __('Login and Registration - Finance Panel', 'rsd-finance-panel'),
             'post_content' => '[rsd_fp_auth]',
             'post_status'  => 'publish',
             'post_type'    => 'page',
@@ -365,7 +365,7 @@ class Auth
         if (!$this->is_public_registration()) {
             return new WP_Error(
                 'registration_disabled',
-                esc_html__('ثبت\u200cنام عمومی در حال حاضر غیرفعال است. لطفاً با مدیر تماس بگیرید.', 'rsd-finance-panel')
+                esc_html__('Public registration is currently disabled. Please contact the administrator.', 'rsd-finance-panel')
             );
         }
 
@@ -373,7 +373,7 @@ class Auth
         if (!FarazSMS::is_valid_iran_mobile($phone)) {
             return new WP_Error(
                 'invalid_phone',
-                esc_html__('شماره موبایل وارد شده معتبر نیست. لطفاً شماره ۱۱ رقمی با پیشوند ۰۹ وارد کنید.', 'rsd-finance-panel')
+                esc_html__('The mobile number entered is not valid. Please enter an 11-digit number with the 09 prefix.', 'rsd-finance-panel')
             );
         }
 
@@ -381,7 +381,7 @@ class Auth
         if ($email !== '' && !is_email($email)) {
             return new WP_Error(
                 'invalid_email',
-                esc_html__('ایمیل وارد شده معتبر نیست.', 'rsd-finance-panel')
+                esc_html__('The email entered is not valid.', 'rsd-finance-panel')
             );
         }
 
@@ -389,7 +389,7 @@ class Auth
         if ($dup_user instanceof WP_User) {
             return new WP_Error(
                 'phone_exists',
-                esc_html__('این شماره موبایل قبلاً در سیستم ثبت شده است. لطفاً وارد شوید.', 'rsd-finance-panel')
+                esc_html__('This mobile number is already registered in the system. Please log in.', 'rsd-finance-panel')
             );
         }
 
@@ -398,7 +398,7 @@ class Auth
             if ($dup_email) {
                 return new WP_Error(
                     'email_exists',
-                    esc_html__('این ایمیل قبلاً در سیستم ثبت شده است.', 'rsd-finance-panel')
+                    esc_html__('This email is already registered in the system.', 'rsd-finance-panel')
                 );
             }
         }
@@ -411,7 +411,7 @@ class Auth
             return new WP_Error(
                 'password_short',
                 sprintf(
-                    esc_html__('رمز عبور باید حداقل %d کاراکتر باشد.', 'rsd-finance-panel'),
+                    esc_html__('Password must be at least %d characters long.', 'rsd-finance-panel'),
                     $min_len
                 )
             );
@@ -420,7 +420,7 @@ class Auth
         if ($password !== $password_confirm) {
             return new WP_Error(
                 'password_mismatch',
-                esc_html__('رمز عبور و تکرار آن با هم مطابقت ندارند.', 'rsd-finance-panel')
+                esc_html__('The password and its confirmation do not match.', 'rsd-finance-panel')
             );
         }
 
@@ -428,7 +428,7 @@ class Auth
             if ($otp === '' || !$this->verify_otp($phone, $otp)) {
                 return new WP_Error(
                     'invalid_otp',
-                    esc_html__('کد تأیید وارد شده معتبر نیست یا منقضی شده است.', 'rsd-finance-panel')
+                    esc_html__('The verification code entered is invalid or has expired.', 'rsd-finance-panel')
                 );
             }
             $this->clear_otp($phone);
@@ -508,14 +508,14 @@ class Auth
         if ($identifier_raw === '' || $password === '') {
             return new WP_Error(
                 'empty_fields',
-                esc_html__('لطفاً شناسه و رمز عبور را وارد کنید.', 'rsd-finance-panel')
+                esc_html__('Please enter your identifier and password.', 'rsd-finance-panel')
             );
         }
 
         if ($this->is_brute_blocked($identifier_raw)) {
             return new WP_Error(
                 'rate_limited',
-                esc_html__('تعداد تلاش‌های ناموفق شما بیش از حد مجاز بوده است. لطفاً ۱۵ دقیقه دیگر دوباره تلاش کنید.', 'rsd-finance-panel')
+                esc_html__('You have exceeded the maximum number of failed attempts. Please try again in 15 minutes.', 'rsd-finance-panel')
             );
         }
 
@@ -524,7 +524,7 @@ class Auth
             $this->record_failed_attempt($identifier_raw);
             return new WP_Error(
                 'invalid_credentials',
-                esc_html__('شناسه یا رمز عبور اشتباه است.', 'rsd-finance-panel')
+                esc_html__('The identifier or password is incorrect.', 'rsd-finance-panel')
             );
         }
 
@@ -532,7 +532,7 @@ class Auth
             $this->record_failed_attempt($identifier_raw);
             return new WP_Error(
                 'invalid_credentials',
-                esc_html__('شناسه یا رمز عبور اشتباه است.', 'rsd-finance-panel')
+                esc_html__('The identifier or password is incorrect.', 'rsd-finance-panel')
             );
         }
 
@@ -545,7 +545,7 @@ class Auth
                 if ($otp === '' || !$this->verify_otp($phone, $otp)) {
                     return new WP_Error(
                         'invalid_otp',
-                        esc_html__('کد تأیید وارد شده معتبر نیست یا منقضی شده است.', 'rsd-finance-panel')
+                        esc_html__('The verification code entered is invalid or has expired.', 'rsd-finance-panel')
                     );
                 }
                 $this->clear_otp($phone);
@@ -577,7 +577,7 @@ class Auth
         if ($identifier === '') {
             return new WP_Error(
                 'empty_identifier',
-                esc_html__('لطفاً شماره موبایل یا ایمیل خود را وارد کنید.', 'rsd-finance-panel')
+                esc_html__('Please enter your mobile number or email.', 'rsd-finance-panel')
             );
         }
 
@@ -585,7 +585,7 @@ class Auth
         if (!$user instanceof WP_User) {
             return new WP_Error(
                 'user_not_found',
-                esc_html__('کاربری با این مشخصات پیدا نشد.', 'rsd-finance-panel')
+                esc_html__('No user was found with these details.', 'rsd-finance-panel')
             );
         }
 
@@ -595,7 +595,7 @@ class Auth
         if (!$is_email_valid) {
             return new WP_Error(
                 'no_valid_email',
-                esc_html__('برای این حساب کاربری ایمیل معتبری ثبت نشده است. لطفاً با مدیر سامانه تماس بگیرید تا رمز عبور برای شما بازنشانی شود.', 'rsd-finance-panel')
+                esc_html__('No valid email is registered for this account. Please contact the system administrator so your password can be reset.', 'rsd-finance-panel')
             );
         }
 
@@ -615,18 +615,18 @@ class Auth
         );
 
         $blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
-        $subject  = sprintf(esc_html__('[%s] بازنشانی رمز عبور', 'rsd-finance-panel'), $blogname);
+        $subject  = sprintf(esc_html__('[%s] Password Reset', 'rsd-finance-panel'), $blogname);
 
         $phone_meta = get_user_meta($user->ID, 'rsd_fp_phone', true);
-        $phone_display = $phone_meta ? "\n" . sprintf(esc_html__('شماره موبایل ثبت‌شده: %s', 'rsd-finance-panel'), $phone_meta) . "\n" : '';
+        $phone_display = $phone_meta ? "\n" . sprintf(esc_html__('Registered mobile number: %s', 'rsd-finance-panel'), $phone_meta) . "\n" : '';
 
-        $message  = sprintf(esc_html__('سلام %s،', 'rsd-finance-panel'), $user->display_name) . "\r\n\r\n";
-        $message .= esc_html__('درخواست بازنشانی رمز عبور برای پنل مالی ارسال شده است.', 'rsd-finance-panel') . "\r\n";
-        $message .= esc_html__('اگر این درخواست توسط شما ارسال نشده است، این پیام را نادیده بگیرید.', 'rsd-finance-panel') . "\r\n\r\n";
-        $message .= esc_html__('برای تعیین رمز عبور جدید روی لینک زیر کلیک کنید:', 'rsd-finance-panel') . "\r\n";
+        $message  = sprintf(esc_html__('Hello %s,', 'rsd-finance-panel'), $user->display_name) . "\r\n\r\n";
+        $message .= esc_html__('A password reset request has been submitted for the finance panel.', 'rsd-finance-panel') . "\r\n";
+        $message .= esc_html__('If you did not make this request, please ignore this message.', 'rsd-finance-panel') . "\r\n\r\n";
+        $message .= esc_html__('Click the link below to set a new password:', 'rsd-finance-panel') . "\r\n";
         $message .= $reset_url . "\r\n\r\n";
         $message .= $phone_display;
-        $message .= sprintf(esc_html__('این لینک تا %s دقیقه معتبر است.', 'rsd-finance-panel'), (int)(HOUR_IN_SECONDS / 60)) . "\r\n";
+        $message .= sprintf(esc_html__('This link is valid for %s minutes.', 'rsd-finance-panel'), (int)(HOUR_IN_SECONDS / 60)) . "\r\n";
 
         $headers = ['Content-Type: text/plain; charset=UTF-8'];
 
@@ -634,7 +634,7 @@ class Auth
         if (!$sent) {
             return new WP_Error(
                 'email_failed',
-                esc_html__('ارسال ایمیل بازنشانی با خطا مواجه شد. لطفاً بعداً دوباره تلاش کنید یا با مدیر تماس بگیرید.', 'rsd-finance-panel')
+                esc_html__('Sending the reset email failed. Please try again later or contact the administrator.', 'rsd-finance-panel')
             );
         }
 
@@ -660,7 +660,7 @@ class Auth
         if ($key === '' || $login === '') {
             return new WP_Error(
                 'invalid_reset_request',
-                esc_html__('درخواست بازنشانی معتبر نیست. لطفاً از طریق «فراموشی رمز عبور» دوباره درخواست دهید.', 'rsd-finance-panel')
+                esc_html__('The reset request is invalid. Please submit a new request via "Forgot Password".', 'rsd-finance-panel')
             );
         }
 
@@ -669,7 +669,7 @@ class Auth
             return new WP_Error(
                 'password_short',
                 sprintf(
-                    esc_html__('رمز عبور باید حداقل %d کاراکتر باشد.', 'rsd-finance-panel'),
+                    esc_html__('Password must be at least %d characters long.', 'rsd-finance-panel'),
                     $min_len
                 )
             );
@@ -678,7 +678,7 @@ class Auth
         if ($new_pass !== $new_confirm) {
             return new WP_Error(
                 'password_mismatch',
-                esc_html__('رمز عبور جدید و تکرار آن با هم مطابقت ندارند.', 'rsd-finance-panel')
+                esc_html__('The new password and its confirmation do not match.', 'rsd-finance-panel')
             );
         }
 
@@ -687,19 +687,19 @@ class Auth
             if ($user->get_error_code() === 'expired_key') {
                 return new WP_Error(
                     'expired_key',
-                    esc_html__('لینک بازنشانی رمز عبور منقضی شده است. لطفاً دوباره درخواست دهید.', 'rsd-finance-panel')
+                    esc_html__('The password reset link has expired. Please submit a new request.', 'rsd-finance-panel')
                 );
             }
             return new WP_Error(
                 'invalid_key',
-                esc_html__('لینک بازنشانی معتبر نیست. لطفاً دوباره درخواست دهید.', 'rsd-finance-panel')
+                esc_html__('The reset link is invalid. Please submit a new request.', 'rsd-finance-panel')
             );
         }
 
         if (!$user instanceof WP_User) {
             return new WP_Error(
                 'invalid_user',
-                esc_html__('کاربر مقصد معتبر نیست.', 'rsd-finance-panel')
+                esc_html__('The target user is invalid.', 'rsd-finance-panel')
             );
         }
 
@@ -872,7 +872,7 @@ class Auth
         if (!FarazSMS::is_valid_iran_mobile($phone)) {
             return new WP_Error(
                 'invalid_phone',
-                esc_html__('شماره موبایل وارد شده معتبر نیست.', 'rsd-finance-panel')
+                esc_html__('The mobile number entered is not valid.', 'rsd-finance-panel')
             );
         }
 
@@ -897,13 +897,13 @@ class Auth
 
             return new WP_Error(
                 'sms_send_failed',
-                $result['message'] ?? esc_html__('ارسال پیامک با خطا مواجه شد. لطفاً بعداً دوباره تلاش کنید.', 'rsd-finance-panel')
+                $result['message'] ?? esc_html__('Sending the SMS failed. Please try again later.', 'rsd-finance-panel')
             );
         }
 
         return new WP_Error(
             'unknown_provider',
-            esc_html__('سرویس دهنده پیامک پشتیبانی نمی‌شود.', 'rsd-finance-panel')
+            esc_html__('The SMS provider is not supported.', 'rsd-finance-panel')
         );
     }
 
@@ -1042,11 +1042,11 @@ class Auth
         }
         if (FarazSMS::is_valid_iran_mobile($phone)) {
             return sprintf(
-                esc_html__('کاربر %s', 'rsd-finance-panel'),
+                esc_html__('User %s', 'rsd-finance-panel'),
                 substr($phone, -4)
             );
         }
-        return esc_html__('کاربر جدید', 'rsd-finance-panel');
+        return esc_html__('New User', 'rsd-finance-panel');
     }
 
     // ============================================================

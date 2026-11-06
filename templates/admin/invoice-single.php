@@ -27,8 +27,8 @@ $back_url = admin_url('admin.php?page=rsd-fp-invoices');
         <div class="rsd-admin-card">
             <div class="rsd-empty">
                 <div class="rsd-empty-icon">📑</div>
-                <h3>فاکتور پیدا نشد</h3>
-                <a href="<?php echo esc_url($back_url); ?>" class="rsd-btn-admin primary">بازگشت به لیست فاکتورها</a>
+                <h3>Invoice Not Found</h3>
+                <a href="<?php echo esc_url($back_url); ?>" class="rsd-btn-admin primary">Back to Invoice List</a>
             </div>
         </div>
 </div>
@@ -53,28 +53,28 @@ $back_url = admin_url('admin.php?page=rsd-fp-invoices');
             </span>
         </div>
         <h1 style="margin:0;font-size:24px;line-height:1.4;color:#0f172a">
-            فاکتور <?php
+            Invoice <?php
                     $period = [];
-                    if (!empty($invoice->year))   $period[] = 'سال ' . $invoice->year;
+                    if (!empty($invoice->year))   $period[] = 'Year ' . $invoice->year;
                     if (!empty($invoice->month))  $period[] = $invoice->month;
                     if (!empty($invoice->period)) $period[] = $invoice->period;
                     echo !empty($invoice->description) ? esc_html($invoice->description) : esc_html(implode(' - ', $period) ?: '#' . $invoice->id);
                     ?>
         </h1>
         <div style="margin-top:8px;display:flex;gap:18px;flex-wrap:wrap;color:#475569;font-size:13px">
-            <span>👤 مشتری: <strong style="color:#0f172a"><?php echo esc_html($client ? $client->display_name : 'کاربر #' . $invoice->user_id); ?></strong></span>
-            <span>📅 صدور: <strong><?php echo esc_html(date_i18n('j F Y', strtotime($invoice->issue_date ?? $invoice->created_at))); ?></strong></span>
+            <span>👤 Client: <strong style="color:#0f172a"><?php echo esc_html($client ? $client->display_name : 'User #' . $invoice->user_id); ?></strong></span>
+            <span>📅 Issue: <strong><?php echo esc_html(date_i18n('j F Y', strtotime($invoice->issue_date ?? $invoice->created_at))); ?></strong></span>
             <?php if (!empty($invoice->due_date)) : ?>
-                <span>⏰ سررسید: <strong><?php echo esc_html(date_i18n('j F Y', strtotime($invoice->due_date))); ?></strong></span>
+                <span>⏰ Due: <strong><?php echo esc_html(date_i18n('j F Y', strtotime($invoice->due_date))); ?></strong></span>
             <?php endif; ?>
         </div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
-        <a href="<?php echo esc_url($back_url); ?>" class="rsd-btn-admin secondary">← بازگشت</a>
+        <a href="<?php echo esc_url($back_url); ?>" class="rsd-btn-admin secondary">← Back</a>
         <a href="<?php echo esc_url(get_edit_user_link($invoice->user_id)); ?>" target="_blank" rel="noopener"
-            class="rsd-btn-admin secondary">👥 پروفایل مشتری</a>
+            class="rsd-btn-admin secondary">👥 Client Profile</a>
         <a href="<?php echo esc_url(add_query_arg(['client_id' => $invoice->user_id], admin_url('admin.php?page=rsd-fp-tickets'))); ?>"
-            class="rsd-btn-admin secondary">🎟️ تیکت‌ها</a>
+            class="rsd-btn-admin secondary">🎟️ Tickets</a>
     </div>
 </div>
 
@@ -82,40 +82,40 @@ $back_url = admin_url('admin.php?page=rsd-fp-invoices');
 <div class="rsd-admin-stats-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px">
     <div class="rsd-admin-stat-card purple">
         <div class="stat-top">
-            <div class="stat-label">مبلغ کل فاکتور</div>
+            <div class="stat-label">Invoice Total</div>
             <div class="stat-icon">📑</div>
         </div>
         <div class="stat-value" style="direction:ltr"><?php echo esc_html(rsd_fp_currency($total)); ?></div>
     </div>
     <div class="rsd-admin-stat-card green">
         <div class="stat-top">
-            <div class="stat-label">مبلغ پرداخت‌شده</div>
+            <div class="stat-label">Paid Amount</div>
             <div class="stat-icon">✅</div>
         </div>
         <div class="stat-value" style="direction:ltr"><?php echo esc_html(rsd_fp_currency($paid)); ?></div>
-        <div class="stat-sub"><?php echo (int)$progress_pct; ?>٪ پرداخت‌شده</div>
+        <div class="stat-sub"><?php echo (int)$progress_pct; ?>% Paid</div>
     </div>
     <div class="rsd-admin-stat-card red">
         <div class="stat-top">
-            <div class="stat-label">مانده قابل پرداخت</div>
+            <div class="stat-label">Outstanding Balance</div>
             <div class="stat-icon">💳</div>
         </div>
         <div class="stat-value" style="direction:ltr"><?php echo esc_html(rsd_fp_currency($outstanding)); ?></div>
     </div>
     <div class="rsd-admin-stat-card blue">
         <div class="stat-top">
-            <div class="stat-label">تعداد پرداخت‌ها</div>
+            <div class="stat-label">Number of Payments</div>
             <div class="stat-icon">📋</div>
         </div>
-        <div class="stat-value"><?php echo (int)count($payments); ?> پرداخت</div>
+        <div class="stat-value"><?php echo (int)count($payments); ?> payments</div>
     </div>
 </div>
 
 <!-- Progress bar -->
 <div class="rsd-admin-card" style="padding:18px 24px;margin-bottom:16px">
     <div style="display:flex;align-items:center;gap:14px;justify-content:space-between;margin-bottom:8px">
-        <span style="font-weight:700;color:#0f172a">پیشرفت تسویه فاکتور</span>
-        <span style="font-weight:700;color:#6366f1"><?php echo (int)$progress_pct; ?>٪</span>
+        <span style="font-weight:700;color:#0f172a">Invoice Settlement Progress</span>
+        <span style="font-weight:700;color:#6366f1"><?php echo (int)$progress_pct; ?>%</span>
     </div>
     <div style="width:100%;height:14px;background:#e2e8f0;border-radius:99px;overflow:hidden">
         <div style="height:100%;width:<?php echo (int)$progress_pct; ?>%;background:linear-gradient(90deg,#22c55e 0%, #6366f1 100%);border-radius:99px;transition:width .3s ease"></div>
@@ -126,18 +126,18 @@ $back_url = admin_url('admin.php?page=rsd-fp-invoices');
     <!-- Invoice Details -->
     <div class="rsd-admin-card">
         <div class="rsd-admin-card-header">
-            <div class="rsd-admin-card-title"><span class="rsd-icon">📄</span> اطلاعات فاکتور</div>
+            <div class="rsd-admin-card-title"><span class="rsd-icon">📄</span> Invoice Information</div>
         </div>
         <div style="display:flex;flex-direction:column;gap:10px;padding:4px">
-            <div class="rsd-info-row"><span>🆔 شناسه فاکتور</span><strong>#<?php echo (int)$invoice->id; ?></strong></div>
-            <div class="rsd-info-row"><span>📂 سال مالی</span><strong><?php echo !empty($invoice->year) ? esc_html($invoice->year) : '<span style="color:#cbd5e1">—</span>'; ?></strong></div>
-            <div class="rsd-info-row"><span>🗓️ دوره</span><strong><?php echo !empty($invoice->month) ? esc_html($invoice->month) : (!empty($invoice->period) ? esc_html($invoice->period) : '<span style="color:#cbd5e1">—</span>'); ?></strong></div>
-            <div class="rsd-info-row"><span>📝 توضیحات</span><strong style="max-width:320px;word-break:break-word"><?php echo !empty($invoice->description) ? esc_html($invoice->description) : '<span style="color:#cbd5e1">—</span>'; ?></strong></div>
-            <div class="rsd-info-row"><span>📅 تاریخ صدور</span><strong><?php echo esc_html(date_i18n('j F Y', strtotime($invoice->issue_date ?? $invoice->created_at))); ?></strong></div>
-            <div class="rsd-info-row"><span>⏰ تاریخ سررسید</span><strong><?php echo !empty($invoice->due_date) ? esc_html(date_i18n('j F Y', strtotime($invoice->due_date))) : '<span style="color:#cbd5e1">—</span>'; ?></strong></div>
-            <div class="rsd-info-row"><span>🏷️ وضعیت</span><strong><span class="rsd-admin-badge <?php echo $sc; ?>"><?php echo esc_html($statuses[$invoice->status] ?? $invoice->status); ?></span></strong></div>
+            <div class="rsd-info-row"><span>🆔 Invoice ID</span><strong>#<?php echo (int)$invoice->id; ?></strong></div>
+            <div class="rsd-info-row"><span>📂 Fiscal Year</span><strong><?php echo !empty($invoice->year) ? esc_html($invoice->year) : '<span style="color:#cbd5e1">—</span>'; ?></strong></div>
+            <div class="rsd-info-row"><span>🗓️ Period</span><strong><?php echo !empty($invoice->month) ? esc_html($invoice->month) : (!empty($invoice->period) ? esc_html($invoice->period) : '<span style="color:#cbd5e1">—</span>'); ?></strong></div>
+            <div class="rsd-info-row"><span>📝 Description</span><strong style="max-width:320px;word-break:break-word"><?php echo !empty($invoice->description) ? esc_html($invoice->description) : '<span style="color:#cbd5e1">—</span>'; ?></strong></div>
+            <div class="rsd-info-row"><span>📅 Issue Date</span><strong><?php echo esc_html(date_i18n('j F Y', strtotime($invoice->issue_date ?? $invoice->created_at))); ?></strong></div>
+            <div class="rsd-info-row"><span>⏰ Due Date</span><strong><?php echo !empty($invoice->due_date) ? esc_html(date_i18n('j F Y', strtotime($invoice->due_date))) : '<span style="color:#cbd5e1">—</span>'; ?></strong></div>
+            <div class="rsd-info-row"><span>🏷️ Status</span><strong><span class="rsd-admin-badge <?php echo $sc; ?>"><?php echo esc_html($statuses[$invoice->status] ?? $invoice->status); ?></span></strong></div>
             <?php if (!empty($invoice->notes)) : ?>
-                <div class="rsd-info-row" style="align-items:flex-start;gap:12px"><span>📝 یادداشت‌ها</span>
+                <div class="rsd-info-row" style="align-items:flex-start;gap:12px"><span>📝 Notes</span>
                     <div style="flex:1;background:#f8fafc;border:1px solid #e2e8f0;padding:10px 12px;border-radius:8px;color:#475569;line-height:1.8"><?php echo wp_kses_post(nl2br(make_clickable($invoice->notes))); ?></div>
                 </div>
             <?php endif; ?>
@@ -147,7 +147,7 @@ $back_url = admin_url('admin.php?page=rsd-fp-invoices');
     <!-- Client & payments -->
     <div class="rsd-admin-card">
         <div class="rsd-admin-card-header">
-            <div class="rsd-admin-card-title"><span class="rsd-icon">👤</span> اطلاعات مشتری</div>
+            <div class="rsd-admin-card-title"><span class="rsd-icon">👤</span> Client Information</div>
         </div>
         <?php if ($client) : ?>
             <div style="display:flex;gap:14px;align-items:center;padding:6px 0 14px;border-bottom:1px dashed #e2e8f0;margin-bottom:14px">
@@ -159,14 +159,14 @@ $back_url = admin_url('admin.php?page=rsd-fp-invoices');
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
                 <a href="<?php echo esc_url(add_query_arg(['view' => 'client', 'id' => $client->ID], admin_url('admin.php?page=rsd-fp-clients'))); ?>"
-                    class="rsd-btn-admin small primary" style="flex:1;justify-content:center">💼 پرتفویل مالی</a>
+                    class="rsd-btn-admin small primary" style="flex:1;justify-content:center">💼 Financial Portfolio</a>
                 <a href="<?php echo esc_url(get_edit_user_link($client->ID)); ?>" target="_blank" rel="noopener"
-                    class="rsd-btn-admin small secondary" style="flex:1;justify-content:center">✏️ ویرایش کاربر</a>
+                    class="rsd-btn-admin small secondary" style="flex:1;justify-content:center">✏️ Edit User</a>
             </div>
         <?php endif; ?>
 
         <div class="rsd-admin-card-title" style="margin-bottom:10px">
-            <span class="rsd-icon">💰</span> ثبت پرداخت جدید
+            <span class="rsd-icon">💰</span> Record New Payment
         </div>
         <form id="rsd-new-payment-form" method="post" data-rsd-ajax-form="admin_add_payment" style="display:flex;flex-direction:column;gap:10px"
             <?php wp_nonce_field('rsd_fp_nonce', 'nonce_placeholder'); ?>>
@@ -175,12 +175,12 @@ $back_url = admin_url('admin.php?page=rsd-fp-invoices');
             <input type="hidden" name="user_id" value="<?php echo (int)$invoice->user_id; ?>">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
                 <div>
-                    <label style="font-size:12px;font-weight:600;color:#475569;margin-bottom:4px;display:block">مبلغ (تومان)</label>
+                    <label style="font-size:12px;font-weight:600;color:#475569;margin-bottom:4px;display:block">Amount (Toman)</label>
                     <input type="number" name="amount" step="100" min="0" max="<?php echo esc_attr($outstanding); ?>"
                         value="<?php echo esc_attr($outstanding); ?>" required style="width:100%;direction:ltr">
                 </div>
                 <div>
-                    <label style="font-size:12px;font-weight:600;color:#475569;margin-bottom:4px;display:block">تاریخ پرداخت</label>
+                    <label style="font-size:12px;font-weight:600;color:#475569;margin-bottom:4px;display:block">Payment Date</label>
                     <?php
                     $today_gy = (int)date('Y');
                     $today_gm = (int)date('n');
@@ -193,7 +193,7 @@ $back_url = admin_url('admin.php?page=rsd-fp-invoices');
                     ?>
                 </div>
                 <div>
-                    <label style="font-size:12px;font-weight:600;color:#475569;margin-bottom:4px;display:block">روش پرداخت</label>
+                    <label style="font-size:12px;font-weight:600;color:#475569;margin-bottom:4px;display:block">Payment Method</label>
                     <select name="payment_method" style="width:100%">
                         <?php foreach ($pay_methods as $k => $v) : ?>
                             <option value="<?php echo esc_attr($k); ?>"><?php echo esc_html($v); ?></option>
@@ -201,20 +201,20 @@ $back_url = admin_url('admin.php?page=rsd-fp-invoices');
                     </select>
                 </div>
                 <div>
-                    <label style="font-size:12px;font-weight:600;color:#475569;margin-bottom:4px;display:block">وضعیت</label>
+                    <label style="font-size:12px;font-weight:600;color:#475569;margin-bottom:4px;display:block">Status</label>
                     <select name="status" style="width:100%">
-                        <option value="completed">پرداخت شده</option>
-                        <option value="pending">در حال انتظار</option>
-                        <option value="failed">ناموفق</option>
+                        <option value="completed">Paid</option>
+                        <option value="pending">Awaiting</option>
+                        <option value="failed">Failed</option>
                     </select>
                 </div>
             </div>
             <div>
-                <label style="font-size:12px;font-weight:600;color:#475569;margin-bottom:4px;display:block">شماره پیگیری / یادداشت</label>
-                <input type="text" name="reference" placeholder="مثلاً شماره رسید / چک / تراکنش بانکی" style="width:100%">
+                <label style="font-size:12px;font-weight:600;color:#475569;margin-bottom:4px;display:block">Reference Number / Note</label>
+                <input type="text" name="reference" placeholder="e.g. receipt / check / bank transaction number" style="width:100%">
             </div>
             <button type="submit" class="rsd-btn-admin primary" style="align-self:flex-start">
-                💰 ثبت پرداخت
+                💰 Record Payment
             </button>
         </form>
     </div>
@@ -224,26 +224,26 @@ $back_url = admin_url('admin.php?page=rsd-fp-invoices');
 <div class="rsd-admin-card">
     <div class="rsd-admin-card-header">
         <div class="rsd-admin-card-title">
-            <span class="rsd-icon">💳</span> سابقه پرداخت‌ها
+            <span class="rsd-icon">💳</span> Payment History
         </div>
-        <strong style="color:#64748b;font-size:13px"><?php echo (int) count($payments); ?> رکورد</strong>
+        <strong style="color:#64748b;font-size:13px"><?php echo (int) count($payments); ?> records</strong>
     </div>
     <div class="rsd-admin-table-wrap">
         <table class="rsd-admin-table">
             <thead>
                 <tr>
                     <th style="width:60px">#</th>
-                    <th>تاریخ پرداخت</th>
-                    <th>مبلغ</th>
-                    <th>روش پرداخت</th>
-                    <th>شماره پیگیری</th>
-                    <th>وضعیت</th>
+                    <th>Payment Date</th>
+                    <th>Amount</th>
+                    <th>Payment Method</th>
+                    <th>Reference Number</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (!empty($payments)) : foreach ($payments as $idx => $p) :
                         $pm_color = ['completed' => 'green', 'pending' => 'yellow', 'failed' => 'red', 'void' => 'gray'];
-                        $pm_labels = ['completed' => 'پرداخت شده', 'pending' => 'در انتظار', 'failed' => 'ناموفق', 'void' => 'لغوشده'];
+                        $pm_labels = ['completed' => 'Paid', 'pending' => 'Pending', 'failed' => 'Failed', 'void' => 'Voided'];
                         $c = $pm_color[$p->status] ?? 'gray';
                 ?>
                         <tr>
@@ -259,7 +259,7 @@ $back_url = admin_url('admin.php?page=rsd-fp-invoices');
                     <tr>
                         <td colspan="6">
                             <div class="rsd-empty">
-                                <p>هنوز پرداختی برای این فاکتور ثبت نشده است.</p>
+                                <p>No payments have been recorded for this invoice yet.</p>
                             </div>
                         </td>
                     </tr>
@@ -275,7 +275,7 @@ $back_url = admin_url('admin.php?page=rsd-fp-invoices');
         // AJAX handler for payment form (falls back to default submit when no handler)
         $('#rsd-new-payment-form').on('submit', function(e) {
             e.preventDefault();
-            alert('در نسخه فعلی، ثبت پرداخت از طریق بانک / دستی به درگاه توسعه پرداخت منتقل شده است. برای تست می‌توانید از طریق ابزار CLI پرداخت ثبت کنید یا مستقیماً از جدول payments در پایگاه‌داده استفاده کنید.');
+            alert('In the current version, payment recording has been moved to the bank / manual payment development gateway. For testing, you can record a payment via the CLI tool or use the payments table in the database directly.');
         });
     });
 </script>

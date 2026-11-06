@@ -18,11 +18,11 @@ $info = $info ?? new \stdClass();
         <?php include __DIR__ . '/parts/header.php'; ?>
 
         <div class="rsd-toolbar">
-            <h2 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">🏢 اطلاعات شرکت</h2>
+            <h2 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">🏢 Company Information</h2>
             <div class="spacer"></div>
             <?php if (!empty($info->pending_changes)) : ?>
                 <span class="rsd-badge rsd-badge-warning">
-                    ⏳ تغییرات شما در انتظار تأیید کارشناس است
+                    ⏳ Your changes are awaiting expert approval
                 </span>
             <?php endif; ?>
         </div>
@@ -61,7 +61,7 @@ $info = $info ?? new \stdClass();
                                 <?php endif; ?>
                                 <div class="rsd-form-hint">
                                     <?php if (is_array($info) && isset($info['is_editable']) && !$info['is_editable']) : ?>
-                                        تغییرات پس از تأیید شرکت، اعمال می‌شود.
+                                        Changes will be applied after company approval.
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -72,7 +72,7 @@ $info = $info ?? new \stdClass();
 
             <div style="text-align:left;margin-top:10px">
                 <button type="submit" class="rsd-btn rsd-btn-lg rsd-btn-primary">
-                    ذخیره و ارسال برای تأیید 💾
+                    Save and Submit for Approval 💾
                 </button>
             </div>
         </form>

@@ -36,8 +36,8 @@ $base_url = admin_url('admin.php?page=rsd-fp-tickets');
 <div class="rsd-admin-wrap">
     <div class="rsd-admin-header">
         <div>
-            <h1>🎟️ مدیریت تیکت‌ها</h1>
-            <p>پاسخگویی به تیکت‌های مشتریان و پیگیری وضعیت درخواست‌ها</p>
+            <h1>🎟️ Ticket Management</h1>
+            <p>Respond to client tickets and track request status</p>
         </div>
     </div>
 
@@ -46,32 +46,32 @@ $base_url = admin_url('admin.php?page=rsd-fp-tickets');
         <a href="<?php echo esc_url(add_query_arg(['status' => 'all', 'category' => null, 'priority' => null, 'client_id' => null, 's' => null], $base_url)); ?>"
            class="rsd-pill <?php echo ($status ?? 'all') === 'all' ? 'active' : ''; ?>">
             <span class="pill-count"><?php echo (int) ($summary['all'] ?? 0); ?></span>
-            <span class="pill-label">همه</span>
+            <span class="pill-label">All</span>
         </a>
         <a href="<?php echo esc_url(add_query_arg(['status' => 'new'], $base_url)); ?>"
            class="rsd-pill blue <?php echo $status === 'new' ? 'active' : ''; ?>">
             <span class="pill-count"><?php echo (int) ($summary['new'] ?? 0); ?></span>
-            <span class="pill-label">جدید</span>
+            <span class="pill-label">New</span>
         </a>
         <a href="<?php echo esc_url(add_query_arg(['status' => 'in_progress'], $base_url)); ?>"
            class="rsd-pill yellow <?php echo $status === 'in_progress' ? 'active' : ''; ?>">
             <span class="pill-count"><?php echo (int) ($summary['in_progress'] ?? 0); ?></span>
-            <span class="pill-label">در حال بررسی</span>
+            <span class="pill-label">In Progress</span>
         </a>
         <a href="<?php echo esc_url(add_query_arg(['status' => 'waiting'], $base_url)); ?>"
            class="rsd-pill purple <?php echo $status === 'waiting' ? 'active' : ''; ?>">
             <span class="pill-count"><?php echo (int) ($summary['waiting'] ?? 0); ?></span>
-            <span class="pill-label">منتظر مشتری</span>
+            <span class="pill-label">Waiting for Client</span>
         </a>
         <a href="<?php echo esc_url(add_query_arg(['status' => 'completed'], $base_url)); ?>"
            class="rsd-pill green <?php echo $status === 'completed' ? 'active' : ''; ?>">
             <span class="pill-count"><?php echo (int) ($summary['completed'] ?? 0); ?></span>
-            <span class="pill-label">انجام‌شده</span>
+            <span class="pill-label">Completed</span>
         </a>
         <a href="<?php echo esc_url(add_query_arg(['status' => 'closed'], $base_url)); ?>"
            class="rsd-pill gray <?php echo $status === 'closed' ? 'active' : ''; ?>">
             <span class="pill-count"><?php echo (int) ($summary['closed'] ?? 0); ?></span>
-            <span class="pill-label">بسته‌شده</span>
+            <span class="pill-label">Closed</span>
         </a>
     </div>
 
@@ -83,11 +83,11 @@ $base_url = admin_url('admin.php?page=rsd-fp-tickets');
             <?php endif; ?>
 
             <input type="search" name="s" value="<?php echo esc_attr($s ?? ''); ?>"
-                   placeholder="🔎 جستجو در موضوع / شماره تیکت / نام مشتری..."
+                   placeholder="🔎 Search by subject / ticket number / client name..."
                    style="min-width:320px">
 
             <select name="category">
-                <option value="all">همه دسته‌بندی‌ها</option>
+                <option value="all">All Categories</option>
                 <?php foreach ($categories as $key => $label) : ?>
                     <option value="<?php echo esc_attr($key); ?>" <?php selected(($category ?? 'all'), $key); ?>>
                         <?php echo esc_html($label); ?>
@@ -96,7 +96,7 @@ $base_url = admin_url('admin.php?page=rsd-fp-tickets');
             </select>
 
             <select name="priority">
-                <option value="all">همه اولویت‌ها</option>
+                <option value="all">All Priorities</option>
                 <?php foreach ($priorities as $key => $label) : ?>
                     <option value="<?php echo esc_attr($key); ?>" <?php selected(($priority ?? 'all'), $key); ?>>
                         <?php echo esc_html($label); ?>
@@ -108,7 +108,7 @@ $base_url = admin_url('admin.php?page=rsd-fp-tickets');
             $clients = get_users(['role__in' => ['rsd_client', 'administrator']]);
             ?>
             <select name="client_id">
-                <option value="0">همه مشتریان</option>
+                <option value="0">All Clients</option>
                 <?php foreach ($clients as $c) : ?>
                     <option value="<?php echo (int)$c->ID; ?>" <?php selected(($client_id ?? 0), $c->ID); ?>>
                         <?php echo esc_html($c->display_name); ?>
@@ -116,10 +116,10 @@ $base_url = admin_url('admin.php?page=rsd-fp-tickets');
                 <?php endforeach; ?>
             </select>
 
-            <button type="submit" class="rsd-btn-admin small primary">اعمال فیلتر</button>
+            <button type="submit" class="rsd-btn-admin small primary">Apply Filter</button>
             <?php if (($status ?? 'all') !== 'all' || ($category ?? 'all') !== 'all' || ($priority ?? 'all') !== 'all' || !empty($s) || !empty($client_id)) : ?>
                 <a href="<?php echo esc_url($base_url); ?>"
-                   class="rsd-btn-admin small secondary">پاک کردن</a>
+                   class="rsd-btn-admin small secondary">Clear</a>
             <?php endif; ?>
         </form>
     </div>
@@ -128,14 +128,14 @@ $base_url = admin_url('admin.php?page=rsd-fp-tickets');
         <div class="rsd-admin-table-wrap">
             <table class="rsd-admin-table widefat">
                 <thead><tr>
-                    <th style="width:110px">شماره تیکت</th>
-                    <th>موضوع</th>
-                    <th>مشتری</th>
-                    <th>دسته‌بندی</th>
-                    <th>اولویت</th>
-                    <th>وضعیت</th>
-                    <th>آخرین فعالیت</th>
-                    <th style="width:140px">عملیات</th>
+                    <th style="width:110px">Ticket Number</th>
+                    <th>Subject</th>
+                    <th>Client</th>
+                    <th>Category</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Last Activity</th>
+                    <th style="width:140px">Actions</th>
                 </tr></thead>
                 <tbody>
                 <?php if (!empty($tickets)) : foreach ($tickets as $t) :
@@ -157,7 +157,7 @@ $base_url = admin_url('admin.php?page=rsd-fp-tickets');
                             <div class="rsd-user-chip">
                                 <?php echo get_avatar($t->user_id, 28); ?>
                                 <div style="display:flex;flex-direction:column;gap:2px">
-                                    <span style="font-weight:600"><?php echo esc_html($t->client_name ?? 'کاربر #' . $t->user_id); ?></span>
+                                    <span style="font-weight:600"><?php echo esc_html($t->client_name ?? 'User #' . $t->user_id); ?></span>
                                     <span style="color:#64748b;font-size:11px"><?php echo esc_html(get_userdata($t->user_id)->user_email ?? ''); ?></span>
                                 </div>
                             </div>
@@ -182,16 +182,16 @@ $base_url = admin_url('admin.php?page=rsd-fp-tickets');
                         </td>
                         <td>
                             <a href="<?php echo esc_url($single_url); ?>"
-                               class="rsd-btn-admin small primary">پاسخ</a>
+                               class="rsd-btn-admin small primary">Reply</a>
                             <a href="<?php echo esc_url(get_edit_user_link($t->user_id)); ?>"
-                               class="rsd-btn-admin small secondary" target="_blank" rel="noopener">مشتری</a>
+                               class="rsd-btn-admin small secondary" target="_blank" rel="noopener">Client</a>
                         </td>
                     </tr>
                 <?php endforeach; else : ?>
                     <tr><td colspan="8"><div class="rsd-empty">
                         <div class="rsd-empty-icon">🎟️</div>
-                        <h3>هنوز تیکتی وجود ندارد</h3>
-                        <p>تیکت‌های ثبت‌شده توسط مشتریان در این جدول نمایش داده می‌شوند.</p>
+                        <h3>No tickets yet</h3>
+                        <p>Tickets submitted by clients are displayed in this table.</p>
                     </div></td></tr>
                 <?php endif; ?>
                 </tbody>

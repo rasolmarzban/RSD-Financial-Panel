@@ -105,23 +105,23 @@ class Documents
             ? trim(($meta['year'] ?? '') . (!empty($meta['period']) ? ' - ' . $meta['period'] : ''))
             : '';
 
-        $notice_title = sprintf('درخواست مدرک جدید: %s', $title_raw);
-        $notice_msg   = 'مدیر یک مدرک را برای شما درخواست کرده است. '
-            . (!empty($period_raw) ? ' دوره مربوطه: ' . trim($period_raw) . '.' : '')
-            . (!empty($expiry_raw) ? ' مهلت ارسال: ' . rsd_fp_jalali_date('j F Y', $expiry_raw) . '.' : '')
-            . ' برای آپلود روی اعلان کلیک کنید.';
+        $notice_title = sprintf('New Document Request: %s', $title_raw);
+        $notice_msg   = 'The admin has requested a document from you. '
+            . (!empty($period_raw) ? ' Related period: ' . trim($period_raw) . '.' : '')
+            . (!empty($expiry_raw) ? ' Submission deadline: ' . rsd_fp_jalali_date('j F Y', $expiry_raw) . '.' : '')
+            . ' Click the notification to upload.';
 
         self::add_notification($client_id, 'document_requested', $notice_title, $notice_msg, $doc_id);
 
         $client_user = get_user_by('id', $client_id);
         if ($client_user && !empty($client_user->user_email)) {
-            $body  = "درخواست مدرک جدیدی از سوی مدیریت برای شما ثبت شده است.\n\n";
-            $body .= "عنوان مدرک: " . ($title_raw ?: '# ' . $doc_id) . "\n";
-            if (!empty($period_raw))   $body .= "دوره: " . $period_raw . "\n";
-            if (!empty($meta['description'] ?? '')) $body .= "توضیحات: " . $meta['description'] . "\n";
-            if (!empty($expiry_raw))  $body .= "مهلت ارسال: " . rsd_fp_jalali_date('j F Y', $expiry_raw) . "\n";
-            $body .= "\nجهت آپلود به پرتال مراجعه کنید: " . self::client_incomplete_url($doc_id) . "\n";
-            @wp_mail($client_user->user_email, sprintf('درخواست مدرک جدید: %s', $title_raw), $body);
+            $body  = "A new document request has been submitted for you by the admin.\n\n";
+            $body .= "Document Title: " . ($title_raw ?: '# ' . $doc_id) . "\n";
+            if (!empty($period_raw))   $body .= "Period: " . $period_raw . "\n";
+            if (!empty($meta['description'] ?? '')) $body .= "Description: " . $meta['description'] . "\n";
+            if (!empty($expiry_raw))  $body .= "Submission deadline: " . rsd_fp_jalali_date('j F Y', $expiry_raw) . "\n";
+            $body .= "\nTo upload, visit the portal: " . self::client_incomplete_url($doc_id) . "\n";
+            @wp_mail($client_user->user_email, sprintf('New Document Request: %s', $title_raw), $body);
         }
     }
 
@@ -155,22 +155,22 @@ class Documents
             ? trim(($doc->year ?? '') . (!empty($doc->period) ? ' - ' . $doc->period : ''))
             : '';
 
-        $notice_title = sprintf('مدرک ناقص شده است: %s', $title_raw);
-        $notice_msg   = 'مدیر مدرک شما را ناقص ثبت کرده است. لطفاً نسخه صحیح را مجدداً در همان درخواست آپلود کنید.'
-            . (!empty($period_raw) ? ' دوره: ' . $period_raw . '.' : '')
-            . (!empty($expiry_raw) ? ' مهلت ارسال: ' . rsd_fp_jalali_date('j F Y', $expiry_raw) . '.' : '');
+        $notice_title = sprintf('Document marked incomplete: %s', $title_raw);
+        $notice_msg   = 'The admin has marked your document as incomplete. Please re-upload the correct version in the same request.'
+            . (!empty($period_raw) ? ' Period: ' . $period_raw . '.' : '')
+            . (!empty($expiry_raw) ? ' Submission deadline: ' . rsd_fp_jalali_date('j F Y', $expiry_raw) . '.' : '');
 
         self::add_notification($client_id, 'document_incomplete', $notice_title, $notice_msg, $doc_id);
 
         $client_user = get_user_by('id', $client_id);
         if ($client_user && !empty($client_user->user_email)) {
-            $body  = "مدیر مدرک زیر را ناقص ثبت کرده و از شما می‌خواهد نسخه صحیح را مجدداً بارگذاری کنید.\n\n";
-            $body .= "عنوان مدرک: " . ($title_raw ?: '# ' . $doc_id) . "\n";
-            if (!empty($period_raw))  $body .= "دوره: " . $period_raw . "\n";
-            if (!empty($doc->description ?? '')) $body .= "توضیحات: " . $doc->description . "\n";
-            if (!empty($expiry_raw)) $body .= "مهلت ارسال: " . rsd_fp_jalali_date('j F Y', $expiry_raw) . "\n";
-            $body .= "\nجهت آپلود مجدد وارد پرتال شوید: " . self::client_incomplete_url($doc_id) . "\n";
-            @wp_mail($client_user->user_email, sprintf('مدرک ناقص شده: %s', $title_raw), $body);
+            $body  = "The admin has marked the following document as incomplete and asks you to re-upload the correct version.\n\n";
+            $body .= "Document Title: " . ($title_raw ?: '# ' . $doc_id) . "\n";
+            if (!empty($period_raw))  $body .= "Period: " . $period_raw . "\n";
+            if (!empty($doc->description ?? '')) $body .= "Description: " . $doc->description . "\n";
+            if (!empty($expiry_raw)) $body .= "Submission deadline: " . rsd_fp_jalali_date('j F Y', $expiry_raw) . "\n";
+            $body .= "\nTo re-upload, enter the portal: " . self::client_incomplete_url($doc_id) . "\n";
+            @wp_mail($client_user->user_email, sprintf('Document Incomplete: %s', $title_raw), $body);
         }
     }
 
@@ -202,12 +202,12 @@ class Documents
         $cats = \RSD\FinancePanel\Core\Plugin::get_setting('document_categories', []);
         if (empty($cats)) {
             $cats = [
-                'invoice'      => esc_html__('فاکتور', 'rsd-finance-panel'),
-                'receipt'      => esc_html__('رسید', 'rsd-finance-panel'),
-                'contract'     => esc_html__('قرارداد', 'rsd-finance-panel'),
-                'tax_document' => esc_html__('سند مالیاتی', 'rsd-finance-panel'),
-                'payroll'      => esc_html__('حقوق و دستمزد', 'rsd-finance-panel'),
-                'other'        => esc_html__('سایر', 'rsd-finance-panel'),
+                'invoice'      => esc_html__('Invoice', 'rsd-finance-panel'),
+                'receipt'      => esc_html__('Receipt', 'rsd-finance-panel'),
+                'contract'     => esc_html__('Contract', 'rsd-finance-panel'),
+                'tax_document' => esc_html__('Tax Document', 'rsd-finance-panel'),
+                'payroll'      => esc_html__('Payroll', 'rsd-finance-panel'),
+                'other'        => esc_html__('Other', 'rsd-finance-panel'),
             ];
         }
         return $cats;
@@ -223,9 +223,9 @@ class Documents
     public static function get_statuses()
     {
         return [
-            'uploaded'   => [esc_html__('ارسال‌شده', 'rsd-finance-panel'),   'green'],
-            'incomplete' => [esc_html__('ناقص', 'rsd-finance-panel'),       'red'],
-            'approved'   => [esc_html__('تأییدشده', 'rsd-finance-panel'),   'purple'],
+            'uploaded'   => [esc_html__('Submitted', 'rsd-finance-panel'),   'green'],
+            'incomplete' => [esc_html__('Incomplete', 'rsd-finance-panel'),   'red'],
+            'approved'   => [esc_html__('Approved', 'rsd-finance-panel'),   'purple'],
         ];
     }
 

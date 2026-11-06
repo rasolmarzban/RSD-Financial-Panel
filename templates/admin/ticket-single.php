@@ -39,9 +39,9 @@ if (isset($_GET['return_status'])) {
         <div class="rsd-admin-card">
             <div class="rsd-empty">
                 <div class="rsd-empty-icon">🎟️</div>
-                <h3>تیکت پیدا نشد</h3>
-                <p>شناسه تیکت نامعتبر است یا حذف شده است.</p>
-                <a href="<?php echo esc_url($back_url); ?>" class="rsd-btn-admin primary">بازگشت به لیست تیکت‌ها</a>
+                <h3>Ticket Not Found</h3>
+                <p>The ticket ID is invalid or has been deleted.</p>
+                <a href="<?php echo esc_url($back_url); ?>" class="rsd-btn-admin primary">Back to Ticket List</a>
             </div>
         </div>
 </div>
@@ -71,23 +71,23 @@ if (isset($_GET['return_status'])) {
             <?php echo esc_html($ticket->subject); ?>
         </h1>
         <div style="margin-top:8px;display:flex;gap:18px;flex-wrap:wrap;color:#475569;font-size:13px">
-            <span>👤 <strong style="color:#0f172a"><?php echo esc_html($client ? $client->display_name : 'کاربر #' . $ticket->user_id); ?></strong></span>
+            <span>👤 <strong style="color:#0f172a"><?php echo esc_html($client ? $client->display_name : 'User #' . $ticket->user_id); ?></strong></span>
             <span>📧 <?php echo esc_html($client ? $client->user_email : '—'); ?></span>
-            <span>📅 ایجاد شده در <strong><?php echo esc_html(date_i18n('j F Y ساعت H:i', strtotime($ticket->created_at))); ?></strong></span>
+            <span>📅 Created on <strong><?php echo esc_html(date_i18n('j F Y H:i', strtotime($ticket->created_at))); ?></strong></span>
             <?php if (!empty($ticket->last_reply_at)) : ?>
-                <span>💬 آخرین پاسخ در <strong><?php echo esc_html(date_i18n('j F Y ساعت H:i', strtotime($ticket->last_reply_at))); ?></strong></span>
+                <span>💬 Last reply on <strong><?php echo esc_html(date_i18n('j F Y H:i', strtotime($ticket->last_reply_at))); ?></strong></span>
             <?php endif; ?>
         </div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
-        <a href="<?php echo esc_url($back_url); ?>" class="rsd-btn-admin secondary">← بازگشت</a>
+        <a href="<?php echo esc_url($back_url); ?>" class="rsd-btn-admin secondary">← Back</a>
         <a href="<?php echo esc_url(get_edit_user_link($ticket->user_id)); ?>" target="_blank" rel="noopener"
-            class="rsd-btn-admin secondary">👥 پروفایل مشتری</a>
+            class="rsd-btn-admin secondary">👥 Client Profile</a>
         <a href="<?php echo esc_url(add_query_arg(['view' => 'client', 'id' => $ticket->user_id], admin_url('admin.php?page=rsd-fp-clients'))); ?>"
-            class="rsd-btn-admin secondary">🔗 پرتال مشتری</a>
+            class="rsd-btn-admin secondary">🔗 Client Portal</a>
         <?php if (!$is_closed) : ?>
             <button type="button" class="rsd-btn-admin danger" id="rsd-close-ticket-btn"
-                data-ticket-id="<?php echo (int) $ticket->id; ?>">✖ بستن تیکت</button>
+                data-ticket-id="<?php echo (int) $ticket->id; ?>">✖ Close Ticket</button>
         <?php endif; ?>
     </div>
 </div>
@@ -98,7 +98,7 @@ if (isset($_GET['return_status'])) {
         <?php wp_nonce_field('rsd_fp_nonce', 'nonce'); ?>
         <input type="hidden" name="ticket_id" value="<?php echo (int) $ticket->id; ?>">
         <div style="display:flex;align-items:center;gap:8px">
-            <label for="q_status" style="font-weight:600;color:#0f172a">تغییر وضعیت:</label>
+            <label for="q_status" style="font-weight:600;color:#0f172a">Change status:</label>
             <select name="status" id="q_status">
                 <?php foreach ($statuses as $key => $label) : ?>
                     <option value="<?php echo esc_attr($key); ?>" <?php selected($ticket->status, $key); ?>>
@@ -108,7 +108,7 @@ if (isset($_GET['return_status'])) {
             </select>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
-            <label for="q_priority" style="font-weight:600;color:#0f172a">تغییر اولویت:</label>
+            <label for="q_priority" style="font-weight:600;color:#0f172a">Change priority:</label>
             <select name="priority" id="q_priority">
                 <?php foreach ($priorities as $key => $label) : ?>
                     <option value="<?php echo esc_attr($key); ?>" <?php selected($ticket->priority, $key); ?>>
@@ -118,7 +118,7 @@ if (isset($_GET['return_status'])) {
             </select>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
-            <label for="q_category" style="font-weight:600;color:#0f172a">تغییر دسته‌بندی:</label>
+            <label for="q_category" style="font-weight:600;color:#0f172a">Change category:</label>
             <select name="category" id="q_category">
                 <?php foreach ($categories as $key => $label) : ?>
                     <option value="<?php echo esc_attr($key); ?>" <?php selected($ticket->category, $key); ?>>
@@ -127,7 +127,7 @@ if (isset($_GET['return_status'])) {
                 <?php endforeach; ?>
             </select>
         </div>
-        <button type="submit" class="rsd-btn-admin small primary" id="rsd-apply-quick">اعمال تغییرات</button>
+        <button type="submit" class="rsd-btn-admin small primary" id="rsd-apply-quick">Apply Changes</button>
     </form>
 </div>
 
@@ -139,9 +139,9 @@ if (isset($_GET['return_status'])) {
             <div class="rsd-admin-card-header" style="margin-bottom:16px">
                 <div class="rsd-admin-card-title">
                     <span class="rsd-icon">💬</span>
-                    مکالمه (<?php echo (int) count($messages); ?> پیام)
+                    Conversation (<?php echo (int) count($messages); ?> messages)
                 </div>
-                <button type="button" class="rsd-btn-admin small secondary" id="rsd-refresh-messages">🔄 به‌روزرسانی</button>
+                <button type="button" class="rsd-btn-admin small secondary" id="rsd-refresh-messages">🔄 Refresh</button>
             </div>
 
             <div id="rsd-ticket-messages" class="rsd-ticket-chat"
@@ -149,7 +149,7 @@ if (isset($_GET['return_status'])) {
                 <?php if (empty($messages)) : ?>
                     <div class="rsd-empty" style="padding:40px 20px">
                         <div class="rsd-empty-icon">💬</div>
-                        <h3>هنوز پیامی ثبت نشده</h3>
+                        <h3>No messages yet</h3>
                     </div>
                     <?php else :
                     $cur_user = wp_get_current_user();
@@ -158,8 +158,8 @@ if (isset($_GET['return_status'])) {
                         $is_me = (int)$m->user_id === (int)$cur_user->ID;
                         $msg_user = $m->user_id === (int)$ticket->user_id ? $client : get_user_by('id', $m->user_id);
                         $align = $is_admin_reply ? 'right' : 'left';
-                        $user_label = $msg_user ? $msg_user->display_name : 'کاربر #' . $m->user_id;
-                        $role_label = $is_admin_reply ? 'مدیر شرکت' : 'مشتری';
+                        $user_label = $msg_user ? $msg_user->display_name : 'User #' . $m->user_id;
+                        $role_label = $is_admin_reply ? 'Company Admin' : 'Client';
                         $bubble_bg = $is_admin_reply ? 'linear-gradient(135deg,#6366f1 0%, #8b5cf6 100%)' : '#ffffff';
                         $bubble_color = $is_admin_reply ? '#ffffff' : '#0f172a';
                         $meta_color = $is_admin_reply ? 'rgba(255,255,255,.75)' : '#64748b';
@@ -209,12 +209,12 @@ if (isset($_GET['return_status'])) {
                     <?php wp_nonce_field('rsd_fp_nonce', 'nonce'); ?>
                     <input type="hidden" name="ticket_id" value="<?php echo (int) $ticket->id; ?>">
                     <textarea name="message" rows="4" required
-                        placeholder="✍️ پاسخ خود را بنویسید... (در صورت تمایل می‌توانید فایل نیز پیوست کنید)"
+                        placeholder="✍️ Write your reply... (you can also attach a file if you wish)"
                         style="width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:12px 14px;line-height:1.8;resize:vertical;min-height:110px"></textarea>
                     <div style="display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap">
                         <div style="display:flex;align-items:center;gap:14px">
                             <label class="rsd-attach-wrap" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border:1px dashed #cbd5e1;border-radius:8px;background:#f8fafc;cursor:pointer;color:#475569">
-                                <span>📎 پیوست فایل</span>
+                                <span>📎 Attach File</span>
                                 <input type="file" name="ticket_attachment" style="display:none"
                                     id="rsd-ticket-attachment">
                             </label>
@@ -223,20 +223,20 @@ if (isset($_GET['return_status'])) {
                         <div style="display:flex;gap:10px;align-items:center">
                             <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#475569">
                                 <input type="checkbox" name="as_client" value="1" id="rsd-as-client">
-                                پس از ارسال، تیکت را «منتظر پاسخ مشتری» کن (پیش‌فرض)
+                                After sending, set the ticket to "Waiting for Client Reply" (default)
                             </label>
                             <button type="submit" class="rsd-btn-admin primary">
-                                ➤ ارسال پاسخ
+                                ➤ Send Reply
                             </button>
                         </div>
                     </div>
                 </form>
             <?php else : ?>
                 <div style="background:#f1f5f9;padding:16px;border-radius:10px;border:1px solid #e2e8f0;color:#475569;text-align:center">
-                    این تیکت در وضعیت <strong><?php echo esc_html($statuses[$ticket->status] ?? $ticket->status); ?></strong> قرار دارد و امکان ارسال پاسخ جدید وجود ندارد.
-                    <button type="button" class="rsd-btn-admin small primary" style="margin-right:12px"
+                    This ticket is in <strong><?php echo esc_html($statuses[$ticket->status] ?? $ticket->status); ?></strong> status and new replies cannot be sent.
+                    <button type="button" class="rsd-btn-admin small primary" style="margin-left:12px"
                         onclick="document.getElementById('q_status').value='in_progress';document.getElementById('rsd-apply-quick').click()">
-                        باز کردن مجدد تیکت
+                        Reopen Ticket
                     </button>
                 </div>
             <?php endif; ?>
@@ -249,7 +249,7 @@ if (isset($_GET['return_status'])) {
         <!-- Client info -->
         <div class="rsd-admin-card">
             <div class="rsd-admin-card-title" style="margin-bottom:14px">
-                <span class="rsd-icon">👤</span> اطلاعات مشتری
+                <span class="rsd-icon">👤</span> Client Information
             </div>
             <?php if ($client) : ?>
                 <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px 4px 14px;border-bottom:1px dashed #e2e8f0;margin-bottom:14px">
@@ -261,37 +261,37 @@ if (isset($_GET['return_status'])) {
                 </div>
                 <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:#334155">
                     <div style="display:flex;justify-content:space-between;gap:10px">
-                        <span style="color:#64748b">📧 ایمیل:</span>
+                        <span style="color:#64748b">📧 Email:</span>
                         <a href="mailto:<?php echo esc_attr($client->user_email); ?>" style="font-weight:600"><?php echo esc_html($client->user_email); ?></a>
                     </div>
                     <?php if (!empty($client->user_url)) : ?>
                         <div style="display:flex;justify-content:space-between;gap:10px">
-                            <span style="color:#64748b">🌐 وب‌سایت:</span>
+                            <span style="color:#64748b">🌐 Website:</span>
                             <a href="<?php echo esc_url($client->user_url); ?>" target="_blank" rel="noopener" style="font-weight:600"><?php echo esc_html($client->user_url); ?></a>
                         </div>
                     <?php endif; ?>
                     <div style="display:flex;justify-content:space-between;gap:10px">
-                        <span style="color:#64748b">📅 ثبت‌نام:</span>
+                        <span style="color:#64748b">📅 Registered:</span>
                         <span style="font-weight:600"><?php echo esc_html(date_i18n('j F Y', strtotime($client->user_registered))); ?></span>
                     </div>
                     <div style="display:flex;justify-content:space-between;gap:10px">
-                        <span style="color:#64748b">🆔 شناسه:</span>
+                        <span style="color:#64748b">🆔 ID:</span>
                         <span style="font-weight:600">#<?php echo (int) $client->ID; ?></span>
                     </div>
                 </div>
                 <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
                     <a href="<?php echo esc_url(add_query_arg(['view' => 'client', 'id' => $client->ID], admin_url('admin.php?page=rsd-fp-clients'))); ?>"
-                        class="rsd-btn-admin small primary" style="flex:1;justify-content:center">پرتفویل مالی</a>
+                        class="rsd-btn-admin small primary" style="flex:1;justify-content:center">Financial Portfolio</a>
                     <a href="<?php echo esc_url(get_edit_user_link($client->ID)); ?>" target="_blank" rel="noopener"
-                        class="rsd-btn-admin small secondary" style="flex:1;justify-content:center">ویرایش کاربر</a>
+                        class="rsd-btn-admin small secondary" style="flex:1;justify-content:center">Edit User</a>
                 </div>
                 <a href="<?php echo esc_url(add_query_arg(['status' => 'all', 'client_id' => $client->ID], admin_url('admin.php?page=rsd-fp-tickets'))); ?>"
                     class="rsd-btn-admin small secondary" style="margin-top:8px;width:100%;justify-content:center">
-                    🎟️ همه تیکت‌های این مشتری
+                    🎟️ All Tickets from This Client
                 </a>
             <?php else : ?>
                 <div class="rsd-empty" style="padding:24px 8px">
-                    <p>کاربر یافت نشد.</p>
+                    <p>User not found.</p>
                 </div>
             <?php endif; ?>
         </div>
@@ -299,7 +299,7 @@ if (isset($_GET['return_status'])) {
         <!-- Activity Summary -->
         <div class="rsd-admin-card">
             <div class="rsd-admin-card-title" style="margin-bottom:14px">
-                <span class="rsd-icon">📊</span> خلاصه فعالیت
+                <span class="rsd-icon">📊</span> Activity Summary
             </div>
             <?php
             global $wpdb;
@@ -316,23 +316,23 @@ if (isset($_GET['return_status'])) {
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
                 <div class="rsd-mini-stat purple">
                     <div class="num"><?php echo (int)$user_tickets; ?></div>
-                    <div class="lbl">کل تیکت‌ها</div>
+                    <div class="lbl">Total Tickets</div>
                 </div>
                 <div class="rsd-mini-stat blue">
                     <div class="num"><?php echo (int)$user_open; ?></div>
-                    <div class="lbl">باز</div>
+                    <div class="lbl">Open</div>
                 </div>
                 <div class="rsd-mini-stat teal">
                     <div class="num"><?php echo (int)$user_docs; ?></div>
-                    <div class="lbl">مدارک</div>
+                    <div class="lbl">Documents</div>
                 </div>
                 <div class="rsd-mini-stat orange">
                     <div class="num"><?php echo (int)$user_invoices; ?></div>
-                    <div class="lbl">فاکتورها</div>
+                    <div class="lbl">Invoices</div>
                 </div>
             </div>
             <div style="margin-top:12px;padding:12px 14px;border-radius:10px;background:linear-gradient(135deg,#fef3c7 0%, #fef9c3 100%);border:1px solid #fde68a;color:#78350f">
-                <div style="font-size:12px;opacity:.85">💸 مجموع بدهی مشتری</div>
+                <div style="font-size:12px;opacity:.85">💸 Client Total Debt</div>
                 <div style="font-size:18px;font-weight:800;margin-top:4px">
                     <?php echo esc_html(rsd_fp_currency($user_outstanding)); ?>
                 </div>
@@ -342,18 +342,18 @@ if (isset($_GET['return_status'])) {
         <!-- Quick actions -->
         <div class="rsd-admin-card">
             <div class="rsd-admin-card-title" style="margin-bottom:14px">
-                <span class="rsd-icon">⚡</span> عملیات سریع
+                <span class="rsd-icon">⚡</span> Quick Actions
             </div>
             <div style="display:flex;flex-direction:column;gap:8px">
                 <a href="<?php echo esc_url(add_query_arg(['client_id' => $uid], admin_url('admin.php?page=rsd-fp-documents'))); ?>"
-                    class="rsd-btn-admin small secondary">📁 مشاهده مدارک مشتری</a>
+                    class="rsd-btn-admin small secondary">📁 View Client Documents</a>
                 <a href="<?php echo esc_url(add_query_arg(['view' => 'single', 'id' => $uid, 'tab' => 'invoices'], admin_url('admin.php?page=rsd-fp-clients'))); ?>"
-                    class="rsd-btn-admin small secondary">📑 فاکتورهای مشتری</a>
+                    class="rsd-btn-admin small secondary">📑 Client Invoices</a>
                 <a href="<?php echo esc_url(add_query_arg(['client_id' => $uid], admin_url('admin.php?page=rsd-fp-calendar'))); ?>"
-                    class="rsd-btn-admin small secondary">📅 رویدادها و جلسات</a>
+                    class="rsd-btn-admin small secondary">📅 Events and Meetings</a>
                 <button type="button" class="rsd-btn-admin small secondary" id="rsd-new-ticket-user-btn"
                     data-user-id="<?php echo (int) $uid; ?>">
-                    🎟️ ثبت تیکت جدید برای این مشتری
+                    🎟️ Create New Ticket for This Client
                 </button>
             </div>
         </div>
@@ -379,7 +379,7 @@ if (isset($_GET['return_status'])) {
             e.preventDefault();
             var $btn = $replyForm.find('[type="submit"]');
             var origText = $btn.text();
-            $btn.prop('disabled', true).text('⏳ در حال ارسال...');
+            $btn.prop('disabled', true).text('⏳ Sending...');
 
             var formData = new FormData(this);
             formData.append('action', 'rsd_fp_reply_ticket');
@@ -402,19 +402,19 @@ if (isset($_GET['return_status'])) {
                             location.reload();
                         }, 400);
                     } else {
-                        alert((res && res.data && res.data.message) || 'خطا در ارسال پاسخ');
+                        alert((res && res.data && res.data.message) || 'Error sending reply');
                     }
                 },
                 error: function() {
                     $btn.prop('disabled', false).text(origText);
-                    alert('ارتباط با سرور قطع شد.');
+                    alert('Connection to the server was lost.');
                 }
             });
         });
 
         // Close ticket
         $('#rsd-close-ticket-btn').on('click', function() {
-            if (!confirm('آیا از بستن این تیکت اطمینان دارید؟')) return;
+            if (!confirm('Are you sure you want to close this ticket?')) return;
             var $b = $(this);
             $b.prop('disabled', true).text('...');
             $.post(ajax_url, {
@@ -427,12 +427,12 @@ if (isset($_GET['return_status'])) {
                         location.reload();
                     }, 300);
                 } else {
-                    alert((res && res.data && res.data.message) || 'خطا');
-                    $b.prop('disabled', false).text('✖ بستن تیکت');
+                    alert((res && res.data && res.data.message) || 'Error');
+                    $b.prop('disabled', false).text('✖ Close Ticket');
                 }
             }, 'json').fail(function() {
-                alert('ارتباط قطع شد');
-                $b.prop('disabled', false).text('✖ بستن تیکت');
+                alert('Connection lost');
+                $b.prop('disabled', false).text('✖ Close Ticket');
             });
         });
 
@@ -440,24 +440,24 @@ if (isset($_GET['return_status'])) {
         $('#rsd-ticket-quick-change').on('submit', function(e) {
             e.preventDefault();
             var btn = $('#rsd-apply-quick');
-            btn.prop('disabled', true).text('⏳ در حال ثبت...');
+            btn.prop('disabled', true).text('⏳ Saving...');
             var data = $(this).serializeArray();
             data.push({
                 name: 'action',
                 value: 'rsd_fp_admin_update_ticket'
             });
             $.post(ajax_url, $.param(data), function(res) {
-                btn.prop('disabled', false).text('اعمال تغییرات');
+                btn.prop('disabled', false).text('Apply Changes');
                 if (res && res.success) {
                     setTimeout(function() {
                         location.reload();
                     }, 250);
                 } else {
-                    alert((res && res.data && res.data.message) || 'خطا در اعمال تغییرات');
+                    alert((res && res.data && res.data.message) || 'Error applying changes');
                 }
             }, 'json').fail(function() {
-                btn.prop('disabled', false).text('اعمال تغییرات');
-                alert('ارتباط با سرور قطع شد');
+                btn.prop('disabled', false).text('Apply Changes');
+                alert('Connection to the server was lost');
             });
         });
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Calendar module class
  *
@@ -38,14 +39,14 @@ class Calendar
         $cats = \RSD\FinancePanel\Core\Plugin::get_setting('calendar_categories', []);
         if (empty($cats)) {
             $cats = [
-                'tax_deadline'    => esc_html__('موعد مالیاتی', 'rsd-finance-panel'),
-                'document_due'    => esc_html__('موعد ارسال مدارک', 'rsd-finance-panel'),
-                'payment_due'     => esc_html__('موعد پرداخت', 'rsd-finance-panel'),
-                'payroll'         => esc_html__('حقوق و دستمزد', 'rsd-finance-panel'),
-                'meeting'         => esc_html__('جلسات', 'rsd-finance-panel'),
-                'company_affairs' => esc_html__('امور شرکت', 'rsd-finance-panel'),
-                'client_request'  => esc_html__('درخواست مشتری', 'rsd-finance-panel'),
-                'other'           => esc_html__('سایر موارد', 'rsd-finance-panel'),
+                'tax_deadline'    => esc_html__('Tax Deadline', 'rsd-finance-panel'),
+                'document_due'    => esc_html__('Document Submission Deadline', 'rsd-finance-panel'),
+                'payment_due'     => esc_html__('Payment Due', 'rsd-finance-panel'),
+                'payroll'         => esc_html__('Payroll', 'rsd-finance-panel'),
+                'meeting'         => esc_html__('Meetings', 'rsd-finance-panel'),
+                'company_affairs' => esc_html__('Company Affairs', 'rsd-finance-panel'),
+                'client_request'  => esc_html__('Client Request', 'rsd-finance-panel'),
+                'other'           => esc_html__('Other', 'rsd-finance-panel'),
             ];
         }
         return $cats;
@@ -80,10 +81,10 @@ class Calendar
     public static function get_statuses()
     {
         return [
-            'pending'      => esc_html__('در انتظار تأیید', 'rsd-finance-panel'),
-            'confirmed'    => esc_html__('تأییدشده', 'rsd-finance-panel'),
-            'needs_change' => esc_html__('نیاز به تغییر', 'rsd-finance-panel'),
-            'rejected'     => esc_html__('ردشده', 'rsd-finance-panel'),
+            'pending'      => esc_html__('Pending Approval', 'rsd-finance-panel'),
+            'confirmed'    => esc_html__('Approved', 'rsd-finance-panel'),
+            'needs_change' => esc_html__('Needs Change', 'rsd-finance-panel'),
+            'rejected'     => esc_html__('Rejected', 'rsd-finance-panel'),
         ];
     }
 
@@ -95,10 +96,10 @@ class Calendar
     public static function get_views()
     {
         return [
-            'day'    => esc_html__('روزانه', 'rsd-finance-panel'),
-            'week'   => esc_html__('هفتگی', 'rsd-finance-panel'),
-            'month'  => esc_html__('ماهانه', 'rsd-finance-panel'),
-            'year'   => esc_html__('سالانه', 'rsd-finance-panel'),
+            'day'    => esc_html__('Daily', 'rsd-finance-panel'),
+            'week'   => esc_html__('Weekly', 'rsd-finance-panel'),
+            'month'  => esc_html__('Monthly', 'rsd-finance-panel'),
+            'year'   => esc_html__('Yearly', 'rsd-finance-panel'),
         ];
     }
 

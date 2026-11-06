@@ -80,7 +80,7 @@
     if (loading) {
       $btn.data("orig-text", $btn.text());
       $btn.prop("disabled", true).addClass("rsd-btn-loading");
-      $btn.text(I18N.processing || "در حال پردازش ...");
+      $btn.text(I18N.processing || "Processing ...");
     } else {
       $btn.prop("disabled", false).removeClass("rsd-btn-loading");
       var t = $btn.data("orig-text");
@@ -100,13 +100,13 @@
         if (resp && resp.success) {
           if (typeof cbOk === "function") cbOk(resp.data || {});
         } else {
-          var msg = resp && resp.data && resp.data.message ? resp.data.message : I18N.error || "خطا رخ داد.";
+          var msg = resp && resp.data && resp.data.message ? resp.data.message : I18N.error || "An error occurred.";
           if (typeof cbErr === "function") cbErr(msg);
           else showMsg(msg, "error");
         }
       })
       .fail(function () {
-        var msg = I18N.network_error || "خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.";
+        var msg = I18N.network_error || "Error connecting to the server. Please try again.";
         if (typeof cbErr === "function") cbErr(msg);
         else showMsg(msg, "error");
       });
@@ -121,7 +121,7 @@
     var $phone = $form.find(phoneInput);
     var phone = $.trim($phone.val());
     if (!phone) {
-      showMsg(I18N.phone_required || "لطفاً شماره موبایل را وارد کنید.", "error");
+      showMsg(I18N.phone_required || "Please enter your mobile number.", "error");
       $phone.focus();
       return;
     }
@@ -163,12 +163,12 @@
         $resend
           .prop("disabled", false)
           .removeClass("rsd-btn-disabled")
-          .text(I18N.resend_code || "ارسال مجدد کد");
+          .text(I18N.resend_code || "Resend code");
         return;
       }
       var m = Math.floor(seconds / 60);
       var s = seconds % 60;
-      $resend.text((I18N.resend_in || "ارسال مجدد پس از") + " " + (m > 0 ? m + ":" : "") + (s < 10 ? "0" + s : s));
+      $resend.text((I18N.resend_in || "Resend in") + " " + (m > 0 ? m + ":" : "") + (s < 10 ? "0" + s : s));
       seconds--;
     }
     tick();
@@ -191,11 +191,11 @@
     var redirectTo = $.trim($form.find("#rsd-auth-login-redirect").val()) || "";
 
     if (!identifier || !password) {
-      showMsg(I18N.fill_required || "لطفاً فیلدهای الزامی را تکمیل کنید.", "error");
+      showMsg(I18N.fill_required || "Please fill in the required fields.", "error");
       return;
     }
     if (OTP_ENABLED && !$form.find(".rsd-auth-step2").is(":visible") && !otp) {
-      showMsg(I18N.enter_otp || "لطفاً کد تأیید را وارد کنید.", "error");
+      showMsg(I18N.enter_otp || "Please enter the verification code.", "error");
       return;
     }
 
@@ -238,23 +238,23 @@
     var redirectTo = $.trim($form.find("#rsd-auth-register-redirect").val()) || "";
 
     if (!phone) {
-      showMsg(I18N.phone_required || "شماره موبایل الزامی است.", "error");
+      showMsg(I18N.phone_required || "Mobile number is required.", "error");
       return;
     }
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      showMsg(I18N.invalid_email || "ایمیل وارد شده معتبر نیست.", "error");
+      showMsg(I18N.invalid_email || "The email entered is not valid.", "error");
       return;
     }
     if (!pw || pw.length < PW_MIN) {
-      showMsg((I18N.password_short || "رمز عبور باید حداقل %d کاراکتر باشد.").replace("%d", PW_MIN), "error");
+      showMsg((I18N.password_short || "Password must be at least %d characters.").replace("%d", PW_MIN), "error");
       return;
     }
     if (pw !== pwc) {
-      showMsg(I18N.password_mismatch || "رمز عبور و تکرار آن با هم مطابقت ندارند.", "error");
+      showMsg(I18N.password_mismatch || "Password and its confirmation do not match.", "error");
       return;
     }
     if (OTP_ENABLED && !$form.find(".rsd-auth-step2").is(":visible") && !otp) {
-      showMsg(I18N.enter_otp || "لطفاً کد تأیید را وارد کنید.", "error");
+      showMsg(I18N.enter_otp || "Please enter the verification code.", "error");
       return;
     }
 
@@ -291,7 +291,7 @@
     clearMsg();
     var id = $.trim($form.find("#rsd-auth-lost-identifier").val());
     if (!id) {
-      showMsg(I18N.enter_id || "لطفاً شماره موبایل یا ایمیل را وارد کنید.", "error");
+      showMsg(I18N.enter_id || "Please enter your mobile number or email.", "error");
       return;
     }
     setLoading($btn, true);
@@ -321,15 +321,15 @@
     var npwc = $form.find("#rsd-auth-resetpass-new-confirm").val();
 
     if (!key || !login) {
-      showMsg(I18N.invalid_reset_request || "درخواست بازنشانی معتبر نیست.", "error");
+      showMsg(I18N.invalid_reset_request || "The reset request is not valid.", "error");
       return;
     }
     if (!npw || npw.length < PW_MIN) {
-      showMsg((I18N.password_short || "رمز عبور باید حداقل %d کاراکتر باشد.").replace("%d", PW_MIN), "error");
+      showMsg((I18N.password_short || "Password must be at least %d characters.").replace("%d", PW_MIN), "error");
       return;
     }
     if (npw !== npwc) {
-      showMsg(I18N.password_mismatch || "رمز عبور و تکرار آن با هم مطابقت ندارند.", "error");
+      showMsg(I18N.password_mismatch || "Password and its confirmation do not match.", "error");
       return;
     }
     setLoading($btn, true);
@@ -374,18 +374,18 @@
       if (initialAction === "register") initialAction = "login";
     }
     if (qs("loggedout") === "true") {
-      showMsg(I18N.logged_out || "شما با موفقیت از سامانه خارج شدید.", "success");
+      showMsg(I18N.logged_out || "You have been logged out successfully.", "success");
     }
     if (qs("passwordreset") === "true") {
-      showMsg(I18N.pw_reset_success || "رمز عبور شما با موفقیت تغییر کرد. اکنون می‌توانید وارد شوید.", "success");
+      showMsg(I18N.pw_reset_success || "Your password has been changed successfully. You can now log in.", "success");
       if (initialAction !== "resetpass") initialAction = "login";
     }
     if (qs("error") === "expiredkey") {
-      showMsg(I18N.key_expired || "لینک بازنشانی منقضی شده است. لطفاً دوباره درخواست دهید.", "error");
+      showMsg(I18N.key_expired || "The reset link has expired. Please request a new one.", "error");
       initialAction = "lostpassword";
     }
     if (qs("error") === "invalidkey") {
-      showMsg(I18N.key_invalid || "لینک بازنشانی معتبر نیست.", "error");
+      showMsg(I18N.key_invalid || "The reset link is not valid.", "error");
       initialAction = "lostpassword";
     }
 

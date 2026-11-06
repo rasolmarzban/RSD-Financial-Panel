@@ -28,7 +28,7 @@
         if (typeof cb === "function") cb(res);
       })
       .fail(function () {
-        if (typeof cb === "function") cb({ success: false, data: { message: "خطا در برقراری ارتباط با سرور." } });
+        if (typeof cb === "function") cb({ success: false, data: { message: "Error connecting to the server." } });
       });
   }
 
@@ -47,57 +47,18 @@
     }, 3800);
   }
 
-  // --- Jalali calendar helpers (U.M.A 33-year leap cycle, server PHP mirrors these exactly) ---
+  // --- Gregorian calendar helpers (server PHP mirrors these exactly) ---
   function gregorianPartsToJalali(gy, gm, gd) {
-    var g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-    gy = gy - 1600;
-    gm = gm - 1;
-    gd = gd - 1;
-    var gy2 = gm > 1 ? gy + 1 : gy;
-    var days = 365 * gy + Math.floor((gy2 + 3) / 4) - Math.floor((gy2 + 99) / 100) + Math.floor((gy2 + 399) / 400) + gd + g_d_m[gm];
-    var jy = -1595 + 33 * Math.floor(days / 12053);
-    days %= 12053;
-    jy += 4 * Math.floor(days / 1461);
-    days %= 1461;
-    if (days > 365) {
-      jy += Math.floor((days - 1) / 365);
-      days = (days - 1) % 365;
-    }
-    var jm, jd;
-    if (days < 186) {
-      jm = 1 + Math.floor(days / 31);
-      jd = 1 + (days % 31);
-    } else {
-      jm = 7 + Math.floor((days - 186) / 30);
-      jd = 1 + ((days - 186) % 30);
-    }
-    return [jy, jm, jd];
-  }
-  function jalaliPartsToGregorian(jy, jm, jd) {
-    jy = jy + 1595;
-    var days = -355668 + 365 * jy + Math.floor((jy - 1) / 33) * 8 + Math.floor((((jy - 1) % 33) + 3) / 4) + ((jm < 7 ? (jm - 1) * 31 : (jm - 7) * 30 + 186) + jd);
-    var gy = 400 * Math.floor(days / 146097);
-    days %= 146097;
-    if (days > 36524) {
-      gy += 100 * Math.floor(--days / 36524);
-      days %= 36524;
-      if (days >= 365) days++;
-    }
-    gy += 4 * Math.floor(days / 1461);
-    days %= 1461;
-    if (days > 365) {
-      gy += Math.floor((days - 1) / 365);
-      days = (days - 1) % 365;
-    }
-    var gd = days + 1;
-    var sal_a = [0, 31, (gy % 4 === 0 && gy % 100 !== 0) || gy % 400 === 0 ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    var gm = 0;
-    for (gm = 0; gm < 13 && gd > sal_a[gm]; gm++) gd -= sal_a[gm];
+    // Gregorian passthrough (kept for caller compatibility)
     return [gy, gm, gd];
   }
-  var jalaliMonthNames = ["", "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"];
+  function jalaliPartsToGregorian(jy, jm, jd) {
+    // Gregorian passthrough (kept for caller compatibility)
+    return [jy, jm, jd];
+  }
+  var jalaliMonthNames = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-  // Accepts Gregorian string "YYYY-MM-DD" (or timestamp) → returns Jalali date string in requested format
+  // Accepts Gregorian string "YYYY-MM-DD" (or timestamp) → returns Gregorian date string in requested format
   //   Supported: j=day-no-zero, d=day-zero, n=month-no-zero, m=month-zero, F=month-name, Y=4-digit year
   function gregorianToJalali(gInput, format) {
     format = format || "Y/m/d";
@@ -138,7 +99,7 @@
     return out;
   }
 
-  // Parse Jalali input "YYYY/MM/DD" (accepts slashes, dashes, dots, Persian/Arabic numerals)
+  // Parse a date input "YYYY/MM/DD" (accepts slashes, dashes, dots, Persian/Arabic numerals)
   // Returns Gregorian "YYYY-MM-DD" on success, or "" on failure.
   function parseJalaliToGregorian(input) {
     input = String(input || "").trim();
@@ -152,35 +113,25 @@
     }
     var m = /^(\d{4})[\-\/\.](\d{1,2})[\-\/\.](\d{1,2})$/.exec(input);
     if (!m) return "";
-    var jy = parseInt(m[1], 10),
-      jm = parseInt(m[2], 10),
-      jd = parseInt(m[3], 10);
-    if (jy < 1200 || jy > 1600 || jm < 1 || jm > 12 || jd < 1 || jd > 31) return "";
-    if (jm >= 7 && jd > 30) return "";
-    if (jm === 12) {
-      // Verify round-trip of Esfand 30 (leap year check)
-      var tmp = jalaliPartsToGregorian(jy, 12, 30);
-      var back = gregorianPartsToJalali(tmp[0], tmp[1], tmp[2]);
-      if (!(back[0] === jy && back[1] === 12 && back[2] === 30)) {
-        if (jd > 29) return "";
-      }
-    }
-    var g = jalaliPartsToGregorian(jy, jm, jd);
+    var gy = parseInt(m[1], 10),
+      gm = parseInt(m[2], 10),
+      gd = parseInt(m[3], 10);
+    if (gm < 1 || gm > 12 || gd < 1 || gd > 31) return "";
     var pn = function (n) {
       return n < 10 ? "0" + n : "" + n;
     };
-    return g[0] + "-" + pn(g[1]) + "-" + pn(g[2]);
+    return gy + "-" + pn(gm) + "-" + pn(gd);
   }
 
   function formatSize(bytes) {
     bytes = parseInt(bytes, 10) || 0;
     if (!bytes) return "";
-    if (bytes < 1024) return bytes + " بایت";
+    if (bytes < 1024) return bytes + " B";
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1).replace(/\.0$/, "") + " KB";
     return (bytes / (1024 * 1024)).toFixed(2).replace(/\.00$/, "") + " MB";
   }
 
-  // Server-generated dates: "YYYY-MM-DD HH:MM:SS" local WP time → localized Jalali j F Y
+  // Server-generated dates: "YYYY-MM-DD HH:MM:SS" local WP time → localized j F Y
   function formatJalaliFull(dbDate) {
     if (!dbDate) return "";
     // Parse local MySQL date as local time
@@ -206,7 +157,7 @@
 
   $(document).ready(function () {
     // --- Render current-document preview panel (in upload modal) from a doc object.
-    //     Also fills all form fields with the same values (converting expiry_date → Jalali text)
+    //     Also fills all form fields with the same values (converting expiry_date → date text)
     function renderCurrentDocPreview(doc, $modal) {
       $modal = $modal || $("#rsd-upload-modal");
       var $preview = $modal.find(".rsd-current-doc-preview");
@@ -289,7 +240,7 @@
         if (doc) {
           renderCurrentDocPreview(doc, $modal);
           if ($heading.data("original")) {
-            $heading.text("جایگزینی مدرک ناقص: " + (doc.title || "#" + docId));
+            $heading.text("Replacing incomplete document: " + (doc.title || "#" + docId));
           }
         } else {
           // Doc unavailable in JS map (shouldn't happen now but be safe):
@@ -319,7 +270,7 @@
       if (e.target === this) ($(this).removeClass("show"), $("body").css("overflow", ""));
     });
 
-    // --- Validate Jalali date fields on forms that carry expiry_date.
+    // --- Validate date fields on forms that carry expiry_date.
     //     (Server-side `normalize_expiry` accepts either format, but JS error is faster feedback.)
     function validateExpiryDate($form, allowEmpty) {
       var $field = $form.find('input[name="expiry_date"]');
@@ -330,7 +281,7 @@
       if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return true;
       var ok = !!parseJalaliToGregorian(raw);
       if (!ok) {
-        rsdToast("فرمت تاریخ انقضا نامعتبر است. لطفاً با قالب ۱۴۰۴/۰۶/۱۵ وارد کنید.", "error");
+        rsdToast("Invalid expiry date format. Please enter it in the format 2025/06/15.", "error");
         $field.focus().select();
       }
       return ok;
@@ -360,18 +311,18 @@
       })
         .done(function (res) {
           if (res.success) {
-            rsdToast(res.data.message || "با موفقیت ثبت شد.", "success");
+            rsdToast(res.data.message || "Saved successfully.", "success");
             $form[0].reset();
             closeModal($form.closest(".rsd-modal-backdrop").attr("id"));
             setTimeout(function () {
               location.reload();
             }, 1000);
           } else {
-            rsdToast(res.data.message || "خطا رخ داد.", "error");
+            rsdToast(res.data.message || "An error occurred.", "error");
           }
         })
         .fail(function () {
-          rsdToast("خطا در برقراری ارتباط.", "error");
+          rsdToast("Error connecting.", "error");
         })
         .always(function () {
           $btn.prop("disabled", false).html(origBtn);
@@ -400,17 +351,17 @@
       })
         .done(function (res) {
           if (res.success) {
-            rsdToast(res.data.message || "مدرک با موفقیت بارگذاری شد.", "success");
+            rsdToast(res.data.message || "Document uploaded successfully.", "success");
             $form[0].reset();
             setTimeout(function () {
               location.reload();
             }, 900);
           } else {
-            rsdToast(res.data.message || "خطا در بارگذاری.", "error");
+            rsdToast(res.data.message || "Error uploading.", "error");
           }
         })
         .fail(function () {
-          rsdToast("خطا در ارتباط.", "error");
+          rsdToast("Connection error.", "error");
         })
         .always(function () {
           $btn.prop("disabled", false).html(origBtn);
@@ -424,12 +375,12 @@
       var docId = $(this).data("delete-document");
       rsdAjax("delete_document", { doc_id: docId }, function (res) {
         if (res.success) {
-          rsdToast(res.data.message || "حذف شد.", "success");
+          rsdToast(res.data.message || "Deleted.", "success");
           setTimeout(function () {
             location.reload();
           }, 700);
         } else {
-          rsdToast(res.data.message || "خطا در حذف.", "error");
+          rsdToast(res.data.message || "Error deleting.", "error");
         }
       });
     });
@@ -445,13 +396,13 @@
       rsdAjax("create_ticket", $form.serialize(), function (res) {
         $btn.prop("disabled", false).html(orig);
         if (res.success) {
-          rsdToast(res.data.message || "تیکت ثبت شد.", "success");
+          rsdToast(res.data.message || "Ticket submitted.", "success");
           closeModal($form.closest(".rsd-modal-backdrop").attr("id"));
           setTimeout(function () {
             location.reload();
           }, 900);
         } else {
-          rsdToast(res.data.message || "خطا رخ داد.", "error");
+          rsdToast(res.data.message || "An error occurred.", "error");
         }
       });
     });
@@ -479,17 +430,17 @@
         .done(function (res) {
           $btn.prop("disabled", false).html(orig);
           if (res.success) {
-            rsdToast(res.data.message || "پاسخ ارسال شد.", "success");
+            rsdToast(res.data.message || "Reply sent.", "success");
             setTimeout(function () {
               location.reload();
             }, 800);
           } else {
-            rsdToast(res.data.message || "خطا در ارسال.", "error");
+            rsdToast(res.data.message || "Error sending.", "error");
           }
         })
         .fail(function () {
           $btn.prop("disabled", false).html(orig);
-          rsdToast("خطا در ارتباط.", "error");
+          rsdToast("Connection error.", "error");
         });
     });
 
@@ -500,12 +451,12 @@
       var tId = $(this).data("close-ticket");
       rsdAjax("close_ticket", { ticket_id: tId }, function (res) {
         if (res.success) {
-          rsdToast(res.data.message || "تیکت بسته شد.", "success");
+          rsdToast(res.data.message || "Ticket closed.", "success");
           setTimeout(function () {
             location.reload();
           }, 700);
         } else {
-          rsdToast(res.data.message || "خطا.", "error");
+          rsdToast(res.data.message || "Error.", "error");
         }
       });
     });
@@ -521,12 +472,12 @@
       rsdAjax("submit_company_changes", $form.serialize(), function (res) {
         $btn.prop("disabled", false).html(orig);
         if (res.success) {
-          rsdToast(res.data.message || "تغییرات برای تأیید ارسال شد.", "success");
+          rsdToast(res.data.message || "Changes sent for approval.", "success");
           setTimeout(function () {
             location.reload();
           }, 600);
         } else {
-          rsdToast(res.data.message || "خطا در ذخیره.", "error");
+          rsdToast(res.data.message || "Error saving.", "error");
         }
       });
     });
@@ -542,12 +493,12 @@
       rsdAjax("submit_service_request", $form.serialize(), function (res) {
         $btn.prop("disabled", false).html(orig);
         if (res.success) {
-          rsdToast(res.data.message || "درخواست شما ثبت شد.", "success");
+          rsdToast(res.data.message || "Your request has been submitted.", "success");
           setTimeout(function () {
             location.reload();
           }, 1000);
         } else {
-          rsdToast(res.data.message || "خطا در ثبت درخواست.", "error");
+          rsdToast(res.data.message || "Error submitting request.", "error");
         }
       });
     });
@@ -574,13 +525,13 @@
       rsdAjax("request_meeting", $form.serialize(), function (res) {
         $btn.prop("disabled", false).html(orig);
         if (res.success) {
-          rsdToast(res.data.message || "درخواست جلسه ثبت شد.", "success");
+          rsdToast(res.data.message || "Meeting request submitted.", "success");
           closeModal($form.closest(".rsd-modal-backdrop").attr("id"));
           setTimeout(function () {
             location.reload();
           }, 800);
         } else {
-          rsdToast(res.data.message || "خطا.", "error");
+          rsdToast(res.data.message || "Error.", "error");
         }
       });
     });
@@ -596,13 +547,13 @@
       rsdAjax("create_calendar_event", $form.serialize(), function (res) {
         $btn.prop("disabled", false).html(orig);
         if (res.success) {
-          rsdToast(res.data.message || "موعد برای تأیید ثبت شد.", "success");
+          rsdToast(res.data.message || "Appointment submitted for approval.", "success");
           closeModal($form.closest(".rsd-modal-backdrop").attr("id"));
           setTimeout(function () {
             location.reload();
           }, 800);
         } else {
-          rsdToast(res.data.message || "خطا در ثبت.", "error");
+          rsdToast(res.data.message || "Error saving.", "error");
         }
       });
     });
@@ -614,12 +565,12 @@
       var id = $(this).data("delete-event");
       rsdAjax("delete_calendar_event", { event_id: id }, function (res) {
         if (res.success) {
-          rsdToast(res.data.message || "حذف شد.", "success");
+          rsdToast(res.data.message || "Deleted.", "success");
           setTimeout(function () {
             location.reload();
           }, 700);
         } else {
-          rsdToast(res.data.message || "خطا.", "error");
+          rsdToast(res.data.message || "Error.", "error");
         }
       });
     });
@@ -639,7 +590,7 @@
         if (this.files.length) {
           $area.addClass("dragover");
           var $label = $area.find(".upload-text");
-          if ($label.length) $label.text(this.files.length + " فایل انتخاب شد");
+          if ($label.length) $label.text(this.files.length + " file(s) selected");
         }
       });
 
@@ -669,7 +620,7 @@
       var $form = $(this);
       var $btn = $form.find('button[type="submit"]');
       var orig = $btn.html();
-      $btn.prop("disabled", true).html('<span class="rsd-spinner"></span> در حال آپلود...');
+      $btn.prop("disabled", true).html('<span class="rsd-spinner"></span> Uploading...');
 
       var formData = new FormData(this);
       formData.append("action", "rsd_fp_batch_upload_documents");
@@ -691,12 +642,12 @@
               location.reload();
             }, 900);
           } else {
-            rsdToast(res.data.message || "خطا در آپلود.", "error");
+            rsdToast(res.data.message || "Error uploading.", "error");
           }
         })
         .fail(function () {
           $btn.prop("disabled", false).html(orig);
-          rsdToast("خطا در ارتباط با سرور.", "error");
+          rsdToast("Error connecting to the server.", "error");
         });
     });
 
@@ -769,21 +720,21 @@
       if (!$badge.length) return;
       if (resetAll) {
         $badge.text("0").hide();
-        $(".rsd-notif-dropdown-head strong").text("بدون اعلان خوانده‌نشده");
+        $(".rsd-notif-dropdown-head strong").text("No unread notifications");
         return;
       }
       var cur = parseInt($badge.text(), 10) || 0;
       cur = Math.max(0, cur - (parseInt(n, 10) || 1));
       if (cur <= 0) $badge.text("0").hide();
       else $badge.text(cur > 99 ? "99+" : String(cur)).show();
-      var txt = cur === 0 ? "بدون اعلان خوانده‌نشده" : cur + " اعلان خوانده‌نشده";
+      var txt = cur === 0 ? "No unread notifications" : cur + " unread notifications";
       $(".rsd-notif-dropdown-head strong").text(txt);
     }
     function maybeShowEmptyNotifs() {
       var $list = $(".rsd-notif-list");
       if (!$list.length) return;
       if ($list.find(".rsd-notif-item").length === 0) {
-        $list.html('<div class="rsd-notif-empty"><div class="rsd-notif-empty-icon">🎉</div>' + "<h4>همه اعلان‌ها خوانده شده‌اند</h4><p>اعلان‌های جدید اینجا نمایش داده می‌شوند.</p></div>");
+        $list.html('<div class="rsd-notif-empty"><div class="rsd-notif-empty-icon">🎉</div>' + "<h4>All notifications have been read</h4><p>New notifications will be shown here.</p></div>");
       }
     }
 

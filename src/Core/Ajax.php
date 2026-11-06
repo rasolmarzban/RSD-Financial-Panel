@@ -118,11 +118,11 @@ class Ajax
     private function verify($require_client = true)
     {
         if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'rsd_fp_nonce')) {
-            $this->send(false, ['message' => esc_html__('توکن امنیتی نامعتبر است.', 'rsd-finance-panel')], 403);
+            $this->send(false, ['message' => esc_html__('Invalid security token.', 'rsd-finance-panel')], 403);
         }
 
         if ($require_client && !current_user_can('rsd_fp_view_dashboard') && !current_user_can('manage_options')) {
-            $this->send(false, ['message' => esc_html__('دسترسی مجاز نیست.', 'rsd-finance-panel')], 403);
+            $this->send(false, ['message' => esc_html__('You do not have permission.', 'rsd-finance-panel')], 403);
         }
     }
 
@@ -143,7 +143,7 @@ class Ajax
         $raw = trim((string)$raw);
         if ($raw === '') {
             if ($empty_ok) return null;
-            $this->send(false, ['message' => esc_html__('تاریخ انقضا الزامی است.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The expiry date is required.', 'rsd-finance-panel')]);
         }
         // Gregorian dash-format (legacy / tests):
         if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $raw)) {
@@ -153,7 +153,7 @@ class Ajax
         $gregorian = function_exists('rsd_fp_parse_jalali_to_gregorian') ? rsd_fp_parse_jalali_to_gregorian($raw) : null;
         if ($gregorian === null) {
             $this->send(false, [
-                'message' => esc_html__('فرمت تاریخ انقضا نامعتبر است. لطفاً با قالب شمسی ۱۴۰۰/۰۱/۰۱ وارد کنید.', 'rsd-finance-panel'),
+                'message' => esc_html__('The expiry date format is invalid. Please enter it in the format YYYY-MM-DD.', 'rsd-finance-panel'),
             ]);
         }
         return $gregorian;
@@ -179,7 +179,7 @@ class Ajax
         $expiry_date = $this->normalize_expiry($_POST['expiry_date'] ?? '', true);
 
         if (empty($title)) {
-            $this->send(false, ['message' => esc_html__('عنوان مدرک الزامی است.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The document title is required.', 'rsd-finance-panel')]);
         }
 
         $is_update = false;
@@ -193,7 +193,7 @@ class Ajax
             ) {
                 $is_update = true;
             } elseif ($existing_doc) {
-                $this->send(false, ['message' => esc_html__('شما مجاز به ویرایش این مدرک نیستید.', 'rsd-finance-panel')]);
+                $this->send(false, ['message' => esc_html__('You are not allowed to edit this document.', 'rsd-finance-panel')]);
             }
         }
 
@@ -234,7 +234,7 @@ class Ajax
             $data['is_incomplete'] = 0;
             $updated = Database::update('documents', $data, ['id' => $existing_doc->id]);
             if (!$updated) {
-                $this->send(false, ['message' => esc_html__('به‌روزرسانی مدرک انجام نشد.', 'rsd-finance-panel')]);
+                $this->send(false, ['message' => esc_html__('The document could not be updated.', 'rsd-finance-panel')]);
             }
             // Replace the old file to free disk space
             if ($file_data && $old_file && !empty($data['file_path']) && $old_file !== $data['file_path']) {
@@ -248,7 +248,7 @@ class Ajax
             do_action('rsd_fp_document_uploaded', $doc_id, $data);
 
             $this->send(true, [
-                'message'   => esc_html__('مدرک ناقص با موفقیت جایگزین و ثبت شد.', 'rsd-finance-panel'),
+                'message'   => esc_html__('The incomplete document was successfully replaced and saved.', 'rsd-finance-panel'),
                 'doc_id'    => $doc_id,
                 'is_update' => true,
                 'metadata_only' => !$file_data,
@@ -256,19 +256,19 @@ class Ajax
         }
 
         if (!$file_data) {
-            $this->send(false, ['message' => esc_html__('انتخاب فایل برای مدرک جدید الزامی است.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Selecting a file is required for a new document.', 'rsd-finance-panel')]);
         }
         $data['status'] = 'uploaded';
         $doc_id = Database::insert('documents', $data);
 
         if (!$doc_id) {
-            $this->send(false, ['message' => esc_html__('خطا در ذخیره مدرک.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Error saving the document.', 'rsd-finance-panel')]);
         }
 
         do_action('rsd_fp_document_uploaded', $doc_id, $data);
 
         $this->send(true, [
-            'message'   => esc_html__('مدرک با موفقیت بارگذاری شد.', 'rsd-finance-panel'),
+            'message'   => esc_html__('The document was uploaded successfully.', 'rsd-finance-panel'),
             'doc_id'    => $doc_id,
             'is_update' => false,
         ]);
@@ -334,7 +334,7 @@ class Ajax
         }
 
         $this->send(true, [
-            'message' => sprintf(esc_html__('%d مدرک با موفقیت بارگذاری شد.', 'rsd-finance-panel'), $uploaded),
+            'message' => sprintf(esc_html__('%d documents were uploaded successfully.', 'rsd-finance-panel'), $uploaded),
             'count'   => $uploaded,
         ]);
     }
@@ -354,11 +354,11 @@ class Ajax
         $doc = Database::get_row('documents', $doc_id);
 
         if (!$doc) {
-            $this->send(false, ['message' => esc_html__('مدرک پیدا نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Document not found.', 'rsd-finance-panel')]);
         }
 
         if (!current_user_can('manage_options') && (int) $doc->user_id !== $user_id) {
-            $this->send(false, ['message' => esc_html__('دسترسی مجاز نیست.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('You do not have permission.', 'rsd-finance-panel')]);
         }
 
         if ($doc->file_path) {
@@ -370,7 +370,7 @@ class Ajax
 
         Database::delete('documents', ['id' => $doc_id]);
 
-        $this->send(true, ['message' => esc_html__('مدرک با موفقیت حذف شد.', 'rsd-finance-panel')]);
+        $this->send(true, ['message' => esc_html__('The document was deleted successfully.', 'rsd-finance-panel')]);
     }
 
     /**
@@ -383,7 +383,7 @@ class Ajax
         $this->verify();
 
         if (!current_user_can('manage_options')) {
-            $this->send(false, ['message' => esc_html__('دسترسی مجاز نیست.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('You do not have permission.', 'rsd-finance-panel')]);
         }
 
         $client_id = (int) ($_POST['user_id'] ?? 0);
@@ -393,7 +393,7 @@ class Ajax
         $expiry_date = $this->normalize_expiry($_POST['expiry_date'] ?? '', true);
 
         if (!$client_id || empty($title)) {
-            $this->send(false, ['message' => esc_html__('فیلدهای الزامی تکمیل نشده‌اند.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Required fields have not been filled in.', 'rsd-finance-panel')]);
         }
 
         $doc_id = Database::insert('documents', [
@@ -409,7 +409,7 @@ class Ajax
         ]);
 
         if (!$doc_id) {
-            $this->send(false, ['message' => esc_html__('خطا در ثبت درخواست مدرک.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Error registering the document request.', 'rsd-finance-panel')]);
         }
 
         do_action(
@@ -425,7 +425,7 @@ class Ajax
         );
 
         $this->send(true, [
-            'message'     => esc_html__('درخواست مدرک برای مشتری ارسال شد.', 'rsd-finance-panel'),
+            'message'     => esc_html__('The document request was sent to the client.', 'rsd-finance-panel'),
             'doc_id'      => $doc_id,
             'expiry_date' => $expiry_date,
         ]);
@@ -436,7 +436,7 @@ class Ajax
      *
      * Expects $_POST[doc_id] + $_POST[status] ∈ {uploaded, incomplete, approved}
      * When status === 'incomplete'  → also sets is_incomplete = 1 (so it shows
-     *                                 in client's "مدارک ناقص" widget/section).
+     *                                 in client's "incomplete documents" widget/section).
      * When status === anything else → also sets is_incomplete = 0.
      *
      * @return void
@@ -446,7 +446,7 @@ class Ajax
         $this->verify();
 
         if (!current_user_can('manage_options')) {
-            $this->send(false, ['message' => esc_html__('فقط مدیر می‌تواند وضعیت مدرک را تغییر دهد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Only an administrator can change the document status.', 'rsd-finance-panel')]);
         }
 
         $doc_id = (int)($_POST['doc_id'] ?? 0);
@@ -454,13 +454,13 @@ class Ajax
 
         $doc = Database::get_row('documents', $doc_id);
         if (!$doc) {
-            $this->send(false, ['message' => esc_html__('مدرک پیدا نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Document not found.', 'rsd-finance-panel')]);
         }
 
         $allowed = array_keys(\RSD\FinancePanel\Modules\Documents::get_statuses());
         if (!in_array($status, $allowed, true)) {
             $this->send(false, [
-                'message' => esc_html__('وضعیت انتخابی نامعتبر است.', 'rsd-finance-panel'),
+                'message' => esc_html__('The selected status is invalid.', 'rsd-finance-panel'),
                 'allowed' => $allowed,
             ]);
         }
@@ -473,7 +473,7 @@ class Ajax
         ], ['id' => $doc_id]);
 
         if (!$updated) {
-            $this->send(false, ['message' => esc_html__('به‌روزرسانی وضعیت مدرک انجام نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The document status could not be updated.', 'rsd-finance-panel')]);
         }
 
         do_action('rsd_fp_document_status_updated', $doc_id, $status, $is_incomplete, (int)$doc->user_id);
@@ -482,7 +482,7 @@ class Ajax
         $label  = $labels[$status][0] ?? $status;
 
         $this->send(true, [
-            'message'       => sprintf(esc_html__('وضعیت مدرک به «%s» تغییر یافت.', 'rsd-finance-panel'), $label),
+            'message'       => sprintf(esc_html__('The document status was changed to "%s".', 'rsd-finance-panel'), $label),
             'is_incomplete' => $is_incomplete,
             'doc_id'        => $doc_id,
         ]);
@@ -505,7 +505,7 @@ class Ajax
         $message = sanitize_textarea_field($_POST['message'] ?? '');
 
         if (empty($subject) || empty($message)) {
-            $this->send(false, ['message' => esc_html__('موضوع و متن پیام تیکت الزامی هستند.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The ticket subject and message are required.', 'rsd-finance-panel')]);
         }
 
         $ticket_number = 'TKT-' . date('Ymd') . '-' . str_pad(wp_rand(1, 9999), 4, '0', STR_PAD_LEFT);
@@ -531,7 +531,7 @@ class Ajax
                 'is_read'   => 0,
             ]);
             if (!$msg_id) {
-                $this->send(false, ['message' => esc_html__('تیکت ذخیره نشد؛ پیام اولیه ثبت نگردید.', 'rsd-finance-panel')]);
+                $this->send(false, ['message' => esc_html__('The ticket was not saved; the initial message was not recorded.', 'rsd-finance-panel')]);
             }
             do_action('rsd_fp_ticket_created', $ticket_id, [
                 'ticket_number' => $ticket_number,
@@ -545,7 +545,7 @@ class Ajax
         }
 
         $this->send(true, [
-            'message'       => esc_html__('تیکت با موفقیت ثبت شد.', 'rsd-finance-panel'),
+            'message'       => esc_html__('The ticket was created successfully.', 'rsd-finance-panel'),
             'ticket_id'     => $ticket_id,
             'ticket_number' => $ticket_number,
         ]);
@@ -565,17 +565,17 @@ class Ajax
         $message = sanitize_textarea_field($_POST['message'] ?? '');
 
         if (empty($message) || !$ticket_id) {
-            $this->send(false, ['message' => esc_html__('متن پاسخ و شماره تیکت الزامی هستند.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The reply text and ticket ID are required.', 'rsd-finance-panel')]);
         }
 
         $ticket = Database::get_row('tickets', $ticket_id);
 
         if (!$ticket) {
-            $this->send(false, ['message' => esc_html__('تیکت پیدا نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Ticket not found.', 'rsd-finance-panel')]);
         }
 
         if (!current_user_can('manage_options') && (int) $ticket->user_id !== $user_id) {
-            $this->send(false, ['message' => esc_html__('دسترسی مجاز نیست.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('You do not have permission.', 'rsd-finance-panel')]);
         }
 
         $attachments = [];
@@ -593,7 +593,7 @@ class Ajax
             'attachments' => !empty($attachments) ? wp_json_encode($attachments) : null,
         ]);
         if (!$msg_id) {
-            $this->send(false, ['message' => esc_html__('پاسخ ذخیره نشد؛ دوباره تلاش کنید.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The reply was not saved; please try again.', 'rsd-finance-panel')]);
         }
 
         $new_status = current_user_can('manage_options') ? 'waiting' : 'in_progress';
@@ -610,7 +610,7 @@ class Ajax
         ]);
 
         $this->send(true, [
-            'message' => esc_html__('پاسخ با موفقیت ارسال شد.', 'rsd-finance-panel'),
+            'message' => esc_html__('The reply was sent successfully.', 'rsd-finance-panel'),
         ]);
     }
 
@@ -624,13 +624,13 @@ class Ajax
         $this->verify(false);
 
         if (!current_user_can('manage_options') && !current_user_can('rsd_fp_manage_tickets')) {
-            $this->send(false, ['message' => esc_html__('دسترسی مجاز نیست.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('You do not have permission.', 'rsd-finance-panel')]);
         }
 
         $ticket_id = (int) ($_POST['ticket_id'] ?? 0);
         $ticket = Database::get_row('tickets', $ticket_id);
         if (!$ticket) {
-            $this->send(false, ['message' => esc_html__('تیکت پیدا نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Ticket not found.', 'rsd-finance-panel')]);
         }
 
         $data = [];
@@ -658,14 +658,14 @@ class Ajax
         }
 
         if (empty($data)) {
-            $this->send(false, ['message' => esc_html__('تغییری برای اعمال شدن یافت نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('No changes were found to apply.', 'rsd-finance-panel')]);
         }
 
         Database::update('tickets', $data, ['id' => $ticket_id]);
 
         do_action('rsd_fp_ticket_updated', $ticket_id, $data, get_current_user_id());
 
-        $this->send(true, ['message' => esc_html__('تغییرات با موفقیت اعمال شد.', 'rsd-finance-panel')]);
+        $this->send(true, ['message' => esc_html__('The changes were applied successfully.', 'rsd-finance-panel')]);
     }
 
     /**
@@ -678,7 +678,7 @@ class Ajax
         $this->verify(false);
 
         if (!current_user_can('manage_options') && !current_user_can('rsd_fp_manage_tickets')) {
-            $this->send(false, ['message' => esc_html__('دسترسی مجاز نیست.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('You do not have permission.', 'rsd-finance-panel')]);
         }
 
         $user_id = (int) ($_POST['user_id'] ?? 0);
@@ -688,10 +688,10 @@ class Ajax
         $priority = sanitize_key($_POST['priority'] ?? 'normal');
 
         if (!$user_id || !get_userdata($user_id)) {
-            $this->send(false, ['message' => esc_html__('کاربر انتخاب‌شده نامعتبر است.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The selected user is invalid.', 'rsd-finance-panel')]);
         }
         if (empty($subject) || empty($message)) {
-            $this->send(false, ['message' => esc_html__('موضوع و متن پیام تیکت الزامی هستند.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The ticket subject and message are required.', 'rsd-finance-panel')]);
         }
 
         $ticket_number = 'TKT-' . date('Ymd') . '-' . str_pad(wp_rand(1, 9999), 4, '0', STR_PAD_LEFT);
@@ -718,7 +718,7 @@ class Ajax
                 'is_read'   => 0,
             ]);
             if (!$msg_id) {
-                $this->send(false, ['message' => esc_html__('تیکت ثبت شد ولی پیام اولیه ذخیره نگردید.', 'rsd-finance-panel')]);
+                $this->send(false, ['message' => esc_html__('The ticket was created but the initial message was not saved.', 'rsd-finance-panel')]);
             }
             do_action('rsd_fp_ticket_created', $ticket_id, [
                 'ticket_number' => $ticket_number,
@@ -733,7 +733,7 @@ class Ajax
         }
 
         $this->send(true, [
-            'message'       => esc_html__('تیکت با موفقیت ایجاد شد.', 'rsd-finance-panel'),
+            'message'       => esc_html__('The ticket was created successfully.', 'rsd-finance-panel'),
             'ticket_id'     => $ticket_id,
             'ticket_number' => $ticket_number,
         ]);
@@ -754,11 +754,11 @@ class Ajax
         $ticket = Database::get_row('tickets', $ticket_id);
 
         if (!$ticket) {
-            $this->send(false, ['message' => esc_html__('تیکت پیدا نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Ticket not found.', 'rsd-finance-panel')]);
         }
 
         if (!current_user_can('manage_options') && (int) $ticket->user_id !== $user_id) {
-            $this->send(false, ['message' => esc_html__('دسترسی مجاز نیست.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('You do not have permission.', 'rsd-finance-panel')]);
         }
 
         Database::update('tickets', [
@@ -771,7 +771,7 @@ class Ajax
             'closed_at' => current_time('mysql'),
         ]);
 
-        $this->send(true, ['message' => esc_html__('تیکت بسته شد.', 'rsd-finance-panel')]);
+        $this->send(true, ['message' => esc_html__('The ticket was closed.', 'rsd-finance-panel')]);
     }
 
     /**
@@ -789,11 +789,11 @@ class Ajax
         $ticket = Database::get_row('tickets', $ticket_id);
 
         if (!$ticket) {
-            $this->send(false, ['message' => esc_html__('تیکت پیدا نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Ticket not found.', 'rsd-finance-panel')]);
         }
 
         if (!current_user_can('manage_options') && (int) $ticket->user_id !== $user_id) {
-            $this->send(false, ['message' => esc_html__('دسترسی مجاز نیست.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('You do not have permission.', 'rsd-finance-panel')]);
         }
 
         global $wpdb;
@@ -837,7 +837,7 @@ class Ajax
         $description = sanitize_textarea_field($_POST['description'] ?? '');
 
         if (empty($service_type) || empty($title)) {
-            $this->send(false, ['message' => esc_html__('نوع خدمت و عنوان درخواست الزامی هستند.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The service type and request title are required.', 'rsd-finance-panel')]);
         }
 
         // Collect all service-specific fields
@@ -859,7 +859,7 @@ class Ajax
         ]);
 
         $this->send(true, [
-            'message'    => esc_html__('درخواست خدمت با موفقیت ثبت شد.', 'rsd-finance-panel'),
+            'message'    => esc_html__('The service request was submitted successfully.', 'rsd-finance-panel'),
             'service_id' => $service_id,
         ]);
     }
@@ -937,7 +937,7 @@ class Ajax
         $is_all_day = isset($_POST['is_all_day']) ? 1 : 0;
 
         if (empty($title) || empty($start_date_raw)) {
-            $this->send(false, ['message' => esc_html__('عنوان رویداد و تاریخ شروع الزامی هستند.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The event title and start date are required.', 'rsd-finance-panel')]);
         }
 
         // Normalize Jalali/Gregorian date input to Gregorian YYYY-MM-DD
@@ -966,7 +966,7 @@ class Ajax
         ]);
 
         $this->send(true, [
-            'message'  => esc_html__('رویداد برای تأیید ثبت شد.', 'rsd-finance-panel'),
+            'message'  => esc_html__('The event was submitted for approval.', 'rsd-finance-panel'),
             'event_id' => $event_id,
         ]);
     }
@@ -986,15 +986,15 @@ class Ajax
         $event = Database::get_row('calendar', $event_id);
 
         if (!$event) {
-            $this->send(false, ['message' => esc_html__('رویداد پیدا نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Event not found.', 'rsd-finance-panel')]);
         }
 
         if (!current_user_can('manage_options') && (int) $event->user_id !== $user_id) {
-            $this->send(false, ['message' => esc_html__('دسترسی مجاز نیست.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('You do not have permission.', 'rsd-finance-panel')]);
         }
 
         Database::delete('calendar', ['id' => $event_id]);
-        $this->send(true, ['message' => esc_html__('رویداد با موفقیت حذف شد.', 'rsd-finance-panel')]);
+        $this->send(true, ['message' => esc_html__('The event was deleted successfully.', 'rsd-finance-panel')]);
     }
 
     /**
@@ -1007,7 +1007,7 @@ class Ajax
         $this->verify();
 
         if (!current_user_can('manage_options')) {
-            $this->send(false, ['message' => esc_html__('دسترسی مجاز نیست.', 'rsd-finance-panel')], 403);
+            $this->send(false, ['message' => esc_html__('You do not have permission.', 'rsd-finance-panel')], 403);
         }
 
         $event_id    = (int) ($_POST['event_id'] ?? 0);
@@ -1015,14 +1015,14 @@ class Ajax
         $end_j       = trim(sanitize_text_field($_POST['end_jalali'] ?? ''));
 
         if ($event_id === 0) {
-            $this->send(false, ['message' => esc_html__('شناسه رویداد نامعتبر است.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The event ID is invalid.', 'rsd-finance-panel')]);
         }
 
         if ($event_id > 0) {
             // Real calendar event: update start_date + end_date
             $row = Database::get_row('calendar', $event_id);
             if (!$row) {
-                $this->send(false, ['message' => esc_html__('رویداد پیدا نشد.', 'rsd-finance-panel')]);
+                $this->send(false, ['message' => esc_html__('Event not found.', 'rsd-finance-panel')]);
             }
 
             $start_g = $start_j ? rsd_fp_parse_jalali_to_gregorian($start_j) : null;
@@ -1030,21 +1030,21 @@ class Ajax
             $start_g = $start_g ? substr($start_g, 0, 10) . ' ' . substr($row->start_date, 11) : null;
             $end_g   = $end_g   ? substr($end_g,   0, 10) . ' ' . substr($row->end_date   ?: $row->start_date, 11) : null;
             if ($start_j && empty($start_g)) {
-                $this->send(false, ['message' => esc_html__('فرمت تاریخ شروع شمسی نامعتبر است.', 'rsd-finance-panel')]);
+                $this->send(false, ['message' => esc_html__('The start date format is invalid.', 'rsd-finance-panel')]);
             }
             if ($end_j && empty($end_g)) {
-                $this->send(false, ['message' => esc_html__('فرمت تاریخ پایان شمسی نامعتبر است.', 'rsd-finance-panel')]);
+                $this->send(false, ['message' => esc_html__('The end date format is invalid.', 'rsd-finance-panel')]);
             }
 
             $upd = [];
             if ($start_j !== '') $upd['start_date'] = $start_g;
             if ($end_j   !== '') $upd['end_date']   = $end_g;
             if (empty($upd)) {
-                $this->send(true, ['message' => esc_html__('تغییری اعمال نشد.', 'rsd-finance-panel')]);
+                $this->send(true, ['message' => esc_html__('No changes were applied.', 'rsd-finance-panel')]);
             }
             $upd['updated_at'] = current_time('mysql');
             Database::update('calendar', $upd, ['id' => $event_id]);
-            $this->send(true, ['message' => esc_html__('تاریخ‌های رویداد با موفقیت به‌روز شد.', 'rsd-finance-panel')]);
+            $this->send(true, ['message' => esc_html__('The event dates were updated successfully.', 'rsd-finance-panel')]);
         } else {
             // Synthetic document row: id = -document_id -> update expiry_date only
             global $wpdb;
@@ -1052,12 +1052,12 @@ class Ajax
             $table   = $wpdb->prefix . 'rsd_fp_documents';
             $doc     = $wpdb->get_row($wpdb->prepare("SELECT id, expiry_date FROM {$table} WHERE id = %d", $doc_id));
             if (!$doc) {
-                $this->send(false, ['message' => esc_html__('مدرک پیدا نشد.', 'rsd-finance-panel')]);
+                $this->send(false, ['message' => esc_html__('Document not found.', 'rsd-finance-panel')]);
             }
 
             $exp_g = $start_j ? rsd_fp_parse_jalali_to_gregorian($start_j) : null;
             if ($start_j && empty($exp_g)) {
-                $this->send(false, ['message' => esc_html__('فرمت تاریخ انقضا شمسی نامعتبر است.', 'rsd-finance-panel')]);
+                $this->send(false, ['message' => esc_html__('The expiry date format is invalid.', 'rsd-finance-panel')]);
             }
 
             $wpdb->update($table, [
@@ -1065,7 +1065,7 @@ class Ajax
                 'updated_at'  => current_time('mysql'),
             ], ['id' => $doc_id]);
 
-            $this->send(true, ['message' => esc_html__('تاریخ انقضای مدرک با موفقیت به‌روز شد.', 'rsd-finance-panel')]);
+            $this->send(true, ['message' => esc_html__('The document expiry date was updated successfully.', 'rsd-finance-panel')]);
         }
     }
 
@@ -1084,7 +1084,7 @@ class Ajax
         $description = sanitize_textarea_field($_POST['description'] ?? '');
 
         if (empty($title) || empty($start_date_raw)) {
-            $this->send(false, ['message' => esc_html__('موضوع و تاریخ جلسه الزامی هستند.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The meeting subject and date are required.', 'rsd-finance-panel')]);
         }
 
         // Normalize Jalali/Gregorian date input to Gregorian YYYY-MM-DD
@@ -1107,7 +1107,7 @@ class Ajax
         ]);
 
         $this->send(true, [
-            'message'  => esc_html__('درخواست جلسه برای تأیید ثبت شد.', 'rsd-finance-panel'),
+            'message'  => esc_html__('The meeting request was submitted for approval.', 'rsd-finance-panel'),
             'event_id' => $event_id,
         ]);
     }
@@ -1127,11 +1127,11 @@ class Ajax
         $invoice = Database::get_row('invoices', $invoice_id);
 
         if (!$invoice) {
-            $this->send(false, ['message' => esc_html__('فاکتور پیدا نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Invoice not found.', 'rsd-finance-panel')]);
         }
 
         if (!current_user_can('manage_options') && (int) $invoice->user_id !== $user_id) {
-            $this->send(false, ['message' => esc_html__('دسترسی مجاز نیست.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('You do not have permission.', 'rsd-finance-panel')]);
         }
 
         $payments = Database::get_rows('payments', ['invoice_id' => $invoice_id], 'payment_date', 'DESC');
@@ -1152,7 +1152,7 @@ class Ajax
         $this->verify(false);
 
         if (!current_user_can('manage_options') && !current_user_can('rsd_fp_manage_all')) {
-            $this->send(false, ['message' => esc_html__('فقط مدیر می‌تواند فاکتور ایجاد کند.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Only an administrator can create an invoice.', 'rsd-finance-panel')]);
         }
 
         $user_id = (int) ($_POST['user_id'] ?? 0);
@@ -1169,11 +1169,11 @@ class Ajax
         $year = '';
         if ($year_raw !== '') {
             if (!preg_match('/^\d{4}$/', $year_raw)) {
-                $this->send(false, ['message' => esc_html__('سال مالی باید ۴ رقم باشد، مثلاً ۱۴۰۴.', 'rsd-finance-panel')]);
+                $this->send(false, ['message' => esc_html__('The fiscal year must be 4 digits, e.g. 1404.', 'rsd-finance-panel')]);
             }
             $year_num = (int) $year_raw;
             if ($year_num < 1380 || $year_num > 1500) {
-                $this->send(false, ['message' => esc_html__('سال مالی باید بین ۱۳۸۰ تا ۱۵۰۰ باشد.', 'rsd-finance-panel')]);
+                $this->send(false, ['message' => esc_html__('The fiscal year must be between 1380 and 1500.', 'rsd-finance-panel')]);
             }
             $year = $year_raw;
         }
@@ -1181,19 +1181,19 @@ class Ajax
         // --- Invoice date is now REQUIRED (user selects via triple; no server default) ---
         $raw_invoice_date = trim((string) ($_POST['invoice_date'] ?? ''));
         if ($raw_invoice_date === '') {
-            $this->send(false, ['message' => esc_html__('تاریخ صدور فاکتور الزامی است.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The invoice issue date is required.', 'rsd-finance-panel')]);
         }
         $invoice_date = $this->normalize_expiry($raw_invoice_date, false);
         if (!$invoice_date) {
-            $this->send(false, ['message' => esc_html__('تاریخ صدور فاکتور نامعتبر است.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The invoice issue date is invalid.', 'rsd-finance-panel')]);
         }
         $due_date = $this->normalize_expiry($_POST['due_date'] ?? '', true);
 
         if ($user_id <= 0 || !get_userdata($user_id)) {
-            $this->send(false, ['message' => esc_html__('مشتری انتخاب‌شده نامعتبر است. لطفاً از لیست جستجو انتخاب کنید.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The selected client is invalid. Please choose from the search list.', 'rsd-finance-panel')]);
         }
         if ($subtotal <= 0 && $tax <= 0 && $discount <= 0) {
-            $this->send(false, ['message' => esc_html__('حداقل مبلغ فاکتور باید بزرگتر از صفر باشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The invoice amount must be greater than zero.', 'rsd-finance-panel')]);
         }
 
         $invoice_id = \RSD\FinancePanel\Modules\Invoices::create_invoice([
@@ -1211,7 +1211,7 @@ class Ajax
         ]);
 
         if (!$invoice_id) {
-            $this->send(false, ['message' => esc_html__('خطا در ایجاد فاکتور؛ لطفاً مقادیر را بررسی کنید.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Error creating the invoice; please check the values.', 'rsd-finance-panel')]);
         }
 
         // If an initial payment was supplied, also add a payments row for record
@@ -1221,12 +1221,12 @@ class Ajax
                 'user_id'        => $user_id,
                 'amount'         => $paid_amount,
                 'payment_method' => sanitize_key($_POST['payment_method'] ?? 'other'),
-                'description'    => esc_html__('پرداخت اولیه هنگام صدور فاکتور', 'rsd-finance-panel'),
+                'description'    => esc_html__('Initial payment at invoice issue', 'rsd-finance-panel'),
             ]);
         }
 
         $this->send(true, [
-            'message'    => esc_html__('فاکتور با موفقیت ایجاد شد.', 'rsd-finance-panel'),
+            'message'    => esc_html__('The invoice was created successfully.', 'rsd-finance-panel'),
             'invoice_id' => $invoice_id,
             'print_url'  => \RSD\FinancePanel\Modules\Invoices::get_print_url($invoice_id),
         ]);
@@ -1242,20 +1242,20 @@ class Ajax
         $this->verify(false);
 
         if (!current_user_can('manage_options') && !current_user_can('rsd_fp_manage_all')) {
-            $this->send(false, ['message' => esc_html__('فقط مدیر می‌تواند فاکتور را ویرایش کند.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Only an administrator can edit the invoice.', 'rsd-finance-panel')]);
         }
 
         $invoice_id = (int) ($_POST['invoice_id'] ?? 0);
         $invoice = Database::get_row('invoices', $invoice_id);
         if (!$invoice) {
-            $this->send(false, ['message' => esc_html__('فاکتور پیدا نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Invoice not found.', 'rsd-finance-panel')]);
         }
 
         $data = [];
         if (isset($_POST['user_id'])) {
             $uid = (int) $_POST['user_id'];
             if ($uid <= 0 || !get_userdata($uid)) {
-                $this->send(false, ['message' => esc_html__('مشتری انتخاب‌شده برای ویرایش نامعتبر است.', 'rsd-finance-panel')]);
+                $this->send(false, ['message' => esc_html__('The client selected for editing is invalid.', 'rsd-finance-panel')]);
             }
             $data['user_id'] = $uid;
         }
@@ -1266,11 +1266,11 @@ class Ajax
         if (isset($_POST['year']) && trim((string)$_POST['year']) !== '') {
             $year_raw = trim((string) $_POST['year']);
             if (!preg_match('/^\d{4}$/', $year_raw)) {
-                $this->send(false, ['message' => esc_html__('سال مالی باید ۴ رقم باشد، مثلاً ۱۴۰۴.', 'rsd-finance-panel')]);
+                $this->send(false, ['message' => esc_html__('The fiscal year must be 4 digits, e.g. 1404.', 'rsd-finance-panel')]);
             }
             $year_num = (int) $year_raw;
             if ($year_num < 1380 || $year_num > 1500) {
-                $this->send(false, ['message' => esc_html__('سال مالی باید بین ۱۳۸۰ تا ۱۵۰۰ باشد.', 'rsd-finance-panel')]);
+                $this->send(false, ['message' => esc_html__('The fiscal year must be between 1380 and 1500.', 'rsd-finance-panel')]);
             }
             $data['year'] = $year_raw;
         } elseif (isset($_POST['year'])) {
@@ -1282,7 +1282,7 @@ class Ajax
             $raw = trim((string) $_POST['invoice_date']);
             $norm = $this->normalize_expiry($raw, false);
             if (!$norm) {
-                $this->send(false, ['message' => esc_html__('تاریخ صدور فاکتور نامعتبر است.', 'rsd-finance-panel')]);
+                $this->send(false, ['message' => esc_html__('The invoice issue date is invalid.', 'rsd-finance-panel')]);
             }
             $data['invoice_date'] = $norm;
         }
@@ -1291,16 +1291,16 @@ class Ajax
         }
 
         if (empty($data)) {
-            $this->send(false, ['message' => esc_html__('تغییری برای اعمال‌شدن یافت نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('No changes were found to apply.', 'rsd-finance-panel')]);
         }
 
         $updated = \RSD\FinancePanel\Modules\Invoices::update_invoice($invoice_id, $data);
         if (!$updated) {
-            $this->send(false, ['message' => esc_html__('به‌روزرسانی فاکتور انجام نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The invoice could not be updated.', 'rsd-finance-panel')]);
         }
 
         $this->send(true, [
-            'message'    => esc_html__('فاکتور با موفقیت به‌روزرسانی شد.', 'rsd-finance-panel'),
+            'message'    => esc_html__('The invoice was updated successfully.', 'rsd-finance-panel'),
             'invoice_id' => $invoice_id,
         ]);
     }
@@ -1315,21 +1315,21 @@ class Ajax
         $this->verify(false);
 
         if (!current_user_can('manage_options') && !current_user_can('rsd_fp_manage_all')) {
-            $this->send(false, ['message' => esc_html__('فقط مدیر می‌تواند فاکتور را حذف کند.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Only an administrator can delete the invoice.', 'rsd-finance-panel')]);
         }
 
         $invoice_id = (int) ($_POST['invoice_id'] ?? 0);
         if ($invoice_id <= 0) {
-            $this->send(false, ['message' => esc_html__('فاکتور نامعتبر است.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The invoice is invalid.', 'rsd-finance-panel')]);
         }
 
         $deleted = \RSD\FinancePanel\Modules\Invoices::delete_invoice($invoice_id);
         if (!$deleted) {
-            $this->send(false, ['message' => esc_html__('حذف فاکتور انجام نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The invoice could not be deleted.', 'rsd-finance-panel')]);
         }
 
         $this->send(true, [
-            'message'    => esc_html__('فاکتور با موفقیت حذف شد.', 'rsd-finance-panel'),
+            'message'    => esc_html__('The invoice was deleted successfully.', 'rsd-finance-panel'),
             'invoice_id' => $invoice_id,
         ]);
     }
@@ -1344,7 +1344,7 @@ class Ajax
         $this->verify(false);
 
         if (!current_user_can('manage_options') && !current_user_can('rsd_fp_manage_all')) {
-            $this->send(false, ['message' => esc_html__('فقط مدیر می‌تواند پرداخت ثبت کند.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Only an administrator can record a payment.', 'rsd-finance-panel')]);
         }
 
         $invoice_id = (int) ($_POST['invoice_id'] ?? 0);
@@ -1370,10 +1370,10 @@ class Ajax
         }
 
         if ($invoice_id <= 0) {
-            $this->send(false, ['message' => esc_html__('فاکتور نامعتبر است.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The invoice is invalid.', 'rsd-finance-panel')]);
         }
         if ($amount <= 0) {
-            $this->send(false, ['message' => esc_html__('مبلغ پرداخت باید بزرگتر از صفر باشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The payment amount must be greater than zero.', 'rsd-finance-panel')]);
         }
 
         $payment_id = \RSD\FinancePanel\Modules\Invoices::add_payment([
@@ -1386,11 +1386,11 @@ class Ajax
         ]);
 
         if (!$payment_id) {
-            $this->send(false, ['message' => esc_html__('ثبت پرداخت انجام نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The payment could not be recorded.', 'rsd-finance-panel')]);
         }
 
         $this->send(true, [
-            'message'     => esc_html__('پرداخت با موفقیت ثبت شد.', 'rsd-finance-panel'),
+            'message'     => esc_html__('The payment was recorded successfully.', 'rsd-finance-panel'),
             'payment_id'  => $payment_id,
             'invoice_id'  => $invoice_id,
         ]);
@@ -1450,7 +1450,7 @@ class Ajax
             Database::insert('company_info', $data);
         }
 
-        $this->send(true, ['message' => esc_html__('اطلاعات شرکت با موفقیت ذخیره شد.', 'rsd-finance-panel')]);
+        $this->send(true, ['message' => esc_html__('The company information was saved successfully.', 'rsd-finance-panel')]);
     }
 
     /**
@@ -1506,7 +1506,7 @@ class Ajax
         }
 
         $this->send(true, [
-            'message' => esc_html__('تغییرات شما برای تأیید به شرکت ارسال شد.', 'rsd-finance-panel'),
+            'message' => esc_html__('Your changes were sent to the company for approval.', 'rsd-finance-panel'),
         ]);
     }
 
@@ -1521,12 +1521,12 @@ class Ajax
         $this->verify();
 
         if (!current_user_can('manage_options')) {
-            $this->send(false, ['message' => esc_html__('شما دسترسی مدیریت را ندارید.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('You do not have administrative access.', 'rsd-finance-panel')]);
         }
 
         $user_id = (int) ($_POST['user_id'] ?? 0);
         if ($user_id <= 0) {
-            $this->send(false, ['message' => esc_html__('کاربر نامعتبر است.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The user is invalid.', 'rsd-finance-panel')]);
         }
 
         $fields = [
@@ -1553,12 +1553,12 @@ class Ajax
         $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$table} WHERE user_id = %d", $user_id));
 
         if (!$row) {
-            $this->send(false, ['message' => esc_html__('اطلاعات شرکت برای این کاربر پیدا نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Company information was not found for this user.', 'rsd-finance-panel')]);
         }
 
         $pending = json_decode($row->pending_changes ?? 'null', true);
         if (!is_array($pending) || empty($pending)) {
-            $this->send(false, ['message' => esc_html__('تغییری در انتظار تأیید وجود ندارد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('There are no changes pending approval.', 'rsd-finance-panel')]);
         }
 
         $update = [];
@@ -1575,7 +1575,7 @@ class Ajax
         Database::update('company_info', $update, ['user_id' => $user_id]);
 
         $this->send(true, [
-            'message' => esc_html__('تغییرات اطلاعات شرکت با تأیید مدیر ثبت شد.', 'rsd-finance-panel'),
+            'message' => esc_html__('The company information changes were saved with administrator approval.', 'rsd-finance-panel'),
         ]);
     }
 
@@ -1589,12 +1589,12 @@ class Ajax
         $this->verify();
 
         if (!current_user_can('manage_options')) {
-            $this->send(false, ['message' => esc_html__('شما دسترسی مدیریت را ندارید.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('You do not have administrative access.', 'rsd-finance-panel')]);
         }
 
         $user_id = (int) ($_POST['user_id'] ?? 0);
         if ($user_id <= 0) {
-            $this->send(false, ['message' => esc_html__('کاربر نامعتبر است.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The user is invalid.', 'rsd-finance-panel')]);
         }
 
         global $wpdb;
@@ -1602,7 +1602,7 @@ class Ajax
         $row = $wpdb->get_row($wpdb->prepare("SELECT id FROM {$table} WHERE user_id = %d", $user_id));
 
         if (!$row) {
-            $this->send(false, ['message' => esc_html__('اطلاعات شرکت برای این کاربر پیدا نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Company information was not found for this user.', 'rsd-finance-panel')]);
         }
 
         Database::update('company_info', [
@@ -1610,7 +1610,7 @@ class Ajax
         ], ['user_id' => $user_id]);
 
         $this->send(true, [
-            'message' => esc_html__('درخواست تغییرات رد شد و وضعیت به حالت قبل بازگشت.', 'rsd-finance-panel'),
+            'message' => esc_html__('The change request was rejected and the status reverted to its previous state.', 'rsd-finance-panel'),
         ]);
     }
 
@@ -1629,7 +1629,7 @@ class Ajax
         $notif = Database::get_row('notifications', $notif_id);
 
         if (!$notif || (int) $notif->user_id !== $user_id) {
-            $this->send(false, ['message' => esc_html__('اعلان پیدا نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Notification not found.', 'rsd-finance-panel')]);
         }
 
         Database::update('notifications', [
@@ -1724,7 +1724,7 @@ class Ajax
     {
         $this->verify(false);
         if (!current_user_can('manage_options') && !current_user_can('rsd_fp_manage_reports')) {
-            $this->send(false, ['message' => esc_html__('دسترسی مجاز نیست.', 'rsd-finance-panel')], 403);
+            $this->send(false, ['message' => esc_html__('You do not have permission.', 'rsd-finance-panel')], 403);
         }
 
         $user_id       = (int) ($_POST['user_id'] ?? 0);
@@ -1736,10 +1736,10 @@ class Ajax
         $description   = sanitize_textarea_field($_POST['description'] ?? '');
 
         if ($user_id <= 0) {
-            $this->send(false, ['message' => esc_html__('انتخاب مشتری الزامی است.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Selecting a client is required.', 'rsd-finance-panel')]);
         }
         if (empty($title)) {
-            $this->send(false, ['message' => esc_html__('عنوان گزارش الزامی است.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The report title is required.', 'rsd-finance-panel')]);
         }
 
         $data = [
@@ -1764,11 +1764,11 @@ class Ajax
 
         $report_id = Database::insert('reports', $data);
         if (!$report_id) {
-            $this->send(false, ['message' => esc_html__('خطا در ذخیره گزارش.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Error saving the report.', 'rsd-finance-panel')]);
         }
 
         $this->send(true, [
-            'message'   => esc_html__('گزارش با موفقیت ثبت شد.', 'rsd-finance-panel'),
+            'message'   => esc_html__('The report was created successfully.', 'rsd-finance-panel'),
             'report_id' => (int) $report_id,
         ]);
     }
@@ -1782,14 +1782,14 @@ class Ajax
     {
         $this->verify(false);
         if (!current_user_can('manage_options') && !current_user_can('rsd_fp_manage_reports')) {
-            $this->send(false, ['message' => esc_html__('دسترسی مجاز نیست.', 'rsd-finance-panel')], 403);
+            $this->send(false, ['message' => esc_html__('You do not have permission.', 'rsd-finance-panel')], 403);
         }
 
         $report_id = (int) ($_POST['report_id'] ?? 0);
         $report    = $report_id > 0 ? Database::get_row('reports', $report_id) : null;
 
         if (!$report) {
-            $this->send(false, ['message' => esc_html__('گزارش پیدا نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Report not found.', 'rsd-finance-panel')]);
         }
 
         $user_id       = (int) ($_POST['user_id'] ?? $report->user_id);
@@ -1801,10 +1801,10 @@ class Ajax
         $description   = isset($_POST['description']) ? sanitize_textarea_field($_POST['description']) : $report->description;
 
         if ($user_id <= 0) {
-            $this->send(false, ['message' => esc_html__('انتخاب مشتری الزامی است.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Selecting a client is required.', 'rsd-finance-panel')]);
         }
         if (empty($title)) {
-            $this->send(false, ['message' => esc_html__('عنوان گزارش الزامی است.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('The report title is required.', 'rsd-finance-panel')]);
         }
 
         $data = [
@@ -1831,7 +1831,7 @@ class Ajax
 
         Database::update('reports', $data, ['id' => $report_id]);
 
-        $this->send(true, ['message' => esc_html__('گزارش با موفقیت به‌روزرسانی شد.', 'rsd-finance-panel')]);
+        $this->send(true, ['message' => esc_html__('The report was updated successfully.', 'rsd-finance-panel')]);
     }
 
     /**
@@ -1843,19 +1843,19 @@ class Ajax
     {
         $this->verify(false);
         if (!current_user_can('manage_options') && !current_user_can('rsd_fp_manage_reports')) {
-            $this->send(false, ['message' => esc_html__('دسترسی مجاز نیست.', 'rsd-finance-panel')], 403);
+            $this->send(false, ['message' => esc_html__('You do not have permission.', 'rsd-finance-panel')], 403);
         }
 
         $report_id = (int) ($_POST['report_id'] ?? 0);
         $report    = $report_id > 0 ? Database::get_row('reports', $report_id) : null;
 
         if (!$report) {
-            $this->send(false, ['message' => esc_html__('گزارش پیدا نشد.', 'rsd-finance-panel')]);
+            $this->send(false, ['message' => esc_html__('Report not found.', 'rsd-finance-panel')]);
         }
 
         Database::delete('reports', ['id' => $report_id]);
 
-        $this->send(true, ['message' => esc_html__('گزارش با موفقیت حذف شد.', 'rsd-finance-panel')]);
+        $this->send(true, ['message' => esc_html__('The report was deleted successfully.', 'rsd-finance-panel')]);
     }
 
     // ============================================================
@@ -1870,7 +1870,7 @@ class Ajax
     private function verify_nonce_only()
     {
         if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'rsd_fp_nonce')) {
-            $this->send(false, ['message' => esc_html__('توکن امنیتی نامعتبر است.', 'rsd-finance-panel')], 403);
+            $this->send(false, ['message' => esc_html__('Invalid security token.', 'rsd-finance-panel')], 403);
         }
     }
 
@@ -1906,7 +1906,7 @@ class Ajax
 
         $auth = $this->auth();
         if (!$auth) {
-            $this->send(false, ['message' => esc_html__('سیستم احراز هویت بارگذاری نشده است.', 'rsd-finance-panel')], 500);
+            $this->send(false, ['message' => esc_html__('The authentication system is not loaded.', 'rsd-finance-panel')], 500);
         }
 
         $phone             = isset($_POST['phone'])             ? trim((string)$_POST['phone'])             : '';
@@ -1934,7 +1934,7 @@ class Ajax
         }
 
         $this->send(true, [
-            'message'     => esc_html__('حساب کاربری شما با موفقیت ساخته شد و وارد شدید.', 'rsd-finance-panel'),
+            'message'     => esc_html__('Your account was created successfully and you are now logged in.', 'rsd-finance-panel'),
             'user_id'     => $user_id,
             'redirect_to' => $redirect,
         ]);
@@ -1952,7 +1952,7 @@ class Ajax
 
         $auth = $this->auth();
         if (!$auth) {
-            $this->send(false, ['message' => esc_html__('سیستم احراز هویت بارگذاری نشده است.', 'rsd-finance-panel')], 500);
+            $this->send(false, ['message' => esc_html__('The authentication system is not loaded.', 'rsd-finance-panel')], 500);
         }
 
         $identifier = isset($_POST['identifier']) ? trim((string)$_POST['identifier']) : '';
@@ -1975,7 +1975,7 @@ class Ajax
         }
 
         $this->send(true, [
-            'message'     => esc_html__('با موفقیت وارد شدید. در حال انتقال به پنل ...', 'rsd-finance-panel'),
+            'message'     => esc_html__('You have logged in successfully. Redirecting to the panel...', 'rsd-finance-panel'),
             'user_id'     => (int)$user->ID,
             'redirect_to' => $redirect,
         ]);
@@ -1993,7 +1993,7 @@ class Ajax
 
         $auth = $this->auth();
         if (!$auth) {
-            $this->send(false, ['message' => esc_html__('سیستم احراز هویت بارگذاری نشده است.', 'rsd-finance-panel')], 500);
+            $this->send(false, ['message' => esc_html__('The authentication system is not loaded.', 'rsd-finance-panel')], 500);
         }
 
         $identifier = isset($_POST['identifier']) ? trim((string)$_POST['identifier']) : '';
@@ -2004,7 +2004,7 @@ class Ajax
         }
 
         $this->send(true, [
-            'message' => esc_html__('در صورت معتبر بودن ایمیل ثبت\u200cشده، لینک بازنشانی رمز عبور برای شما ارسال شد.', 'rsd-finance-panel'),
+            'message' => esc_html__('If the registered email is valid, a password reset link has been sent to you.', 'rsd-finance-panel'),
         ]);
     }
 
@@ -2020,7 +2020,7 @@ class Ajax
 
         $auth = $this->auth();
         if (!$auth) {
-            $this->send(false, ['message' => esc_html__('سیستم احراز هویت بارگذاری نشده است.', 'rsd-finance-panel')], 500);
+            $this->send(false, ['message' => esc_html__('The authentication system is not loaded.', 'rsd-finance-panel')], 500);
         }
 
         $key              = isset($_POST['key'])                  ? trim((string)$_POST['key'])                  : '';
@@ -2041,7 +2041,7 @@ class Ajax
         $auth_url = add_query_arg('passwordreset', 'true', $auth_url);
 
         $this->send(true, [
-            'message'     => esc_html__('رمز عبور شما با موفقیت تغییر کرد. اکنون می‌توانید با رمز جدید وارد شوید.', 'rsd-finance-panel'),
+            'message'     => esc_html__('Your password was changed successfully. You can now log in with the new password.', 'rsd-finance-panel'),
             'redirect_to' => $auth_url,
         ]);
     }
@@ -2058,11 +2058,11 @@ class Ajax
 
         $auth = $this->auth();
         if (!$auth) {
-            $this->send(false, ['message' => esc_html__('سیستم احراز هویت بارگذاری نشده است.', 'rsd-finance-panel')], 500);
+            $this->send(false, ['message' => esc_html__('The authentication system is not loaded.', 'rsd-finance-panel')], 500);
         }
 
         if (!$auth->is_otp_enabled()) {
-            $this->send(false, ['message' => esc_html__('احراز هویت دو مرحله\u200cای در حال حاضر غیرفعال است.', 'rsd-finance-panel')], 400);
+            $this->send(false, ['message' => esc_html__('Two-factor authentication is currently disabled.', 'rsd-finance-panel')], 400);
         }
 
         $phone   = isset($_POST['phone'])   ? trim((string)$_POST['phone'])   : '';
@@ -2079,7 +2079,7 @@ class Ajax
 
         $this->send(true, [
             'message' => sprintf(
-                esc_html__('کد تأیید ۶ رقمی به شماره %s ارسال شد. لطفاً وارد کنید.', 'rsd-finance-panel'),
+                esc_html__('A 6-digit verification code was sent to %s. Please enter it.', 'rsd-finance-panel'),
                 esc_html(\RSD\FinancePanel\SMS\FarazSMS::normalise_phone($phone))
             ),
             'otp_ttl_seconds' => \RSD\FinancePanel\Modules\Auth::OTP_TTL,
@@ -2099,7 +2099,7 @@ class Ajax
 
         $auth = $this->auth();
         if (!$auth) {
-            $this->send(false, ['message' => esc_html__('سیستم احراز هویت بارگذاری نشده است.', 'rsd-finance-panel')], 500);
+            $this->send(false, ['message' => esc_html__('The authentication system is not loaded.', 'rsd-finance-panel')], 500);
         }
 
         $phone = isset($_POST['phone']) ? trim((string)$_POST['phone']) : '';
@@ -2107,11 +2107,11 @@ class Ajax
 
         $ok = $auth->verify_otp($phone, $code);
         if (!$ok) {
-            $this->send(false, ['message' => esc_html__('کد تأیید وارد شده معتبر نیست یا منقضی شده است.', 'rsd-finance-panel')], 400);
+            $this->send(false, ['message' => esc_html__('The entered verification code is invalid or has expired.', 'rsd-finance-panel')], 400);
         }
 
         $this->send(true, [
-            'message' => esc_html__('کد تأیید با موفقیت تأیید شد.', 'rsd-finance-panel'),
+            'message' => esc_html__('The verification code was confirmed successfully.', 'rsd-finance-panel'),
         ]);
     }
 }

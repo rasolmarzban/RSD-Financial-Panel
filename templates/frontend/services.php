@@ -20,13 +20,13 @@ $statuses = \RSD\FinancePanel\Modules\Services::get_statuses();
         <?php include __DIR__ . '/parts/header.php'; ?>
 
         <div class="rsd-toolbar">
-            <h2 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">⚙️ درخواست خدمات جدید</h2>
+            <h2 style="font-size:18px;font-weight:700;margin:0;color:#0f172a">⚙️ New Service Request</h2>
             <div class="spacer"></div>
         </div>
 
         <div class="rsd-tabs">
-            <div class="rsd-tab active" onclick="rsdTab(this,'available')">خدمات موجود</div>
-            <div class="rsd-tab" onclick="rsdTab(this,'my-requests')">درخواست‌های من (<?php echo esc_html(count($my_requests)); ?>)</div>
+            <div class="rsd-tab active" onclick="rsdTab(this,'available')">Available Services</div>
+            <div class="rsd-tab" onclick="rsdTab(this,'my-requests')">My Requests (<?php echo esc_html(count($my_requests)); ?>)</div>
         </div>
 
         <div id="tab-available">
@@ -47,7 +47,7 @@ $statuses = \RSD\FinancePanel\Modules\Services::get_statuses();
                         </div>
                         <h3><?php echo esc_html($svc['label']); ?></h3>
                         <p><?php echo esc_html($svc['description']); ?></p>
-                        <div class="svc-go">انتخاب و شروع درخواست →</div>
+                        <div class="svc-go">Select and Start Request →</div>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -60,11 +60,11 @@ $statuses = \RSD\FinancePanel\Modules\Services::get_statuses();
                         <div class="rsd-card-header">
                             <div class="rsd-card-title">
                                 <span class="rsd-card-icon">📝</span>
-                                فرم درخواست: <?php echo esc_html($svc['label']); ?>
+                                Request Form: <?php echo esc_html($svc['label']); ?>
                             </div>
                             <button type="button" class="rsd-btn rsd-btn-sm rsd-btn-light"
                                 onclick="jQuery('[data-service-wrapper]').hide();jQuery('.rsd-service-card').removeClass('active');jQuery('html,body').animate({scrollTop:jQuery('.rsd-services-grid').offset().top-60},200);">
-                                ← تغییر خدمت
+                                ← Change Service
                             </button>
                         </div>
                         <form data-service-form="<?php echo esc_attr($key); ?>" data-rsd-svc-form>
@@ -82,7 +82,7 @@ $statuses = \RSD\FinancePanel\Modules\Services::get_statuses();
                                         </label>
                                         <?php if ($field['type'] === 'select') : ?>
                                             <select name="<?php echo esc_attr($fname); ?>" <?php if (!empty($field['required'])) echo 'required'; ?>>
-                                                <option value="">- انتخاب کنید -</option>
+                                                <option value="">- Select -</option>
                                                 <?php foreach ($field['options'] as $k => $v) : ?>
                                                     <option value="<?php echo esc_attr($k); ?>"><?php echo esc_html($v); ?></option>
                                                 <?php endforeach; ?>
@@ -99,12 +99,12 @@ $statuses = \RSD\FinancePanel\Modules\Services::get_statuses();
                                 <?php endforeach; ?>
                             </div>
                             <div class="rsd-form-row">
-                                <label>توضیحات تکمیلی</label>
+                                <label>Additional Description</label>
                                 <textarea name="description" rows="3"></textarea>
                             </div>
                             <div style="text-align:left;margin-top:10px">
                                 <button type="submit" class="rsd-btn rsd-btn-primary rsd-btn-lg">
-                                    ثبت نهایی درخواست ✅
+                                    Submit Request ✅
                                 </button>
                             </div>
                         </form>
@@ -119,11 +119,11 @@ $statuses = \RSD\FinancePanel\Modules\Services::get_statuses();
                     <table class="rsd-table">
                         <thead>
                             <tr>
-                                <th>شناسه درخواست</th>
-                                <th>نوع خدمت</th>
-                                <th>عنوان</th>
-                                <th>تاریخ ثبت</th>
-                                <th>وضعیت</th>
+                                <th>Request ID</th>
+                                <th>Service Type</th>
+                                <th>Title</th>
+                                <th>Submission Date</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -143,8 +143,8 @@ $statuses = \RSD\FinancePanel\Modules\Services::get_statuses();
                                     <td colspan="5">
                                         <div class="rsd-empty">
                                             <div class="rsd-empty-icon">📝</div>
-                                            <h3>هنوز درخواستی ثبت نکرده‌اید</h3>
-                                            <p>از بخش «خدمات موجود» درخواست خود را ثبت کنید.</p>
+                                            <h3>You have not submitted any requests yet</h3>
+                                            <p>Submit your request from the "Available Services" section.</p>
                                         </div>
                                     </td>
                                 </tr>

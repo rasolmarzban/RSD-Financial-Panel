@@ -13,6 +13,7 @@ use RSD\FinancePanel\Modules\Reports;
 
 $rtypes = Reports::get_types();
 $months = Reports::get_months();
+$current_year = (int) date('Y');
 
 $type_colors = [
     'tax'            => 'red',
@@ -133,8 +134,8 @@ $type_colors = [
 <div class="rsd-admin-wrap">
     <div class="rsd-admin-header">
         <div>
-            <h1>📊 مدیریت گزارش‌ها</h1>
-            <p>گزارش‌های مالی، مالیاتی و حقوقی صادرشده برای مشتریان</p>
+            <h1>📊 Reports Management</h1>
+            <p>Financial, tax and legal reports issued for clients</p>
         </div>
     </div>
 
@@ -142,23 +143,23 @@ $type_colors = [
         <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
             <form method="get" action="" style="display:flex;gap:10px;align-items:center">
                 <input type="hidden" name="page" value="rsd-fp-reports">
-                <label style="font-weight:600;color:#334155;font-size:13px">فیلتر مشتری:</label>
+                <label style="font-weight:600;color:#334155;font-size:13px">Filter client:</label>
                 <select name="client_id" style="min-width:240px">
-                    <option value="0">— همه مشتریان —</option>
+                    <option value="0">— All clients —</option>
                     <?php foreach ($clients as $c) : ?>
                         <option value="<?php echo (int)$c->ID; ?>" <?php selected($filter_client, (int)$c->ID); ?>>
                             <?php echo esc_html($c->display_name . ' (' . $c->user_email . ')'); ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
-                <button type="submit" class="rsd-btn-admin small secondary">اعمال فیلتر</button>
+                <button type="submit" class="rsd-btn-admin small secondary">Apply Filter</button>
                 <?php if ($filter_client > 0) : ?>
-                    <a href="<?php echo esc_url(admin_url('admin.php?page=rsd-fp-reports')); ?>" class="rsd-btn-admin small light">پاک کردن</a>
+                    <a href="<?php echo esc_url(admin_url('admin.php?page=rsd-fp-reports')); ?>" class="rsd-btn-admin small light">Clear</a>
                 <?php endif; ?>
             </form>
             <div class="spacer" style="flex:1"></div>
             <button type="button" class="rsd-btn-admin primary" id="rsd-open-add-report">
-                ＋ افزودن گزارش جدید
+                ＋ Add New Report
             </button>
         </div>
     </div>
@@ -168,14 +169,14 @@ $type_colors = [
             <table class="rsd-admin-table widefat">
                 <thead>
                     <tr>
-                        <th style="width:90px">شناسه</th>
-                        <th>عنوان گزارش</th>
-                        <th>مشتری</th>
-                        <th>نوع گزارش</th>
-                        <th>دوره / سال</th>
-                        <th>تاریخ صدور</th>
-                        <th>فایل</th>
-                        <th style="width:230px">عملیات</th>
+                        <th style="width:90px">ID</th>
+                        <th>Report Title</th>
+                        <th>Client</th>
+                        <th>Report Type</th>
+                        <th>Period / Year</th>
+                        <th>Issue Date</th>
+                        <th>File</th>
+                        <th style="width:230px">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -185,7 +186,7 @@ $type_colors = [
                             <tr data-report-row="<?php echo (int)$r->id; ?>">
                                 <td><span style="font-family:monospace;font-weight:700;color:#0369a1">#<?php echo (int)$r->id; ?></span></td>
                                 <td style="color:#0f172a;font-weight:600">
-                                    <?php echo !empty($r->title) ? esc_html($r->title) : '<span style="color:#94a3b8">بدون عنوان</span>'; ?>
+                                    <?php echo !empty($r->title) ? esc_html($r->title) : '<span style="color:#94a3b8">Untitled</span>'; ?>
                                     <?php if (!empty($r->description)) : ?>
                                         <div style="font-size:11px;color:#64748b;margin-top:4px;font-weight:400;max-width:380px;white-space:normal;line-height:1.6">
                                             <?php echo esc_html(wp_trim_words($r->description, 14, '…')); ?>
@@ -196,7 +197,7 @@ $type_colors = [
                                     <div class="rsd-user-chip">
                                         <?php echo get_avatar($r->user_id, 28); ?>
                                         <div style="display:flex;flex-direction:column;gap:2px">
-                                            <span style="font-weight:600"><?php echo esc_html($r->client_name ?? 'کاربر #' . $r->user_id); ?></span>
+                                            <span style="font-weight:600"><?php echo esc_html($r->client_name ?? 'User #' . $r->user_id); ?></span>
                                             <span style="color:#64748b;font-size:11px"><?php echo esc_html(get_userdata($r->user_id)->user_email ?? ''); ?></span>
                                         </div>
                                     </div>
@@ -209,7 +210,7 @@ $type_colors = [
                                 <td>
                                     <?php
                                     $period_parts = [];
-                                    if (!empty($r->year))   $period_parts[] = 'سال ' . $r->year;
+                                    if (!empty($r->year))   $period_parts[] = 'Year ' . $r->year;
                                     if (!empty($r->month))  $period_parts[] = (isset($months[$r->month]) ? $months[$r->month] : $r->month);
                                     if (!empty($r->period)) $period_parts[] = $r->period;
                                     echo !empty($period_parts) ? esc_html(implode(' / ', $period_parts)) : '<span style="color:#cbd5e1">—</span>';
@@ -222,7 +223,7 @@ $type_colors = [
                                     <?php if (!empty($r->file_path)) : ?>
                                         <a href="<?php echo esc_url($r->file_path); ?>" target="_blank" rel="noopener"
                                             style="color:#0369a1;font-weight:600;text-decoration:underline;display:inline-flex;align-items:center;gap:4px">
-                                            📎 دانلود
+                                            📎 Download
                                         </a>
                                         <?php if (!empty($r->file_name)) : ?>
                                             <div style="font-size:11px;color:#94a3b8;margin-top:2px"><?php echo esc_html($r->file_name); ?></div>
@@ -233,7 +234,7 @@ $type_colors = [
                                 </td>
                                 <td>
                                     <a href="<?php echo esc_url(add_query_arg(['client_id' => $r->user_id], admin_url('admin.php?page=rsd-fp-documents'))); ?>"
-                                        class="rsd-btn-admin small secondary">مدارک</a>
+                                        class="rsd-btn-admin small secondary">Documents</a>
                                     <button type="button" class="rsd-btn-admin small" data-rsd-edit-report
                                         data-id="<?php echo (int)$r->id; ?>"
                                         data-user_id="<?php echo (int)$r->user_id; ?>"
@@ -245,12 +246,12 @@ $type_colors = [
                                         data-description="<?php echo esc_attr($r->description); ?>"
                                         data-file_path="<?php echo esc_attr($r->file_path ?? ''); ?>"
                                         data-file_name="<?php echo esc_attr($r->file_name ?? ''); ?>">
-                                        ویرایش
+                                        Edit
                                     </button>
                                     <button type="button" class="rsd-btn-admin small danger" data-rsd-delete-report
                                         data-id="<?php echo (int)$r->id; ?>"
                                         data-title="<?php echo esc_attr($r->title); ?>">
-                                        حذف
+                                        Delete
                                     </button>
                                 </td>
                             </tr>
@@ -260,8 +261,8 @@ $type_colors = [
                             <td colspan="8">
                                 <div class="rsd-empty">
                                     <div class="rsd-empty-icon">📊</div>
-                                    <h3>هنوز گزارشی ثبت نشده</h3>
-                                    <p>گزارش‌های صادره برای مشتریان در این جدول نمایش داده می‌شوند. با دکمه بالا یک گزارش جدید ثبت کنید.</p>
+                                    <h3>No reports registered yet</h3>
+                                    <p>Reports issued for clients are shown in this table. Use the button above to register a new report.</p>
                                 </div>
                             </td>
                         </tr>
@@ -276,7 +277,7 @@ $type_colors = [
 <div class="rsd-modal-backdrop" id="rsd-report-modal" style="display:none">
     <div class="rsd-modal rsd-modal-lg">
         <div class="rsd-modal-header">
-            <h3 id="rsd-report-modal-title">＋ افزودن گزارش جدید</h3>
+            <h3 id="rsd-report-modal-title">＋ Add New Report</h3>
             <button type="button" class="rsd-modal-close" onclick="document.getElementById('rsd-report-modal').style.display='none'">&times;</button>
         </div>
         <div class="rsd-modal-body">
@@ -287,9 +288,9 @@ $type_colors = [
 
                 <div class="rsd-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
                     <div>
-                        <label style="display:block;font-weight:600;margin-bottom:6px;color:#0f172a">مشتری <span style="color:#dc2626">*</span></label>
+                        <label style="display:block;font-weight:600;margin-bottom:6px;color:#0f172a">Client <span style="color:#dc2626">*</span></label>
                         <select name="user_id" id="rsd-rpt-user_id" required style="width:100%">
-                            <option value="">— انتخاب مشتری —</option>
+                            <option value="">— Select client —</option>
                             <?php foreach ($clients as $c) : ?>
                                 <option value="<?php echo (int)$c->ID; ?>">
                                     <?php echo esc_html($c->display_name . ' (' . $c->user_email . ')'); ?>
@@ -298,29 +299,29 @@ $type_colors = [
                         </select>
                     </div>
                     <div>
-                        <label style="display:block;font-weight:600;margin-bottom:6px;color:#0f172a">نوع گزارش</label>
+                        <label style="display:block;font-weight:600;margin-bottom:6px;color:#0f172a">Report Type</label>
                         <select name="report_type" id="rsd-rpt-report_type" style="width:100%">
-                            <option value="">— نامشخص —</option>
+                            <option value="">— Unspecified —</option>
                             <?php foreach ($rtypes as $k => $v) : ?>
                                 <option value="<?php echo esc_attr($k); ?>"><?php echo esc_html($v); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
                     <div style="grid-column:1 / -1">
-                        <label style="display:block;font-weight:600;margin-bottom:6px;color:#0f172a">عنوان گزارش <span style="color:#dc2626">*</span></label>
-                        <input type="text" name="title" id="rsd-rpt-title" required placeholder="مثلاً گزارش مالیات بر ارزش افزوده مهر ۱۴۰۵" style="width:100%">
+                        <label style="display:block;font-weight:600;margin-bottom:6px;color:#0f172a">Report Title <span style="color:#dc2626">*</span></label>
+                        <input type="text" name="title" id="rsd-rpt-title" required placeholder="e.g. VAT report for October 2024" style="width:100%">
                     </div>
                     <div>
-                        <label style="display:block;font-weight:600;margin-bottom:6px;color:#0f172a">سال گزارش (شمسی)</label>
+                        <label style="display:block;font-weight:600;margin-bottom:6px;color:#0f172a">Report Year (Gregorian)</label>
                         <select name="year" id="rsd-rpt-year" style="width:100%">
                             <option value="">—</option>
-                            <?php for ($y = 1410; $y >= 1385; $y--) : ?>
+                            <?php for ($y = $current_year + 5; $y >= $current_year - 20; $y--) : ?>
                                 <option value="<?php echo $y; ?>"><?php echo $y; ?></option>
                             <?php endfor; ?>
                         </select>
                     </div>
                     <div>
-                        <label style="display:block;font-weight:600;margin-bottom:6px;color:#0f172a">ماه گزارش</label>
+                        <label style="display:block;font-weight:600;margin-bottom:6px;color:#0f172a">Report Month</label>
                         <select name="month" id="rsd-rpt-month" style="width:100%">
                             <option value="">—</option>
                             <?php foreach ($months as $mk => $mv) : ?>
@@ -329,37 +330,37 @@ $type_colors = [
                         </select>
                     </div>
                     <div style="grid-column:1 / -1">
-                        <label style="display:block;font-weight:600;margin-bottom:6px;color:#0f172a">دوره گزارش (وضعیت آزاد)</label>
-                        <input type="text" name="period" id="rsd-rpt-period" placeholder="مثلاً سه‌ماهه اول یا سال کامل ۱۴۰۵" style="width:100%">
+                        <label style="display:block;font-weight:600;margin-bottom:6px;color:#0f172a">Report Period (free text)</label>
+                        <input type="text" name="period" id="rsd-rpt-period" placeholder="e.g. First quarter or full year 2024" style="width:100%">
                     </div>
                     <div style="grid-column:1 / -1">
-                        <label style="display:block;font-weight:600;margin-bottom:6px;color:#0f172a">توضیحات</label>
-                        <textarea name="description" id="rsd-rpt-description" rows="3" style="width:100%" placeholder="توضیحات تکمیلی درباره این گزارش..."></textarea>
+                        <label style="display:block;font-weight:600;margin-bottom:6px;color:#0f172a">Description</label>
+                        <textarea name="description" id="rsd-rpt-description" rows="3" style="width:100%" placeholder="Additional notes about this report..."></textarea>
                     </div>
                     <div style="grid-column:1 / -1">
-                        <label style="display:block;font-weight:600;margin-bottom:6px;color:#0f172a">فایل گزارش (PDF / Excel / Word / تصویر)</label>
+                        <label style="display:block;font-weight:600;margin-bottom:6px;color:#0f172a">Report File (PDF / Excel / Word / Image)</label>
                         <div id="rsd-rpt-current-file-wrap" style="margin-bottom:10px;display:none">
                             <div style="display:flex;gap:10px;align-items:center;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:8px;padding:10px 14px">
-                                <span>📎 فایل فعلی:</span>
+                                <span>📎 Current file:</span>
                                 <a id="rsd-rpt-current-file-link" href="#" target="_blank" rel="noopener" style="color:#0369a1;font-weight:600;text-decoration:underline"></a>
-                                <label style="display:inline-flex;align-items:center;gap:5px;margin-right:auto;color:#dc2626;cursor:pointer;font-size:13px">
+                                <label style="display:inline-flex;align-items:center;gap:5px;margin-left:auto;color:#dc2626;cursor:pointer;font-size:13px">
                                     <input type="checkbox" name="remove_file" id="rsd-rpt-remove-file" value="1">
-                                    حذف فایل موجود
+                                    Remove existing file
                                 </label>
                             </div>
                         </div>
                         <input type="file" name="report_file" id="rsd-rpt-file" accept=".pdf,.xls,.xlsx,.doc,.docx,.jpg,.jpeg,.png,.zip">
                         <div style="font-size:12px;color:#94a3b8;margin-top:6px">
-                            حداکثر حجم طبق محدودیت سرور: بهینه ۲۰ مگابایت
+                            Max size per server limit: recommended 20 MB
                         </div>
                     </div>
                 </div>
             </form>
         </div>
         <div class="rsd-modal-footer" style="display:flex;justify-content:flex-end;gap:10px">
-            <button type="button" class="rsd-btn-admin light" onclick="document.getElementById('rsd-report-modal').style.display='none'">انصراف</button>
+            <button type="button" class="rsd-btn-admin light" onclick="document.getElementById('rsd-report-modal').style.display='none'">Cancel</button>
             <button type="button" class="rsd-btn-admin primary" id="rsd-report-submit-btn">
-                <span id="rsd-report-submit-label">ثبت گزارش</span>
+                <span id="rsd-report-submit-label">Save Report</span>
             </button>
         </div>
     </div>
@@ -384,8 +385,8 @@ $type_colors = [
             $form[0].reset();
             $('#rsd-rpt-id').val('0');
             $form.find('input[name=action]').val('rsd_fp_save_report');
-            $title.text('＋ افزودن گزارش جدید');
-            $submitLabel.text('ثبت گزارش');
+            $title.text('＋ Add New Report');
+            $submitLabel.text('Save Report');
             $curWrap.hide();
             $removeFile.prop('checked', false);
             if (preselectUserId) {
@@ -398,8 +399,8 @@ $type_colors = [
             $form[0].reset();
             $('#rsd-rpt-id').val(data.id);
             $form.find('input[name=action]').val('rsd_fp_update_report');
-            $title.text('✏️ ویرایش گزارش #' + data.id);
-            $submitLabel.text('ذخیره تغییرات');
+            $title.text('✏️ Edit Report #' + data.id);
+            $submitLabel.text('Save Changes');
             $('#rsd-rpt-user_id').val(data.user_id);
             $('#rsd-rpt-report_type').val(data.report_type);
             $('#rsd-rpt-title').val(data.title);
@@ -409,7 +410,7 @@ $type_colors = [
             $('#rsd-rpt-description').val(data.description);
             if (data.file_path) {
                 $curWrap.show();
-                $curLink.attr('href', data.file_path).text(data.file_name || 'مشاهده فایل');
+                $curLink.attr('href', data.file_path).text(data.file_name || 'View file');
             } else {
                 $curWrap.hide();
             }
@@ -440,11 +441,11 @@ $type_colors = [
         $(document).on('click', '[data-rsd-delete-report]', function() {
             var $b = $(this);
             var id = $b.data('id');
-            var t = $b.data('title') || ('گزارش #' + id);
-            if (!confirm('آیا از حذف «' + t + '» اطمینان دارید؟ این عملیات قابل بازگشت نیست.')) return;
+            var t = $b.data('title') || ('Report #' + id);
+            if (!confirm('Are you sure you want to delete "' + t + '"? This action cannot be undone.')) return;
 
             var orig = $b.html();
-            $b.prop('disabled', true).text('در حال حذف...');
+            $b.prop('disabled', true).text('Deleting...');
 
             $.ajax({
                 url: ajaxurl_wp,
@@ -458,17 +459,17 @@ $type_colors = [
             }).done(function(res) {
                 if (res && res.success) {
                     $('tr[data-report-row="' + id + '"]').remove();
-                    alert(res.data.message || 'گزارش حذف شد.');
+                    alert(res.data.message || 'Report deleted.');
                     setTimeout(function() {
                         location.reload();
                     }, 500);
                 } else {
                     $b.prop('disabled', false).html(orig);
-                    alert((res && res.data && res.data.message) ? res.data.message : 'خطا در حذف گزارش.');
+                    alert((res && res.data && res.data.message) ? res.data.message : 'Error deleting report.');
                 }
             }).fail(function() {
                 $b.prop('disabled', false).html(orig);
-                alert('خطا در ارتباط با سرور.');
+                alert('Error communicating with the server.');
             });
         });
 
@@ -476,18 +477,18 @@ $type_colors = [
             var user_id = $('#rsd-rpt-user_id').val();
             var title = $('#rsd-rpt-title').val().trim();
             if (!user_id || user_id === '0' || user_id === '') {
-                alert('انتخاب مشتری الزامی است.');
+                alert('Selecting a client is required.');
                 return;
             }
             if (!title) {
-                alert('عنوان گزارش الزامی است.');
+                alert('Report title is required.');
                 return;
             }
 
             var fd = new FormData($form[0]);
             var origLabel = $submitLabel.text();
             $submitBtn.prop('disabled', true);
-            $submitLabel.text('در حال ذخیره...');
+            $submitLabel.text('Saving...');
 
             $.ajax({
                 url: ajaxurl_wp,
@@ -501,17 +502,17 @@ $type_colors = [
                 $submitBtn.prop('disabled', false);
                 $submitLabel.text(origLabel);
                 if (res && res.success) {
-                    alert(res.data.message || 'با موفقیت ذخیره شد.');
+                    alert(res.data.message || 'Saved successfully.');
                     setTimeout(function() {
                         location.reload();
                     }, 600);
                 } else {
-                    alert((res && res.data && res.data.message) ? res.data.message : 'خطا در ذخیره گزارش.');
+                    alert((res && res.data && res.data.message) ? res.data.message : 'Error saving report.');
                 }
             }).fail(function() {
                 $submitBtn.prop('disabled', false);
                 $submitLabel.text(origLabel);
-                alert('خطا در ارتباط با سرور.');
+                alert('Error communicating with the server.');
             });
         });
 

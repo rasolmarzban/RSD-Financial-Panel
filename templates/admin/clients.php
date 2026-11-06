@@ -9,8 +9,8 @@ defined('ABSPATH') || exit;
 <div class="rsd-admin-wrap">
     <div class="rsd-admin-header">
         <div>
-            <h1>👥 مدیریت مشتریان</h1>
-            <p>لیست کاربران دارای دسترسی به پرتال مالی</p>
+            <h1>👥 Client Management</h1>
+            <p>List of users with access to the financial portal</p>
         </div>
     </div>
 
@@ -18,13 +18,13 @@ defined('ABSPATH') || exit;
         <div class="rsd-admin-table-wrap">
             <table class="rsd-admin-table">
                 <thead><tr>
-                    <th>آواتار</th>
-                    <th>نام مشتری</th>
-                    <th>ایمیل</th>
-                    <th>نام کاربری</th>
-                    <th>نقش</th>
-                    <th>تاریخ عضویت</th>
-                    <th>عملیات</th>
+                    <th>Avatar</th>
+                    <th>Client Name</th>
+                    <th>Email</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Join Date</th>
+                    <th>Actions</th>
                 </tr></thead>
                 <tbody>
                 <?php if (!empty($clients)) : foreach ($clients as $u) : ?>
@@ -37,9 +37,9 @@ defined('ABSPATH') || exit;
                             $roles = (array) $u->roles;
                             foreach ($roles as $r) {
                                 if ($r === 'rsd_client') {
-                                    echo '<span class="rsd-admin-badge purple">مشتری</span>';
+                                    echo '<span class="rsd-admin-badge purple">Client</span>';
                                 } elseif ($r === 'administrator') {
-                                    echo '<span class="rsd-admin-badge blue">مدیر</span>';
+                                    echo '<span class="rsd-admin-badge blue">Administrator</span>';
                                 } else {
                                     echo '<span class="rsd-admin-badge gray">' . esc_html($r) . '</span>';
                                 }
@@ -48,13 +48,13 @@ defined('ABSPATH') || exit;
                         <td style="color:#64748b;font-size:12px"><?php echo esc_html(date_i18n('j F Y', strtotime($u->user_registered))); ?></td>
                         <td>
                             <a href="<?php echo esc_url(add_query_arg(['view'=>'client','id'=>$u->ID])); ?>"
-                               class="rsd-btn-admin small primary">جزئیات</a>
+                               class="rsd-btn-admin small primary">Details</a>
                             <a href="<?php echo esc_url(get_edit_user_link($u->ID)); ?>"
-                               class="rsd-btn-admin small secondary">ویرایش</a>
+                               class="rsd-btn-admin small secondary">Edit</a>
                         </td>
                     </tr>
                 <?php endforeach; else : ?>
-                    <tr><td colspan="7"><div class="rsd-empty"><p>مشتری یافت نشد. کاربرانی با نقش «RSD Client» ایجاد کنید.</p></div></td></tr>
+                    <tr><td colspan="7"><div class="rsd-empty"><p>No clients found. Create users with the "RSD Client" role.</p></div></td></tr>
                 <?php endif; ?>
                 </tbody>
             </table>

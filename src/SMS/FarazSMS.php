@@ -1,6 +1,6 @@
 <?php
 /**
- * Faraz SMS (فراز اس ام اس) Gateway class
+ * Faraz SMS Gateway class
  *
  * Bridge between the plugin and a real FarazSMS HTTP API.
  * CURRENT PHASE (2026-09-14): All send methods return mock responses — no real
@@ -69,7 +69,7 @@ class FarazSMS
             'Password'    => $password,
             'From'        => $sender,
             'To'          => $phone,
-            'Text'        => sprintf('كد تایید شما: %s پنل مالی RSD', $code),
+            'Text'        => sprintf('Your verification code: %s RSD Finance Panel', $code),
             'IsFlash'     => 'false',
         ]);
 

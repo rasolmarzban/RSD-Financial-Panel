@@ -4,7 +4,7 @@
  * Template: Frontend Custom Auth Page (Login / Register / Lost / Reset)
  *
  * Design matches the client portal dashboard palette (gradient background,
- * white frosted-glass card, gradient logo 14px radius, RTL).
+ * white frosted-glass card, gradient logo 14px radius, LTR).
  *
  * @var string $action                    'login' | 'register' | 'lostpassword' | 'resetpass'
  * @var bool   $otp_enabled               Whether 2-step OTP SMS is enabled
@@ -294,28 +294,28 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
     }
 </style>
 
-<div class="rsd-fp-auth-portal rsd-fp-portal rsd-fp-rtl">
+<div class="rsd-fp-auth-portal rsd-fp-portal">
     <div class="rsd-auth-card">
 
         <!-- Brand / Logo -->
         <div class="rsd-auth-brand">
             <!-- <div class="rsd-auth-logo"><?php // echo esc_html($logo_initial); 
                                             ?></div> -->
-            <h2><?php esc_html_e('ورود به حساب کاربری و ثبت نام مشتریان', 'rsd-finance-panel'); ?></h2>
+            <h2><?php esc_html_e('Account Login and Client Sign Up', 'rsd-finance-panel'); ?></h2>
         </div>
 
         <!-- Tabs -->
-        <div class="rsd-auth-tabs" role="tablist" aria-label="انتخاب فرم">
+        <div class="rsd-auth-tabs" role="tablist" aria-label="Select form">
             <button type="button" class="rsd-auth-tab" data-auth-tab="login" role="tab">
-                <?php esc_html_e('ورود', 'rsd-finance-panel'); ?>
+                <?php esc_html_e('Login', 'rsd-finance-panel'); ?>
             </button>
             <?php if ($public_registration) : ?>
                 <button type="button" class="rsd-auth-tab" data-auth-tab="register" role="tab">
-                    <?php esc_html_e('ثبت نام', 'rsd-finance-panel'); ?>
+                    <?php esc_html_e('Sign Up', 'rsd-finance-panel'); ?>
                 </button>
             <?php endif; ?>
             <button type="button" class="rsd-auth-tab" data-auth-tab="lostpassword" role="tab">
-                <?php esc_html_e('فراموشی رمز', 'rsd-finance-panel'); ?>
+                <?php esc_html_e('Forgot Password', 'rsd-finance-panel'); ?>
             </button>
         </div>
 
@@ -326,7 +326,7 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
         <form class="rsd-auth-form" data-auth-form="login" method="post" style="display:none" autocomplete="on" novalidate>
             <div class="rsd-form-row rsd-auth-step1 rsd-auth-step-wrap">
                 <label for="rsd-auth-login-identifier">
-                    <?php esc_html_e('شماره موبایل یا ایمیل', 'rsd-finance-panel'); ?>
+                    <?php esc_html_e('Mobile Number or Email', 'rsd-finance-panel'); ?>
                     <span class="required">*</span>
                 </label>
                 <input type="text"
@@ -334,16 +334,16 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
                     name="identifier"
                     dir="ltr"
                     spellcheck="false"
-                    placeholder="مثال:  info@example.com , ۰۹۱۲۳۴۵۶۷۸۹"
+                    placeholder="e.g.,  info@example.com , 09123456789"
                     autocomplete="username">
                 <div class="rsd-auth-helper-note">
-                    <?php esc_html_e('می‌توانید از شماره موبایل یا ایمیل ثبت شده خود استفاده کنید.', 'rsd-finance-panel'); ?>
+                    <?php esc_html_e('You can use your registered mobile number or email.', 'rsd-finance-panel'); ?>
                 </div>
             </div>
 
             <div class="rsd-form-row rsd-auth-step1 rsd-auth-step-wrap">
                 <label for="rsd-auth-login-password">
-                    <?php esc_html_e('رمز عبور', 'rsd-finance-panel'); ?>
+                    <?php esc_html_e('Password', 'rsd-finance-panel'); ?>
                     <span class="required">*</span>
                 </label>
                 <input type="password"
@@ -360,24 +360,24 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
                         class="rsd-btn rsd-btn-outline rsd-auth-send-otp"
                         data-context="login"
                         style="width:100%">
-                        <?php esc_html_e('ارسال کد تأیید (SMS)', 'rsd-finance-panel'); ?>
+                        <?php esc_html_e('Send Verification Code (SMS)', 'rsd-finance-panel'); ?>
                     </button>
                 </div>
 
                 <div class="rsd-auth-step2 rsd-auth-step-wrap" style="display:none">
                     <div class="rsd-auth-otp-step">
                         <span>
-                            <?php esc_html_e('کد ۶ رقمی برای شماره', 'rsd-finance-panel'); ?>
+                            <?php esc_html_e('A 6-digit code for number', 'rsd-finance-panel'); ?>
                             <span class="rsd-auth-otp-phone" dir="ltr" style="font-weight:700;color:#0f172a">-</span>
-                            <?php esc_html_e('ارسال شد.', 'rsd-finance-panel'); ?>
+                            <?php esc_html_e('was sent.', 'rsd-finance-panel'); ?>
                         </span>
                         <button type="button" class="rsd-auth-otp-resend" data-context="login">
-                            <?php esc_html_e('ارسال مجدد کد', 'rsd-finance-panel'); ?>
+                            <?php esc_html_e('Resend Code', 'rsd-finance-panel'); ?>
                         </button>
                     </div>
                     <div class="rsd-form-row" style="margin-bottom:14px">
                         <label for="rsd-auth-login-otp">
-                            <?php esc_html_e('کد تأیید ۶ رقمی', 'rsd-finance-panel'); ?>
+                            <?php esc_html_e('6-Digit Verification Code', 'rsd-finance-panel'); ?>
                             <span class="required">*</span>
                         </label>
                         <input type="text"
@@ -402,13 +402,13 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
                         id="rsd-auth-login-remember"
                         name="remember"
                         value="1">
-                    <?php esc_html_e('مرا به خاطر بسپار', 'rsd-finance-panel'); ?>
+                    <?php esc_html_e('Remember me', 'rsd-finance-panel'); ?>
                 </label>
                 <button type="button"
                     class="rsd-auth-tab rsd-auth-inline-link"
                     data-auth-tab="lostpassword"
                     style="background:none;border:none;padding:0;width:auto;box-shadow:none;color:#3b82f6;font-weight:700;font-size:12px">
-                    <?php esc_html_e('رمز عبور را فراموش کرده‌اید؟', 'rsd-finance-panel'); ?>
+                    <?php esc_html_e('Forgot your password?', 'rsd-finance-panel'); ?>
                 </button>
             </div>
 
@@ -418,19 +418,19 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
             <div class="rsd-auth-submit-row">
                 <button type="submit"
                     class="rsd-btn rsd-btn-primary rsd-btn-lg"
-                    data-loading-text="<?php esc_attr_e('در حال ورود ...', 'rsd-finance-panel'); ?>">
-                    <?php esc_html_e('ورود به پنل', 'rsd-finance-panel'); ?>
+                    data-loading-text="<?php esc_attr_e('Signing in ...', 'rsd-finance-panel'); ?>">
+                    <?php esc_html_e('Sign in to your panel', 'rsd-finance-panel'); ?>
                 </button>
             </div>
 
             <?php if ($public_registration) : ?>
                 <div class="rsd-auth-bottom-links">
-                    <span><?php esc_html_e('هنوز ثبت نام نکرده‌اید؟', 'rsd-finance-panel'); ?></span>
+                    <span><?php esc_html_e("Don't have an account?", 'rsd-finance-panel'); ?></span>
                     <button type="button"
                         class="rsd-auth-tab"
                         data-auth-tab="register"
                         style="background:none;border:none;padding:0;width:auto;box-shadow:none;color:#3b82f6;font-weight:700;font-size:12px">
-                        <?php esc_html_e('ثبت نام سریع', 'rsd-finance-panel'); ?>
+                        <?php esc_html_e('Quick Sign Up', 'rsd-finance-panel'); ?>
                     </button>
                 </div>
             <?php endif; ?>
@@ -441,7 +441,7 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
             <form class="rsd-auth-form" data-auth-form="register" method="post" style="display:none" autocomplete="on" novalidate>
                 <div class="rsd-form-row rsd-auth-step-wrap rsd-auth-step1">
                     <label for="rsd-auth-register-phone">
-                        <?php esc_html_e('شماره موبایل', 'rsd-finance-panel'); ?>
+                        <?php esc_html_e('Mobile Number', 'rsd-finance-panel'); ?>
                         <span class="required">*</span>
                     </label>
                     <input type="text"
@@ -449,17 +449,17 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
                         name="phone"
                         dir="ltr"
                         spellcheck="false"
-                        placeholder="۰۹۱۲۳۴۵۶۷۸۹"
+                        placeholder="09123456789"
                         maxlength="15"
                         autocomplete="tel">
                     <div class="rsd-auth-helper-note">
-                        <?php esc_html_e('شماره موبایل باید ۱۱ رقم و با پیشوند ۰۹ شروع شود. این شماره برای بازیابی حساب و اعلان‌ها استفاده می‌شود.', 'rsd-finance-panel'); ?>
+                        <?php esc_html_e('The mobile number must be 11 digits and start with the 09 prefix. It is used for account recovery and notifications.', 'rsd-finance-panel'); ?>
                     </div>
                 </div>
 
                 <div class="rsd-form-row rsd-auth-step-wrap rsd-auth-step1">
                     <label for="rsd-auth-register-email">
-                        <?php esc_html_e('ایمیل (اختیاری)', 'rsd-finance-panel'); ?>
+                        <?php esc_html_e('Email (optional)', 'rsd-finance-panel'); ?>
                     </label>
                     <input type="email"
                         id="rsd-auth-register-email"
@@ -468,7 +468,7 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
                         placeholder="info@example.com"
                         autocomplete="email">
                     <div class="rsd-auth-helper-note">
-                        <?php esc_html_e('در صورت وارد نکردن ایمیل، امکان بازیابی رمز عبور از طریق ایمیل وجود نخواهد داشت.', 'rsd-finance-panel'); ?>
+                        <?php esc_html_e('If you do not enter an email, password recovery via email will not be possible.', 'rsd-finance-panel'); ?>
                     </div>
                 </div>
 
@@ -478,24 +478,24 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
                             class="rsd-btn rsd-btn-outline rsd-auth-send-otp"
                             data-context="register"
                             style="width:100%">
-                            <?php esc_html_e('ارسال کد تأیید (SMS)', 'rsd-finance-panel'); ?>
+                            <?php esc_html_e('Send Verification Code (SMS)', 'rsd-finance-panel'); ?>
                         </button>
                     </div>
 
                     <div class="rsd-auth-step2 rsd-auth-step-wrap" style="display:none">
                         <div class="rsd-auth-otp-step">
                             <span>
-                                <?php esc_html_e('کد ۶ رقمی برای شماره', 'rsd-finance-panel'); ?>
+                                <?php esc_html_e('A 6-digit code for number', 'rsd-finance-panel'); ?>
                                 <span class="rsd-auth-otp-phone" dir="ltr" style="font-weight:700;color:#0f172a">-</span>
-                                <?php esc_html_e('ارسال شد.', 'rsd-finance-panel'); ?>
+                                <?php esc_html_e('was sent.', 'rsd-finance-panel'); ?>
                             </span>
                             <button type="button" class="rsd-auth-otp-resend" data-context="register">
-                                <?php esc_html_e('ارسال مجدد کد', 'rsd-finance-panel'); ?>
+                                <?php esc_html_e('Resend Code', 'rsd-finance-panel'); ?>
                             </button>
                         </div>
                         <div class="rsd-form-row" style="margin-bottom:14px">
                             <label for="rsd-auth-register-otp">
-                                <?php esc_html_e('کد تأیید ۶ رقمی', 'rsd-finance-panel'); ?>
+                                <?php esc_html_e('6-Digit Verification Code', 'rsd-finance-panel'); ?>
                                 <span class="required">*</span>
                             </label>
                             <input type="text"
@@ -516,7 +516,7 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
 
                 <div class="rsd-form-row rsd-auth-step-wrap rsd-auth-step2" style="display:<?php echo $otp_enabled ? 'none' : 'block'; ?>">
                     <label for="rsd-auth-register-password">
-                        <?php esc_html_e('رمز عبور', 'rsd-finance-panel'); ?>
+                        <?php esc_html_e('Password', 'rsd-finance-panel'); ?>
                         <span class="required">*</span>
                     </label>
                     <input type="password"
@@ -527,13 +527,13 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
                         autocomplete="new-password"
                         minlength="<?php echo esc_attr($password_min_length); ?>">
                     <div class="rsd-auth-helper-note">
-                        <?php echo esc_html(sprintf(esc_html__('حداقل %d کاراکتر شامل حروف و اعداد توصیه می‌شود.', 'rsd-finance-panel'), $password_min_length)); ?>
+                        <?php echo esc_html(sprintf(esc_html__('At least %d characters including letters and numbers is recommended.', 'rsd-finance-panel'), $password_min_length)); ?>
                     </div>
                 </div>
 
                 <div class="rsd-form-row rsd-auth-step-wrap rsd-auth-step2" style="display:<?php echo $otp_enabled ? 'none' : 'block'; ?>">
                     <label for="rsd-auth-register-password-confirm">
-                        <?php esc_html_e('تکرار رمز عبور', 'rsd-finance-panel'); ?>
+                        <?php esc_html_e('Confirm Password', 'rsd-finance-panel'); ?>
                         <span class="required">*</span>
                     </label>
                     <input type="password"
@@ -550,17 +550,17 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
                 <div class="rsd-auth-submit-row">
                     <button type="submit"
                         class="rsd-btn rsd-btn-primary rsd-btn-lg">
-                        <?php esc_html_e('ایجاد حساب کاربری و ورود', 'rsd-finance-panel'); ?>
+                        <?php esc_html_e('Create Account and Sign In', 'rsd-finance-panel'); ?>
                     </button>
                 </div>
 
                 <div class="rsd-auth-bottom-links">
-                    <span><?php esc_html_e('قبلاً ثبت نام کرده‌اید؟', 'rsd-finance-panel'); ?></span>
+                    <span><?php esc_html_e('Already registered?', 'rsd-finance-panel'); ?></span>
                     <button type="button"
                         class="rsd-auth-tab"
                         data-auth-tab="login"
                         style="background:none;border:none;padding:0;width:auto;box-shadow:none;color:#3b82f6;font-weight:700;font-size:12px">
-                        <?php esc_html_e('ورود به حساب', 'rsd-finance-panel'); ?>
+                        <?php esc_html_e('Sign in to account', 'rsd-finance-panel'); ?>
                     </button>
                 </div>
             </form>
@@ -570,7 +570,7 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
         <form class="rsd-auth-form" data-auth-form="lostpassword" method="post" style="display:none" novalidate>
             <div class="rsd-form-row">
                 <label for="rsd-auth-lost-identifier">
-                    <?php esc_html_e('شماره موبایل یا ایمیل حساب', 'rsd-finance-panel'); ?>
+                    <?php esc_html_e('Account Mobile Number or Email', 'rsd-finance-panel'); ?>
                     <span class="required">*</span>
                 </label>
                 <input type="text"
@@ -578,12 +578,12 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
                     name="identifier"
                     dir="ltr"
                     spellcheck="false"
-                    placeholder="شماره موبایل یا ایمیل ثبت شده">
+                    placeholder="Registered mobile number or email">
                 <div class="rsd-auth-helper-note">
-                    <?php esc_html_e('اگر ایمیل معتبری برای حساب شما ثبت شده باشد، لینک بازنشانی رمز عبور به آن ادرس ارسال می‌گردد.', 'rsd-finance-panel'); ?>
+                    <?php esc_html_e('If a valid email is registered for your account, a password reset link will be sent to that address.', 'rsd-finance-panel'); ?>
                     <br>
                     <strong style="color:#b91c1c">
-                        <?php esc_html_e('توجه: اگر در ثبت نام ایمیل وارد نکرده باشید، با مدیر سامانه تماس بگیرید.', 'rsd-finance-panel'); ?>
+                        <?php esc_html_e('Note: If you did not enter an email during sign up, please contact the system administrator.', 'rsd-finance-panel'); ?>
                     </strong>
                 </div>
             </div>
@@ -591,17 +591,17 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
             <div class="rsd-auth-submit-row">
                 <button type="submit"
                     class="rsd-btn rsd-btn-primary rsd-btn-lg">
-                    <?php esc_html_e('ارسال لینک بازنشانی رمز عبور', 'rsd-finance-panel'); ?>
+                    <?php esc_html_e('Send Password Reset Link', 'rsd-finance-panel'); ?>
                 </button>
             </div>
 
             <div class="rsd-auth-bottom-links">
-                <span><?php esc_html_e('یادتان آمد؟', 'rsd-finance-panel'); ?></span>
+                <span><?php esc_html_e('Remembered it?', 'rsd-finance-panel'); ?></span>
                 <button type="button"
                     class="rsd-auth-tab"
                     data-auth-tab="login"
                     style="background:none;border:none;padding:0;width:auto;box-shadow:none;color:#3b82f6;font-weight:700;font-size:12px">
-                    <?php esc_html_e('بازگشت به صفحه ورود', 'rsd-finance-panel'); ?>
+                    <?php esc_html_e('Back to login page', 'rsd-finance-panel'); ?>
                 </button>
             </div>
         </form>
@@ -613,7 +613,7 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
 
             <div class="rsd-form-row">
                 <label for="rsd-auth-resetpass-new">
-                    <?php esc_html_e('رمز عبور جدید', 'rsd-finance-panel'); ?>
+                    <?php esc_html_e('New Password', 'rsd-finance-panel'); ?>
                     <span class="required">*</span>
                 </label>
                 <input type="password"
@@ -624,13 +624,13 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
                     autocomplete="new-password"
                     minlength="<?php echo esc_attr($password_min_length); ?>">
                 <div class="rsd-auth-helper-note">
-                    <?php echo esc_html(sprintf(esc_html__('حداقل %d کاراکتر.', 'rsd-finance-panel'), $password_min_length)); ?>
+                    <?php echo esc_html(sprintf(esc_html__('At least %d characters.', 'rsd-finance-panel'), $password_min_length)); ?>
                 </div>
             </div>
 
             <div class="rsd-form-row">
                 <label for="rsd-auth-resetpass-new-confirm">
-                    <?php esc_html_e('تکرار رمز عبور جدید', 'rsd-finance-panel'); ?>
+                    <?php esc_html_e('Confirm New Password', 'rsd-finance-panel'); ?>
                     <span class="required">*</span>
                 </label>
                 <input type="password"
@@ -644,7 +644,7 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
             <div class="rsd-auth-submit-row">
                 <button type="submit"
                     class="rsd-btn rsd-btn-primary rsd-btn-lg">
-                    <?php esc_html_e('ذخیره رمز عبور جدید', 'rsd-finance-panel'); ?>
+                    <?php esc_html_e('Save New Password', 'rsd-finance-panel'); ?>
                 </button>
             </div>
 
@@ -654,7 +654,7 @@ $logo_initial = mb_substr(get_bloginfo('name') ?: 'R', 0, 1);
                     class="rsd-auth-tab"
                     data-auth-tab="login"
                     style="background:none;border:none;padding:0;width:auto;box-shadow:none;color:#3b82f6;font-weight:700;font-size:12px">
-                    <?php esc_html_e('صفحه ورود', 'rsd-finance-panel'); ?>
+                    <?php esc_html_e('Login Page', 'rsd-finance-panel'); ?>
                 </button>
             </div>
         </form>

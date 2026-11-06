@@ -37,7 +37,7 @@ class Assets
             return;
         }
 
-        // Main dashboard CSS (RTL)
+        // Main dashboard CSS (LTR)
         wp_enqueue_style(
             'rsd-fp-dashboard',
             RSD_FP_PLUGIN_URL . 'assets/css/dashboard.css',
@@ -96,24 +96,24 @@ class Assets
                 'public_registration'   => $public_reg,
                 'password_min_length'   => $password_min_len,
                 'i18n' => [
-                    'processing'           => esc_html__('در حال پردازش ...', 'rsd-finance-panel'),
-                    'error'                => esc_html__('خطایی رخ داد.', 'rsd-finance-panel'),
-                    'success'              => esc_html__('عملیات موفق', 'rsd-finance-panel'),
-                    'network_error'        => esc_html__('خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.', 'rsd-finance-panel'),
-                    'fill_required'        => esc_html__('لطفاً فیلدهای الزامی را تکمیل کنید.', 'rsd-finance-panel'),
-                    'phone_required'       => esc_html__('شماره موبایل الزامی است.', 'rsd-finance-panel'),
-                    'invalid_email'        => esc_html__('ایمیل وارد شده معتبر نیست.', 'rsd-finance-panel'),
-                    'enter_id'             => esc_html__('لطفاً شماره موبایل یا ایمیل را وارد کنید.', 'rsd-finance-panel'),
-                    'password_short'       => esc_html__('رمز عبور باید حداقل %d کاراکتر باشد.', 'rsd-finance-panel'),
-                    'password_mismatch'    => esc_html__('رمز عبور و تکرار آن با هم مطابقت ندارند.', 'rsd-finance-panel'),
-                    'enter_otp'            => esc_html__('لطفاً کد تأیید را وارد کنید.', 'rsd-finance-panel'),
-                    'resend_code'          => esc_html__('ارسال مجدد کد', 'rsd-finance-panel'),
-                    'resend_in'            => esc_html__('ارسال مجدد پس از', 'rsd-finance-panel'),
-                    'logged_out'           => esc_html__('شما با موفقیت از سامانه خارج شدید.', 'rsd-finance-panel'),
-                    'pw_reset_success'     => esc_html__('رمز عبور شما با موفقیت تغییر کرد. اکنون می‌توانید وارد شوید.', 'rsd-finance-panel'),
-                    'key_expired'          => esc_html__('لینک بازنشانی منقضی شده است. لطفاً دوباره درخواست دهید.', 'rsd-finance-panel'),
-                    'key_invalid'          => esc_html__('لینک بازنشانی معتبر نیست.', 'rsd-finance-panel'),
-                    'invalid_reset_request' => esc_html__('درخواست بازنشانی معتبر نیست.', 'rsd-finance-panel'),
+                    'processing'           => esc_html__('Processing...', 'rsd-finance-panel'),
+                    'error'                => esc_html__('An error occurred.', 'rsd-finance-panel'),
+                    'success'              => esc_html__('Operation successful', 'rsd-finance-panel'),
+                    'network_error'        => esc_html__('Server connection error. Please try again.', 'rsd-finance-panel'),
+                    'fill_required'        => esc_html__('Please fill in the required fields.', 'rsd-finance-panel'),
+                    'phone_required'       => esc_html__('Phone number is required.', 'rsd-finance-panel'),
+                    'invalid_email'        => esc_html__('The entered email is not valid.', 'rsd-finance-panel'),
+                    'enter_id'             => esc_html__('Please enter your phone number or email.', 'rsd-finance-panel'),
+                    'password_short'       => esc_html__('Password must be at least %d characters long.', 'rsd-finance-panel'),
+                    'password_mismatch'    => esc_html__('Password and its confirmation do not match.', 'rsd-finance-panel'),
+                    'enter_otp'            => esc_html__('Please enter the verification code.', 'rsd-finance-panel'),
+                    'resend_code'          => esc_html__('Resend code', 'rsd-finance-panel'),
+                    'resend_in'            => esc_html__('Resend in', 'rsd-finance-panel'),
+                    'logged_out'           => esc_html__('You have been logged out successfully.', 'rsd-finance-panel'),
+                    'pw_reset_success'     => esc_html__('Your password was changed successfully. You can now log in.', 'rsd-finance-panel'),
+                    'key_expired'          => esc_html__('The reset link has expired. Please request a new one.', 'rsd-finance-panel'),
+                    'key_invalid'          => esc_html__('The reset link is not valid.', 'rsd-finance-panel'),
+                    'invalid_reset_request' => esc_html__('The reset request is not valid.', 'rsd-finance-panel'),
                 ],
             ]);
         }

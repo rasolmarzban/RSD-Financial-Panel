@@ -21,8 +21,8 @@ foreach ($statuses as $k => $v) {
 <div class="rsd-admin-wrap">
     <div class="rsd-admin-header">
         <div>
-            <h1>📁 مدیریت مدارک</h1>
-            <p>مدیریت مدارک بارگذاری‌شده توسط مشتریان</p>
+            <h1>📁 Document Management</h1>
+            <p>Manage documents uploaded by clients</p>
         </div>
     </div>
 
@@ -30,7 +30,7 @@ foreach ($statuses as $k => $v) {
         <form method="get">
             <input type="hidden" name="page" value="rsd-fp-documents">
             <select name="status">
-                <option value="all">همه وضعیت‌ها</option>
+                <option value="all">All Statuses</option>
                 <?php foreach ($statuses as $key => $info) : ?>
                     <option value="<?php echo esc_attr($key); ?>" <?php selected($status ?? '', $key); ?>>
                         <?php echo esc_html($info[0]); ?>
@@ -41,14 +41,14 @@ foreach ($statuses as $k => $v) {
             $clients = get_users(['role__in' => ['rsd_client', 'administrator']]);
             ?>
             <select name="client_id">
-                <option value="0">همه مشتریان</option>
+                <option value="0">All Clients</option>
                 <?php foreach ($clients as $c) : ?>
                     <option value="<?php echo (int)$c->ID; ?>" <?php selected($client_id ?? 0, $c->ID); ?>>
                         <?php echo esc_html($c->display_name); ?>
                     </option>
                 <?php endforeach; ?>
             </select>
-            <button type="submit" class="rsd-btn-admin small primary">اعمال فیلتر</button>
+            <button type="submit" class="rsd-btn-admin small primary">Apply Filter</button>
         </form>
     </div>
 
@@ -58,14 +58,14 @@ foreach ($statuses as $k => $v) {
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>مشتری</th>
-                        <th>عنوان مدرک</th>
-                        <th>دسته‌بندی</th>
-                        <th>وضعیت</th>
-                        <th>تاریخ ارسال</th>
-                        <th>تاریخ انقضا</th>
-                        <th>فایل</th>
-                        <th>عملیات</th>
+                        <th>Client</th>
+                        <th>Document Title</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Submission Date</th>
+                        <th>Expiry Date</th>
+                        <th>File</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -88,7 +88,7 @@ foreach ($statuses as $k => $v) {
                                     $incomplete_badge = '';
                                     ob_start();
                                     if (!empty($d->is_incomplete)) :
-                                    ?><span class="rsd-admin-badge red" style="margin-left:6px">ناقص</span><?php
+                                    ?><span class="rsd-admin-badge red" style="margin-left:6px">Incomplete</span><?php
                                                                                                         endif;
                                                                                                         $incomplete_badge = ob_get_clean();
                                                                                                         echo $incomplete_badge;
@@ -105,7 +105,7 @@ foreach ($statuses as $k => $v) {
                                         <select class="rsd-doc-status-select"
                                             data-doc-status
                                             data-doc-id="<?php echo (int)$d->id; ?>"
-                                            aria-label="<?php esc_attr_e('تغییر وضعیت مدرک', 'rsd-finance-panel'); ?>">
+                                            aria-label="<?php esc_attr_e('Change document status', 'rsd-finance-panel'); ?>">
                                             <?php foreach ($statuses as $key => $info) : ?>
                                                 <option value="<?php echo esc_attr($key); ?>"
                                                     data-color="<?php echo esc_attr($info[1]); ?>"
@@ -125,16 +125,16 @@ foreach ($statuses as $k => $v) {
                                         $label = '';
                                         if ($days_left < 0) {
                                             $cls = 'red';
-                                            $label = ' (منقضی)';
+                                            $label = ' (Expired)';
                                         } elseif ($days_left <= 7) {
                                             $cls = 'amber';
-                                            $label = ' (' . $days_left . ' روز)';
+                                            $label = ' (' . $days_left . ' days)';
                                         }
                                     ?>
                                         <span style="color:#0f172a;font-size:12px"><?php echo esc_html(rsd_fp_jalali_date('j F Y', $exp_ts)); ?></span>
                                         <br>
                                         <span class="rsd-admin-badge <?php echo esc_attr($cls); ?>" style="margin-top:3px">
-                                            <?php echo esc_html(trim(($days_left < 0 ? 'منقضی شده' : 'مانده: ' . $days_left . ' روز') . $label)); ?>
+                                            <?php echo esc_html(trim(($days_left < 0 ? 'Expired' : 'Remaining: ' . $days_left . ' days') . $label)); ?>
                                         </span>
                                     <?php else : ?>
                                         <span style="color:#cbd5e1;font-size:11px">-</span>
@@ -143,14 +143,14 @@ foreach ($statuses as $k => $v) {
                                 <td>
                                     <?php if (!empty($d->file_path)) : ?>
                                         <a href="<?php echo esc_url($d->file_path); ?>" target="_blank"
-                                            class="rsd-btn-admin small secondary">دانلود</a>
+                                            class="rsd-btn-admin small secondary">Download</a>
                                     <?php else : ?>
                                         <span style="color:#cbd5e1">-</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
                                     <button type="button" class="rsd-btn-admin small danger rsd-confirm"
-                                        data-delete-document="<?php echo (int)$d->id; ?>">حذف</button>
+                                        data-delete-document="<?php echo (int)$d->id; ?>">Delete</button>
                                 </td>
                             </tr>
                         <?php endforeach;
@@ -158,7 +158,7 @@ foreach ($statuses as $k => $v) {
                         <tr>
                             <td colspan="9">
                                 <div class="rsd-empty">
-                                    <p>مدرکی یافت نشد.</p>
+                                    <p>No documents found.</p>
                                 </div>
                             </td>
                         </tr>

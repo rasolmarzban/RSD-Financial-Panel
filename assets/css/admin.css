@@ -4,8 +4,8 @@
  */
 
 #wpcontent {
-    direction: rtl;
-    font-family: 'IRANSans', 'Tahoma', 'Arial', sans-serif;
+    direction: ltr;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .rsd-admin-wrap {
@@ -169,7 +169,7 @@
 
 .rsd-admin-table thead th {
     padding: 11px 14px;
-    text-align: right;
+    text-align: left;
     font-size: 12px;
     font-weight: 700;
     color: #64748b;
@@ -521,11 +521,11 @@
     box-shadow: 0 0 0 3px rgba(99,102,241,.18);
 }
 
-/* RTL fixes for form elements */
+/* Direction fixes for form elements */
 .rsd-admin-wrap textarea,
 .rsd-admin-wrap input,
 .rsd-admin-wrap select {
-    direction: rtl;
+    direction: ltr;
 }
 .rsd-admin-wrap input[type="number"],
 .rsd-admin-wrap input[type="date"],
@@ -587,7 +587,7 @@
     background: #ffffff;
     color: #0f172a;
     cursor: pointer;
-    direction: rtl;
+    direction: ltr;
     font-family: inherit;
     line-height: 1.6;
     transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
@@ -634,8 +634,8 @@ body.rsd-modal-open {
     align-items: flex-start;
     justify-content: center;
     padding: 40px 16px;
-    direction: rtl;
-    font-family: 'IRANSans', 'Tahoma', 'Arial', sans-serif;
+    direction: ltr;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     overflow-y: auto;
 }
 
@@ -752,7 +752,7 @@ body.rsd-modal-open {
     font-weight: 800;
     color: #0f172a;
     direction: ltr;
-    font-family: monospace, Tahoma;
+    font-family: monospace;
 }
 
 /* 3-column grid for subtotal/tax/discount */
@@ -815,7 +815,7 @@ body.rsd-modal-open {
 
 /* Buttons spacing in table ops column */
 .rsd-admin-table .rsd-btn-admin + .rsd-btn-admin {
-    margin-right: 4px;
+    margin-left: 4px;
 }
 
 /* Keep small buttons consistent in table cells */
@@ -852,7 +852,7 @@ body.rsd-modal-open {
     font-family: inherit;
     cursor: pointer;
     transition: border-color .15s ease, box-shadow .15s ease;
-    direction: rtl;
+    direction: ltr;
 }
 .rsd-date-triple select:focus {
     border-color: #3b82f6;
@@ -861,12 +861,12 @@ body.rsd-modal-open {
 .rsd-date-triple select.rsd-triple-year {
     direction: ltr;
     text-align: center;
-    font-family: monospace, Tahoma;
+    font-family: monospace;
 }
 .rsd-date-triple select.rsd-triple-day {
     direction: ltr;
     text-align: center;
-    font-family: monospace, Tahoma;
+    font-family: monospace;
 }
 @media (max-width: 560px) {
     .rsd-date-triple {
@@ -894,7 +894,7 @@ body.rsd-modal-open {
     color: #0f172a;
     outline: none;
     font-family: inherit;
-    direction: rtl;
+    direction: ltr;
     transition: border-color .15s ease, box-shadow .15s ease;
 }
 .rsd-client-search-input::placeholder {
@@ -924,9 +924,9 @@ body.rsd-modal-open {
 }
 
 /* ============ Extra: better table cell widths when currency labels added ============ */
-.rsd-admin-table th[style*="مبلغ"],
-.rsd-admin-table th[style*="پرداخت‌شده"],
-.rsd-admin-table th[style*="مانده"] {
+.rsd-admin-table th[style*="Amount"],
+.rsd-admin-table th[style*="Paid"],
+.rsd-admin-table th[style*="Balance"] {
     min-width: 140px;
 }
 
@@ -938,17 +938,17 @@ body.rsd-modal-open {
     margin-inline-end: 4px;
 }
 
-/* Number input RTL-aware fix: show numbers LTR even inside RTL wrapper */
+/* Number input: show numbers left-to-right inside the form wrapper */
 .rsd-admin-wrap input[type="number"],
 .rsd-modal-body input[type="number"] {
     direction: ltr;
     text-align: left;
-    font-family: monospace, Tahoma;
+    font-family: monospace;
 }
 .rsd-admin-wrap input[type="number"]::placeholder,
 .rsd-modal-body input[type="number"]::placeholder {
-    direction: rtl;
-    text-align: right;
+    direction: ltr;
+    text-align: left;
 }
 
 

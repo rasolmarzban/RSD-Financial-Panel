@@ -98,7 +98,6 @@ class Frontend
             }
             if ($match) {
                 $classes[] = 'rsd-fp-portal';
-                $classes[] = 'rsd-fp-rtl';
             }
         }
         return $classes;
@@ -175,8 +174,8 @@ class Frontend
 
         if (!Plugin::is_client_user()) {
             wp_die(
-                esc_html__('شما دسترسی لازم برای مشاهده این صفحه را ندارید.', 'rsd-finance-panel'),
-                esc_html__('دسترسی مجاز نیست', 'rsd-finance-panel'),
+                esc_html__('You do not have permission to view this page.', 'rsd-finance-panel'),
+                esc_html__('Access Denied', 'rsd-finance-panel'),
                 ['response' => 403, 'back_link' => true]
             );
         }
@@ -655,12 +654,12 @@ class Frontend
         $my_requests = Database::get_rows('services', ['user_id' => $client_id], 'created_at', 'DESC', 100);
 
         $service_types = [
-            'company_registration' => esc_html__('ثبت شرکت', 'rsd-finance-panel'),
-            'brand_registration'   => esc_html__('ثبت برند', 'rsd-finance-panel'),
-            'tax_id_application'   => esc_html__('دریافت شماره مالیاتی', 'rsd-finance-panel'),
-            'new_personnel_payroll' => esc_html__('صدور فیش حقوقی برای پرسنل جدید', 'rsd-finance-panel'),
-            'employee_termination' => esc_html__('خروج کارمند', 'rsd-finance-panel'),
-            'other'                => esc_html__('سایر خدمات', 'rsd-finance-panel'),
+            'company_registration' => esc_html__('Company Registration', 'rsd-finance-panel'),
+            'brand_registration'   => esc_html__('Brand Registration', 'rsd-finance-panel'),
+            'tax_id_application'   => esc_html__('Tax ID Application', 'rsd-finance-panel'),
+            'new_personnel_payroll' => esc_html__('Payroll Slip for New Personnel', 'rsd-finance-panel'),
+            'employee_termination' => esc_html__('Employee Termination', 'rsd-finance-panel'),
+            'other'                => esc_html__('Other Services', 'rsd-finance-panel'),
         ];
 
         return rsd_fp_get_template('frontend/services', [
@@ -734,17 +733,17 @@ class Frontend
                     $esc_dash = esc_url($dashboard);
                     return sprintf(
                         '<meta http-equiv="refresh" content="0; url=%s">'
-                        . '<script type="text/javascript">if(window.location && window.location.replace){window.location.replace(%s);}else{window.location.href=%s;}</script>'
-                        . '<div style="padding:24px;text-align:center;font-family:tahoma;">'
-                        . '<p style="margin:0 0 8px;font-weight:600;">%s</p>'
-                        . '<a href="%s" style="color:#2563eb;text-decoration:underline;">%s</a>'
-                        . '</div>',
+                            . '<script type="text/javascript">if(window.location && window.location.replace){window.location.replace(%s);}else{window.location.href=%s;}</script>'
+                            . '<div style="padding:24px;text-align:center;font-family:system-ui,-apple-system,sans-serif;">'
+                            . '<p style="margin:0 0 8px;font-weight:600;">%s</p>'
+                            . '<a href="%s" style="color:#2563eb;text-decoration:underline;">%s</a>'
+                            . '</div>',
                         $esc_dash,
                         wp_json_encode($dashboard),
                         wp_json_encode($dashboard),
-                        esc_html__('در حال انتقال به پنل کاربری ...', 'rsd-finance-panel'),
+                        esc_html__('Redirecting to the user panel...', 'rsd-finance-panel'),
                         $esc_dash,
-                        esc_html__('اگر منتقل نشدید اینجا کلیک کنید', 'rsd-finance-panel')
+                        esc_html__('If you were not redirected, click here', 'rsd-finance-panel')
                     );
                 }
             }
@@ -757,9 +756,9 @@ class Frontend
                     <p style="margin:0 0 8px;font-weight:600;color:#0f172a">%s</p>
                     <a href="%s" class="rsd-btn rsd-btn-primary" style="display:inline-flex;margin-top:4px">%s</a>
                 </div>',
-                esc_html__('سیستم ورود و ثبت نام سفارشی غیرفعال است. از صفحه استاندارد وردپرس استفاده کنید.', 'rsd-finance-panel'),
+                esc_html__('The custom login and registration system is disabled. Please use the standard WordPress page.', 'rsd-finance-panel'),
                 esc_url($login),
-                esc_html__('ورود به حساب کاربری', 'rsd-finance-panel')
+                esc_html__('Log in to your account', 'rsd-finance-panel')
             );
         }
 
@@ -795,19 +794,19 @@ class Frontend
         $flash_type    = 'success';
 
         if (isset($_GET['loggedout']) && $_GET['loggedout'] === 'true') {
-            $flash_message = esc_html__('شما با موفقیت از سامانه خارج شدید.', 'rsd-finance-panel');
+            $flash_message = esc_html__('You have been logged out successfully.', 'rsd-finance-panel');
             $flash_type    = 'success';
         } elseif (isset($_GET['passwordreset']) && $_GET['passwordreset'] === 'true') {
-            $flash_message = esc_html__('رمز عبور شما با موفقیت تغییر کرد. اکنون می‌توانید وارد شوید.', 'rsd-finance-panel');
+            $flash_message = esc_html__('Your password was changed successfully. You can now log in.', 'rsd-finance-panel');
             $flash_type    = 'success';
         } elseif (isset($_GET['error']) && $_GET['error'] === 'expiredkey') {
-            $flash_message = esc_html__('لینک بازنشانی رمز عبور منقضی شده است. لطفاً دوباره درخواست دهید.', 'rsd-finance-panel');
+            $flash_message = esc_html__('The password reset link has expired. Please request a new one.', 'rsd-finance-panel');
             $flash_type    = 'error';
             if ($action === 'resetpass') {
                 $action = 'lostpassword';
             }
         } elseif (isset($_GET['error']) && $_GET['error'] === 'invalidkey') {
-            $flash_message = esc_html__('لینک بازنشانی رمز عبور معتبر نیست.', 'rsd-finance-panel');
+            $flash_message = esc_html__('The password reset link is not valid.', 'rsd-finance-panel');
             $flash_type    = 'error';
             if ($action === 'resetpass') {
                 $action = 'lostpassword';
@@ -868,9 +867,9 @@ class Frontend
                     %s
                     <a href="%s" style="font-weight:700;margin-inline-end:6px">%s</a>
                 </div>',
-                esc_html__('برای دسترسی به پنل مشتریان باید ابتدا وارد حساب کاربری خود شوید.', 'rsd-finance-panel'),
+                esc_html__('To access the client panel, you must first log in to your account.', 'rsd-finance-panel'),
                 esc_url($login),
-                esc_html__('ورود به حساب کاربری', 'rsd-finance-panel')
+                esc_html__('Log in to your account', 'rsd-finance-panel')
             );
         }
 
@@ -878,7 +877,7 @@ class Frontend
             '<div class="rsd-alert rsd-alert-danger" style="padding:16px 18px;border-radius:14px;background:#fee2e2;border:1px solid #fecaca;color:#7f1d1d;">
                 %s
             </div>',
-            esc_html__('شما دسترسی لازم برای دسترسی به این بخش را ندارید.', 'rsd-finance-panel')
+            esc_html__('You do not have permission to access this section.', 'rsd-finance-panel')
         );
     }
 

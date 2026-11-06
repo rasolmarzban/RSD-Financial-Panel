@@ -30,24 +30,24 @@ if (!function_exists('rsd_fp_render_jalali_triple')) {
     function rsd_fp_render_jalali_triple($target_name, $prefix, $required = false, $default_value = '')
     {
         $persian_months = [
-            1 => 'فروردین',
-            2 => 'اردیبهشت',
-            3 => 'خرداد',
-            4 => 'تیر',
-            5 => 'مرداد',
-            6 => 'شهریور',
-            7 => 'مهر',
-            8 => 'آبان',
-            9 => 'آذر',
-            10 => 'دی',
-            11 => 'بهمن',
-            12 => 'اسفند',
+            1 => 'January',
+            2 => 'February',
+            3 => 'March',
+            4 => 'April',
+            5 => 'May',
+            6 => 'June',
+            7 => 'July',
+            8 => 'August',
+            9 => 'September',
+            10 => 'October',
+            11 => 'November',
+            12 => 'December',
         ];
-        $current_jalali_y = 1404;
+        $current_jalali_y = (int) date('Y');
         if (function_exists('rsd_fp_current_jalali_year')) {
             $current_jalali_y = (int) rsd_fp_current_jalali_year();
         }
-        $years = range(max(1380, $current_jalali_y - 20), $current_jalali_y + 5);
+        $years = range($current_jalali_y - 20, $current_jalali_y + 5);
         $days  = range(1, 31);
 
         $sel_y = '';
@@ -56,7 +56,7 @@ if (!function_exists('rsd_fp_render_jalali_triple')) {
         $dv = trim((string)$default_value);
         if ($dv !== '' && preg_match('#^([1-9]\d{3})[\-\/](0?[1-9]|1[0-2])[\-\/](0?[1-9]|[12]\d|3[01])$#', $dv, $mm)) {
             $yy = (int)$mm[1];
-            if ($yy >= 1300 && $yy <= 2000) {
+            if ($yy >= 1900 && $yy <= 2100) {
                 $sel_y = (string)$yy;
                 $sel_m = (int)$mm[2];
                 $sel_d = (int)$mm[3];
@@ -76,7 +76,7 @@ if (!function_exists('rsd_fp_render_jalali_triple')) {
             class="rsd-triple-date-hidden" value="<?php echo esc_attr($safe_default); ?>" <?php echo $hidden_req; ?>>
         <div class="rsd-date-triple" data-rsd-triple-target="<?php echo esc_attr($prefix . '-hidden'); ?>">
             <select class="rsd-triple-year" data-rsd-part="y" <?php echo $req; ?>>
-                <option value="">سال</option>
+                <option value="">Year</option>
                 <?php foreach (array_reverse($years, true) as $y) :
                     $y = (string)$y;
                     $s = selected($sel_y, $y, false);
@@ -84,14 +84,14 @@ if (!function_exists('rsd_fp_render_jalali_triple')) {
                 endforeach; ?>
             </select>
             <select class="rsd-triple-month" data-rsd-part="m" <?php echo $req; ?>>
-                <option value="">ماه</option>
+                <option value="">Month</option>
                 <?php foreach ($persian_months as $mn => $ml) :
                     $s = selected((string)$sel_m, (string)$mn, false);
                     echo '<option value="' . esc_attr($mn) . '"' . $s . '>' . esc_html($ml) . '</option>';
                 endforeach; ?>
             </select>
             <select class="rsd-triple-day" data-rsd-part="d" <?php echo $req; ?>>
-                <option value="">روز</option>
+                <option value="">Day</option>
                 <?php foreach ($days as $d) :
                     $s = selected((string)$sel_d, (string)$d, false);
                     echo '<option value="' . esc_attr($d) . '"' . $s . '>' . esc_html($d) . '</option>';
@@ -113,7 +113,7 @@ if (!function_exists('rsd_fp_today_jalali_ymd')) {
                 $t = trim($t);
                 if (preg_match('#^([1-9]\d{3})[\-\/](0?[1-9]|1[0-2])[\-\/](0?[1-9]|[12]\d|3[01])$#', $t, $mm)) {
                     $yy = (int)$mm[1];
-                    if ($yy >= 1300 && $yy <= 2000) {
+                    if ($yy >= 1900 && $yy <= 2100) {
                         return $mm[1] . '/' . $pn($mm[2]) . '/' . $pn($mm[3]);
                     }
                 }
@@ -123,7 +123,7 @@ if (!function_exists('rsd_fp_today_jalali_ymd')) {
         if (function_exists('rsd_fp_gregorian_to_jalali_parts')) {
             [$gy, $gm, $gd] = [(int)date('Y'), (int)date('n'), (int)date('j')];
             [$jy, $jm, $jd] = rsd_fp_gregorian_to_jalali_parts($gy, $gm, $gd);
-            if ($jy >= 1300 && $jy <= 2000) {
+            if ($jy >= 1900 && $jy <= 2100) {
                 return $jy . '/' . $pn($jm) . '/' . $pn($jd);
             }
         }
@@ -136,18 +136,18 @@ $today_j = rsd_fp_today_jalali_ymd();
     <div class="rsd-admin-header">
         <div>
             <a href="<?php echo esc_url(admin_url('admin.php?page=rsd-fp-clients')); ?>"
-                class="rsd-btn-admin small secondary" style="margin-bottom:10px">← بازگشت به لیست</a>
+                class="rsd-btn-admin small secondary" style="margin-bottom:10px">← Back to list</a>
             <h1>👤 <?php echo esc_html($client ? $client->display_name : '#' . $client_id); ?></h1>
-            <p><?php echo esc_html($client ? $client->user_email : ' کاربر نامشخص'); ?></p>
+            <p><?php echo esc_html($client ? $client->user_email : ' Unknown user'); ?></p>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button type="button" class="rsd-btn-admin primary" data-rsd-modal="rsd-client-invoice-modal" data-rsd-invoice-mode="create">
-                🧾 صدور فاکتور برای این مشتری
+                🧾 Issue Invoice for this Client
             </button>
             <a href="<?php echo esc_url(add_query_arg(['client_id' => $client_id], admin_url('admin.php?page=rsd-fp-documents'))); ?>"
-                class="rsd-btn-admin secondary">📂 مدارک مشتری</a>
+                class="rsd-btn-admin secondary">📂 Client Documents</a>
             <a href="<?php echo esc_url(admin_url('admin.php?page=rsd-fp-invoices')); ?>"
-                class="rsd-btn-admin secondary">📑 همه فاکتورها</a>
+                class="rsd-btn-admin secondary">📑 All Invoices</a>
         </div>
     </div>
 
@@ -155,35 +155,35 @@ $today_j = rsd_fp_today_jalali_ymd();
     <div class="rsd-admin-stats-row">
         <div class="rsd-admin-stat-card purple">
             <div class="stat-top">
-                <div class="stat-label">فاکتور کل</div>
+                <div class="stat-label">Total Invoiced</div>
                 <div class="stat-icon">📑</div>
             </div>
             <div class="stat-value"><?php echo esc_html(rsd_fp_currency($balance['total_invoiced'] ?? 0)); ?></div>
         </div>
         <div class="rsd-admin-stat-card green">
             <div class="stat-top">
-                <div class="stat-label">پرداخت‌شده</div>
+                <div class="stat-label">Paid</div>
                 <div class="stat-icon">💳</div>
             </div>
             <div class="stat-value"><?php echo esc_html(rsd_fp_currency($balance['total_paid'] ?? 0)); ?></div>
         </div>
         <div class="rsd-admin-stat-card red">
             <div class="stat-top">
-                <div class="stat-label">مانده بدهی</div>
+                <div class="stat-label">Outstanding Balance</div>
                 <div class="stat-icon">⚠️</div>
             </div>
             <div class="stat-value"><?php echo esc_html(rsd_fp_currency($balance['outstanding'] ?? 0)); ?></div>
         </div>
         <div class="rsd-admin-stat-card orange">
             <div class="stat-top">
-                <div class="stat-label">مدارک ناقص</div>
+                <div class="stat-label">Incomplete Documents</div>
                 <div class="stat-icon">📄</div>
             </div>
             <div class="stat-value"><?php echo esc_html($incomplete_count); ?></div>
         </div>
         <div class="rsd-admin-stat-card teal">
             <div class="stat-top">
-                <div class="stat-label">تیکت‌های خوانده‌نشده</div>
+                <div class="stat-label">Unread Tickets</div>
                 <div class="stat-icon">💬</div>
             </div>
             <div class="stat-value"><?php echo esc_html($unread_tickets); ?></div>
@@ -192,13 +192,13 @@ $today_j = rsd_fp_today_jalali_ymd();
 
     <div class="rsd-admin-grid cols-2">
         <div class="rsd-admin-card">
-            <div class="rsd-admin-card-title" style="font-weight:700;margin-bottom:16px">🏢 اطلاعات شرکت</div>
+            <div class="rsd-admin-card-title" style="font-weight:700;margin-bottom:16px">🏢 Company Information</div>
             <?php
             $info = \RSD\FinancePanel\Modules\Company_Info::get($client_id);
             $fields = \RSD\FinancePanel\Modules\Company_Info::get_fields();
             if (!$info) : ?>
                 <div class="rsd-empty">
-                    <p>اطلاعات شرکتی برای این مشتری ثبت نشده است.</p>
+                    <p>No company information has been registered for this client.</p>
                 </div>
             <?php else : ?>
                 <table class="rsd-admin-table">
@@ -211,7 +211,7 @@ $today_j = rsd_fp_today_jalali_ymd();
                         ?>
                             <tr>
                                 <td style="width:200px;font-weight:600;color:#475569"><?php echo esc_html($f['label']); ?></td>
-                                <td><?php echo is_array($val) ? esc_html(implode('، ', $val)) : nl2br(esc_html($val)); ?></td>
+                                <td><?php echo is_array($val) ? esc_html(implode(', ', $val)) : nl2br(esc_html($val)); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -222,29 +222,29 @@ $today_j = rsd_fp_today_jalali_ymd();
                 ?>
                     <div class="rsd-alert rsd-alert-warning" style="margin-top:16px;padding:18px">
                         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
-                            <strong style="font-size:14px">⏳ تغییرات در انتظار تأیید کارشناس</strong>
+                            <strong style="font-size:14px">⏳ Changes awaiting expert approval</strong>
                             <div style="display:flex;gap:8px">
                                 <button type="button"
                                     class="rsd-btn-admin small primary"
                                     data-rsd-company-approve
                                     data-rsd-user-id="<?php echo (int)$client_id; ?>">
-                                    ✅ تأیید و ثبت اطلاعات
+                                    ✅ Approve and Save Information
                                 </button>
                                 <button type="button"
                                     class="rsd-btn-admin small"
                                     style="background:#fee2e2;color:#b91c1c;border:1px solid #fecaca"
                                     data-rsd-company-reject
                                     data-rsd-user-id="<?php echo (int)$client_id; ?>">
-                                    ❌ رد تغییرات
+                                    ❌ Reject Changes
                                 </button>
                             </div>
                         </div>
                         <table class="rsd-admin-table widefat" style="margin-top:6px">
                             <thead>
                                 <tr>
-                                    <th style="width:180px">فیلد</th>
-                                    <th style="width:50%">مقدار فعلی</th>
-                                    <th style="width:50%;background:#ecfdf5;color:#065f46">مقدار درخواستی جدید</th>
+                                    <th style="width:180px">Field</th>
+                                    <th style="width:50%">Current Value</th>
+                                    <th style="width:50%;background:#ecfdf5;color:#065f46">Requested New Value</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -255,20 +255,20 @@ $today_j = rsd_fp_today_jalali_ymd();
                                     $cur = $info->$k ?? '';
                                     if (is_string($cur) && $cur !== '' && ($cur[0] ?? '') === '{') $cur = json_decode($cur, true);
                                     $new = $pending[$k] ?? '';
-                                    $cur_str = is_array($cur) ? implode('، ', $cur) : (string)$cur;
-                                    $new_str = is_array($new) ? implode('، ', $new) : (string)$new;
+                                    $cur_str = is_array($cur) ? implode(', ', $cur) : (string)$cur;
+                                    $new_str = is_array($new) ? implode(', ', $new) : (string)$new;
                                     if ($cur_str === '' && $new_str === '') continue;
                                     $has_row = true;
                                 ?>
                                     <tr>
                                         <td style="font-weight:600;color:#475569"><?php echo esc_html($f['label']); ?></td>
-                                        <td><?php echo $cur_str === '' ? '<span style="color:#94a3b8;font-style:italic">— خالی —</span>' : esc_html($cur_str); ?></td>
-                                        <td style="background:#ecfdf5;color:#065f46;font-weight:600"><?php echo $new_str === '' ? '<span style="color:#94a3b8;font-style:italic">— خالی —</span>' : esc_html($new_str); ?></td>
+                                        <td><?php echo $cur_str === '' ? '<span style="color:#94a3b8;font-style:italic">— Empty —</span>' : esc_html($cur_str); ?></td>
+                                        <td style="background:#ecfdf5;color:#065f46;font-weight:600"><?php echo $new_str === '' ? '<span style="color:#94a3b8;font-style:italic">— Empty —</span>' : esc_html($new_str); ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                                 <?php if (!$has_row) : ?>
                                     <tr>
-                                        <td colspan="3" style="color:#94a3b8;text-align:center;padding:14px">هیچ تغییری برای مقایسه وجود ندارد.</td>
+                                        <td colspan="3" style="color:#94a3b8;text-align:center;padding:14px">There are no changes to compare.</td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>
@@ -279,29 +279,29 @@ $today_j = rsd_fp_today_jalali_ymd();
         </div>
 
         <div class="rsd-admin-card">
-            <div class="rsd-admin-card-title" style="font-weight:700;margin-bottom:16px">📝 درخواست مدرک از مشتری</div>
+            <div class="rsd-admin-card-title" style="font-weight:700;margin-bottom:16px">📝 Request Document from Client</div>
             <form method="post" id="rsd-admin-req-doc" data-rsd-ajax-form="request_document">
                 <input type="hidden" name="user_id" value="<?php echo (int)$client_id; ?>">
                 <div class="rsd-admin-form-row">
-                    <label>عنوان مدرک <span style="color:#ef4444">*</span></label>
-                    <input type="text" name="title" required placeholder="مثلاً: ارسال تصویر قبوض آگهی دارایی">
+                    <label>Document Title <span style="color:#ef4444">*</span></label>
+                    <input type="text" name="title" required placeholder="e.g.: Send a photo of the property advertisement bills">
                 </div>
                 <div class="rsd-admin-form-row rsd-admin-cols-2">
                     <div>
-                        <label>دوره مربوطه</label>
-                        <input type="text" name="period" placeholder="مثلاً: دوماهه اول سال ۱۴۰۳">
+                        <label>Relevant period</label>
+                        <input type="text" name="period" placeholder="e.g.: First two months of 2024">
                     </div>
                     <div>
-                        <label>تاریخ انقضا / مهلت ارسال</label>
+                        <label>Expiry date / submission deadline</label>
                         <?php rsd_fp_render_jalali_triple('expiry_date', 'rsd-client-doc-expiry', false, ''); ?>
-                        <span style="color:#94a3b8;font-size:11px;margin-inline-end:4px">سال، ماه و روز مهلت را انتخاب کنید (اختیاری)</span>
+                        <span style="color:#94a3b8;font-size:11px;margin-inline-end:4px">Select the deadline year, month and day (optional)</span>
                     </div>
                 </div>
                 <div class="rsd-admin-form-row">
-                    <label>توضیحات / توضیحات بیشتر</label>
+                    <label>Description / more details</label>
                     <textarea name="description" rows="3"></textarea>
                 </div>
-                <button class="rsd-btn-admin primary" type="submit">📨 ارسال درخواست</button>
+                <button class="rsd-btn-admin primary" type="submit">📨 Send Request</button>
             </form>
         </div>
     </div>
@@ -309,23 +309,23 @@ $today_j = rsd_fp_today_jalali_ymd();
     <!-- Client invoices section -->
     <div class="rsd-admin-card" style="margin-top:24px">
         <div class="rsd-admin-card-title" style="font-weight:700;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">
-            <span>📑 فاکتورهای این مشتری</span>
+            <span>📑 This client's invoices</span>
             <button type="button" class="rsd-btn-admin small primary" data-rsd-modal="rsd-client-invoice-modal" data-rsd-invoice-mode="create">
-                ➕ فاکتور جدید برای این مشتری
+                ➕ New Invoice for this Client
             </button>
         </div>
         <div class="rsd-admin-table-wrap">
             <table class="rsd-admin-table widefat">
                 <thead>
                     <tr>
-                        <th style="width:130px">شماره فاکتور</th>
-                        <th>توضیح / دوره</th>
-                        <th style="text-align:left;width:150px">مبلغ کل (تومان)</th>
-                        <th style="text-align:left;width:150px">پرداخت‌شده (تومان)</th>
-                        <th style="text-align:left;width:150px">مانده (تومان)</th>
-                        <th>سررسید</th>
-                        <th>وضعیت</th>
-                        <th style="width:220px">عملیات</th>
+                        <th style="width:130px">Invoice Number</th>
+                        <th>Description / Period</th>
+                        <th style="text-align:left;width:150px">Total Amount (Toman)</th>
+                        <th style="text-align:left;width:150px">Paid (Toman)</th>
+                        <th style="text-align:left;width:150px">Balance (Toman)</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th style="width:220px">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -348,7 +348,7 @@ $today_j = rsd_fp_today_jalali_ymd();
                                 <td style="color:#0f172a;font-weight:600">
                                     <?php
                                     $period = [];
-                                    if (!empty($i->year))   $period[] = 'سال ' . $i->year;
+                                    if (!empty($i->year))   $period[] = 'Year ' . $i->year;
                                     if (!empty($i->month))  $period[] = $i->month;
                                     echo !empty($i->description) ? esc_html($i->description) : esc_html(implode(' - ', $period) ?: '—');
                                     ?>
@@ -366,7 +366,7 @@ $today_j = rsd_fp_today_jalali_ymd();
                                     <?php if ($due_date_display !== '') : ?>
                                         <?php echo esc_html($due_date_display); ?>
                                         <?php if ($is_overdue) : ?>
-                                            <br><span class="rsd-admin-badge red" style="margin-top:4px;font-size:11px">سررسید گذشته</span>
+                                            <br><span class="rsd-admin-badge red" style="margin-top:4px;font-size:11px">Overdue</span>
                                         <?php endif; ?>
                                     <?php else : ?>
                                         <span style="color:#cbd5e1">—</span>
@@ -380,9 +380,9 @@ $today_j = rsd_fp_today_jalali_ymd();
                                 <td>
                                     <div style="display:flex;gap:4px;flex-wrap:wrap">
                                         <a href="<?php echo esc_url($single_url); ?>"
-                                            class="rsd-btn-admin small primary" title="جزئیات فاکتور">جزئیات</a>
+                                            class="rsd-btn-admin small primary" title="Invoice details">Details</a>
                                         <a href="<?php echo esc_url($print_url); ?>" target="_blank" rel="noopener"
-                                            class="rsd-btn-admin small teal" title="دانلود / چاپ PDF">📄 PDF</a>
+                                            class="rsd-btn-admin small teal" title="Download / Print PDF">📄 PDF</a>
                                         <button type="button" class="rsd-btn-admin small secondary rsd-invoice-edit-from-client"
                                             data-rsd-invoice-id="<?php echo (int)$i->id; ?>"
                                             data-rsd-modal="rsd-client-invoice-modal"
@@ -397,10 +397,10 @@ $today_j = rsd_fp_today_jalali_ymd();
                                             data-rsd-status="<?php echo esc_attr($i->status ?? 'unpaid'); ?>"
                                             data-rsd-invoice-date="<?php echo esc_attr($i->invoice_date ?? ''); ?>"
                                             data-rsd-due-date="<?php echo esc_attr($i->due_date ?? ''); ?>"
-                                            title="ویرایش">✏️</button>
+                                            title="Edit">✏️</button>
                                         <button type="button" class="rsd-btn-admin small danger rsd-invoice-del"
                                             data-rsd-invoice-id="<?php echo (int)$i->id; ?>"
-                                            title="حذف فاکتور">🗑️</button>
+                                            title="Delete invoice">🗑️</button>
                                     </div>
                                 </td>
                             </tr>
@@ -410,11 +410,11 @@ $today_j = rsd_fp_today_jalali_ymd();
                             <td colspan="8">
                                 <div class="rsd-empty" style="padding:30px 10px">
                                     <div class="rsd-empty-icon">📑</div>
-                                    <h3>هنوز برای این مشتری فاکتوری ثبت نشده</h3>
-                                    <p>برای صدور اولین فاکتور روی دکمه پایین کلیک کنید.</p>
+                                    <h3>No invoices have been recorded for this client yet</h3>
+                                    <p>Click the button below to issue the first invoice.</p>
                                     <p style="margin-top:10px">
                                         <button type="button" class="rsd-btn-admin primary" data-rsd-modal="rsd-client-invoice-modal" data-rsd-invoice-mode="create">
-                                            ➕ صدور اولین فاکتور
+                                            ➕ Issue First Invoice
                                         </button>
                                     </p>
                                 </div>
@@ -432,8 +432,8 @@ $today_j = rsd_fp_today_jalali_ymd();
     <div class="rsd-modal-dialog rsd-modal-lg" role="dialog" aria-modal="true">
         <div class="rsd-modal-content">
             <div class="rsd-modal-header">
-                <h3 class="rsd-modal-title" id="rsd-client-invoice-modal-title">🧾 صدور فاکتور برای <?php echo esc_html($client ? $client->display_name : 'مشتری'); ?></h3>
-                <button type="button" class="rsd-modal-close" data-rsd-modal-close aria-label="بستن">&times;</button>
+                <h3 class="rsd-modal-title" id="rsd-client-invoice-modal-title">🧾 Issue Invoice for <?php echo esc_html($client ? $client->display_name : 'client'); ?></h3>
+                <button type="button" class="rsd-modal-close" data-rsd-modal-close aria-label="Close">&times;</button>
             </div>
             <form method="post" id="rsd-client-invoice-form" data-rsd-ajax-form="client_invoice_form">
                 <input type="hidden" name="user_id" value="<?php echo (int)$client_id; ?>">
@@ -441,39 +441,39 @@ $today_j = rsd_fp_today_jalali_ymd();
                 <div class="rsd-modal-body">
                     <div class="rsd-admin-grid cols-2">
                         <div class="rsd-admin-card" style="box-shadow:none;border:1px solid #e2e8f0">
-                            <div class="rsd-admin-card-title" style="font-weight:700;margin-bottom:14px">👤 مشتری و دوره مالیاتی</div>
+                            <div class="rsd-admin-card-title" style="font-weight:700;margin-bottom:14px">👤 Client and Tax Period</div>
                             <div class="rsd-alert rsd-alert-info" style="margin-bottom:14px">
-                                👤 صدور فاکتور برای: <strong><?php echo esc_html($client ? sprintf('%s (%s)', $client->display_name, $client->user_email) : 'مشتری فعلی'); ?></strong>
+                                👤 Issuing invoice for: <strong><?php echo esc_html($client ? sprintf('%s (%s)', $client->display_name, $client->user_email) : 'current client'); ?></strong>
                             </div>
 
                             <div class="rsd-admin-form-row rsd-admin-cols-2">
                                 <div>
-                                    <label>سال مالی</label>
+                                    <label>Fiscal Year</label>
                                     <input type="text" name="year" id="rsd-client-invoice-year" maxlength="4"
                                         inputmode="numeric" dir="ltr"
-                                        placeholder="۱۴۰۴"
-                                        title="۴ رقم سال شمسی، مثلاً ۱۴۰۴">
+                                        placeholder="2024"
+                                        title="4-digit Gregorian year, e.g. 2024">
                                 </div>
                                 <div>
-                                    <label>ماه / دوره</label>
+                                    <label>Month / Period</label>
                                     <input type="text" name="month" id="rsd-client-invoice-month" maxlength="50"
-                                        placeholder="مثلاً: فروردین یا دوماهه اول">
+                                        placeholder="e.g.: January or first two months">
                                 </div>
                             </div>
 
                             <div class="rsd-admin-form-row rsd-admin-cols-2">
                                 <div>
-                                    <label>تاریخ صدور فاکتور <span style="color:#ef4444">*</span></label>
+                                    <label>Invoice Issue Date <span style="color:#ef4444">*</span></label>
                                     <?php rsd_fp_render_jalali_triple('invoice_date', 'rsd-client-invoice-invdate', true, $today_j); ?>
                                 </div>
                                 <div>
-                                    <label>تاریخ سررسید <span style="color:#64748b">(اختیاری)</span></label>
+                                    <label>Due Date <span style="color:#64748b">(optional)</span></label>
                                     <?php rsd_fp_render_jalali_triple('due_date', 'rsd-client-invoice-duedate', false, ''); ?>
                                 </div>
                             </div>
 
                             <div class="rsd-admin-form-row">
-                                <label>وضعیت اولیه</label>
+                                <label>Initial Status</label>
                                 <select name="status" id="rsd-client-invoice-status">
                                     <?php foreach ($statuses as $k => $lbl) :
                                         if ($k === 'overdue' || $k === 'void') continue;
@@ -484,27 +484,27 @@ $today_j = rsd_fp_today_jalali_ymd();
                         </div>
 
                         <div class="rsd-admin-card" style="box-shadow:none;border:1px solid #e2e8f0">
-                            <div class="rsd-admin-card-title" style="font-weight:700;margin-bottom:14px">💰 مبالغ و توضیحات (به تومان ایران)</div>
+                            <div class="rsd-admin-card-title" style="font-weight:700;margin-bottom:14px">💰 Amounts and Description (in Iranian Toman)</div>
 
                             <div class="rsd-admin-form-row">
-                                <label>شرح / توضیح فاکتور</label>
+                                <label>Invoice description / notes</label>
                                 <textarea name="description" id="rsd-client-invoice-description" rows="3"
-                                    placeholder="مثلاً: صورتحساب خدمات حسابداری سال ۱۴۰۴ - فصل اول"></textarea>
+                                    placeholder="e.g.: Accounting services invoice for 2024 - Q1"></textarea>
                             </div>
 
                             <div class="rsd-admin-form-row rsd-admin-cols-3">
                                 <div>
-                                    <label>جمع کل (تومان، قبل از مالیات) <span style="color:#ef4444">*</span></label>
+                                    <label>Subtotal (Toman, before tax) <span style="color:#ef4444">*</span></label>
                                     <input type="number" min="0" step="1" name="subtotal" id="rsd-client-invoice-subtotal"
                                         dir="ltr" inputmode="numeric" value="0" required>
                                 </div>
                                 <div>
-                                    <label>مالیات (تومان)</label>
+                                    <label>Tax (Toman)</label>
                                     <input type="number" min="0" step="1" name="tax" id="rsd-client-invoice-tax"
                                         dir="ltr" inputmode="numeric" value="0">
                                 </div>
                                 <div>
-                                    <label>تخفیف (تومان)</label>
+                                    <label>Discount (Toman)</label>
                                     <input type="number" min="0" step="1" name="discount" id="rsd-client-invoice-discount"
                                         dir="ltr" inputmode="numeric" value="0">
                                 </div>
@@ -513,16 +513,16 @@ $today_j = rsd_fp_today_jalali_ymd();
                             <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;margin-top:10px">
                                 <div class="rsd-admin-form-row rsd-admin-cols-2">
                                     <div>
-                                        <label style="font-weight:700;color:#0369a1">مبلغ کل فاکتور (تومان، خودکار)</label>
+                                        <label style="font-weight:700;color:#0369a1">Invoice Total (Toman, automatic)</label>
                                         <div id="rsd-client-invoice-total-preview"
-                                            style="font-family:monospace;direction:ltr;font-size:20px;font-weight:800;color:#0369a1;text-align:left;padding:6px 0">0 <span style="font-size:13px;color:#64748b;font-weight:600">تومان</span></div>
+                                            style="font-family:monospace;direction:ltr;font-size:20px;font-weight:800;color:#0369a1;text-align:left;padding:6px 0">0 <span style="font-size:13px;color:#64748b;font-weight:600">Toman</span></div>
                                     </div>
                                     <div>
-                                        <label>پرداخت اولیه هنگام صدور (تومان)</label>
+                                        <label>Initial Payment at Issue (Toman)</label>
                                         <input type="number" min="0" step="1" name="paid_amount" id="rsd-client-invoice-paid"
                                             dir="ltr" inputmode="numeric" value="0">
                                         <select name="payment_method" id="rsd-client-invoice-pm" style="margin-top:6px">
-                                            <option value="">روش پرداخت اولیه (اختیاری)</option>
+                                            <option value="">Initial payment method (optional)</option>
                                             <?php foreach ($pay_methods as $k => $lbl) : ?>
                                                 <option value="<?php echo esc_attr($k); ?>"><?php echo esc_html($lbl); ?></option>
                                             <?php endforeach; ?>
@@ -533,7 +533,7 @@ $today_j = rsd_fp_today_jalali_ymd();
 
                             <div class="rsd-admin-form-row" id="rsd-client-invoice-edit-hint" style="display:none">
                                 <div class="rsd-alert rsd-alert-info">
-                                    ℹ️ در حالت ویرایش، برای ثبت پرداخت جدید از دکمه «ثبت پرداخت» در صفحه جزئیات فاکتور استفاده کنید.
+                                    ℹ️ In edit mode, use the "Record Payment" button on the invoice details page to record a new payment.
                                 </div>
                             </div>
                         </div>
@@ -542,8 +542,8 @@ $today_j = rsd_fp_today_jalali_ymd();
                 <div class="rsd-modal-footer" style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
                     <div id="rsd-client-invoice-form-msg" style="flex:1;color:#64748b;font-size:13px;align-self:center"></div>
                     <div style="display:flex;gap:8px">
-                        <button type="button" class="rsd-btn-admin secondary" data-rsd-modal-close>انصراف</button>
-                        <button type="submit" class="rsd-btn-admin primary" id="rsd-client-invoice-submit-btn">💾 ذخیره فاکتور</button>
+                        <button type="button" class="rsd-btn-admin secondary" data-rsd-modal-close>Cancel</button>
+                        <button type="submit" class="rsd-btn-admin primary" id="rsd-client-invoice-submit-btn">💾 Save Invoice</button>
                     </div>
                 </div>
             </form>
@@ -558,7 +558,7 @@ $today_j = rsd_fp_today_jalali_ymd();
         var fmt = function(n) {
             n = Number(n) || 0;
             try {
-                return n.toLocaleString('fa-IR');
+                return n.toLocaleString('en-US');
             } catch (e) {
                 return n.toLocaleString('en-US');
             }
@@ -572,7 +572,7 @@ $today_j = rsd_fp_today_jalali_ymd();
             }
             var total = Math.max(0, v[0] + v[1] - v[2]);
             var out = document.getElementById('rsd-client-invoice-total-preview');
-            if (out) out.innerHTML = fmt(total) + ' <span style="font-size:13px;color:#64748b;font-weight:600">تومان</span>';
+            if (out) out.innerHTML = fmt(total) + ' <span style="font-size:13px;color:#64748b;font-weight:600">Toman</span>';
         };
         ['rsd-client-invoice-subtotal', 'rsd-client-invoice-tax', 'rsd-client-invoice-discount'].forEach(function(id) {
             var el = document.getElementById(id);

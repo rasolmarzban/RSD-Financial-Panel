@@ -34,35 +34,35 @@ class Invoices
     }
 
     /**
-     * Get invoice statuses (Persian)
+     * Get invoice statuses
      *
      * @return array
      */
     public static function get_statuses()
     {
         return [
-            'paid'    => esc_html__('پرداخت‌شده', 'rsd-finance-panel'),
-            'partial' => esc_html__('پرداخت جزئی', 'rsd-finance-panel'),
-            'unpaid'  => esc_html__('پرداخت‌نشده', 'rsd-finance-panel'),
-            'overdue' => esc_html__('سررسید گذشته', 'rsd-finance-panel'),
-            'void'    => esc_html__('ابطال‌شده', 'rsd-finance-panel'),
+            'paid'    => esc_html__('Paid', 'rsd-finance-panel'),
+            'partial' => esc_html__('Partial Payment', 'rsd-finance-panel'),
+            'unpaid'  => esc_html__('Unpaid', 'rsd-finance-panel'),
+            'overdue' => esc_html__('Overdue', 'rsd-finance-panel'),
+            'void'    => esc_html__('Void', 'rsd-finance-panel'),
         ];
     }
 
     /**
-     * Get payment methods (Persian)
+     * Get payment methods
      *
      * @return array
      */
     public static function get_payment_methods()
     {
         return [
-            'cash'         => esc_html__('نقدی', 'rsd-finance-panel'),
-            'bank_transfer' => esc_html__('انتقال بانکی', 'rsd-finance-panel'),
-            'card'         => esc_html__('کارت به کارت', 'rsd-finance-panel'),
-            'cheque'       => esc_html__('چک', 'rsd-finance-panel'),
-            'online'       => esc_html__('پرداخت آنلاین', 'rsd-finance-panel'),
-            'other'        => esc_html__('سایر', 'rsd-finance-panel'),
+            'cash'         => esc_html__('Cash', 'rsd-finance-panel'),
+            'bank_transfer' => esc_html__('Bank Transfer', 'rsd-finance-panel'),
+            'card'         => esc_html__('Card to Card', 'rsd-finance-panel'),
+            'cheque'       => esc_html__('Cheque', 'rsd-finance-panel'),
+            'online'       => esc_html__('Online Payment', 'rsd-finance-panel'),
+            'other'        => esc_html__('Other', 'rsd-finance-panel'),
         ];
     }
 
@@ -377,7 +377,7 @@ class Invoices
     {
         $invoice_id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
         if ($invoice_id <= 0) {
-            wp_die(esc_html__('فاکتور نامعتبر است.', 'rsd-finance-panel'));
+            wp_die(esc_html__('The invoice is invalid.', 'rsd-finance-panel'));
         }
 
         // Nonce check
@@ -385,19 +385,19 @@ class Invoices
             !isset($_GET['_wpnonce']) ||
             !wp_verify_nonce(wp_unslash($_GET['_wpnonce']), 'rsd_fp_print_invoice_' . $invoice_id)
         ) {
-            wp_die(esc_html__('توکن امنیتی نامعتبر است.', 'rsd-finance-panel'));
+            wp_die(esc_html__('The security token is invalid.', 'rsd-finance-panel'));
         }
 
         // Permission check
         $invoice = Database::get_row('invoices', $invoice_id);
         if (!$invoice) {
-            wp_die(esc_html__('فاکتور پیدا نشد.', 'rsd-finance-panel'));
+            wp_die(esc_html__('Invoice not found.', 'rsd-finance-panel'));
         }
 
         $user_id = get_current_user_id();
         if (!current_user_can('manage_options') && (int) $invoice->user_id !== $user_id) {
             if (!current_user_can('rsd_fp_view_dashboard') || (int) $invoice->user_id !== $user_id) {
-                wp_die(esc_html__('دسترسی مجاز نیست.', 'rsd-finance-panel'));
+                wp_die(esc_html__('Access is not allowed.', 'rsd-finance-panel'));
             }
         }
 
@@ -439,11 +439,11 @@ class Invoices
         }
 ?>
         <!DOCTYPE html>
-        <html dir="rtl" lang="fa">
+        <html dir="ltr" lang="en">
 
         <head>
             <meta charset="UTF-8">
-            <title>فاکتور #<?php echo esc_html($invoice->invoice_number); ?></title>
+            <title>Invoice #<?php echo esc_html($invoice->invoice_number); ?></title>
             <style>
                 * {
                     box-sizing: border-box;
@@ -452,13 +452,13 @@ class Invoices
                 }
 
                 body {
-                    font-family: Tahoma, Arial, sans-serif;
+                    font-family: Inter, 'Segoe UI', system-ui, -apple-system, sans-serif;
                     font-size: 13px;
                     line-height: 1.7;
                     color: #111;
                     background: #fff;
                     padding: 40px;
-                    direction: rtl;
+                    direction: ltr;
                 }
 
                 .invoice-wrap {
@@ -542,7 +542,7 @@ class Invoices
                 .info-row .val {
                     color: #0f172a;
                     direction: ltr;
-                    text-align: right;
+                    text-align: left;
                     font-family: inherit;
                 }
 
@@ -694,20 +694,20 @@ class Invoices
 
         <body>
             <div class="toolbar no-print">
-                <button class="btn-print" onclick="window.print()">🖨️ چاپ / ذخیره به PDF</button>
+                <button class="btn-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
             </div>
             <div class="invoice-wrap">
                 <div class="invoice-header">
                     <div class="brand">
                         <h1><?php echo esc_html($site_name); ?></h1>
                         <p><?php echo esc_html($site_url); ?></p>
-                        <p style="margin-top:10px;color:#0369a1;font-weight:bold;font-size:18px">فاکتور رسمی</p>
+                        <p style="margin-top:10px;color:#0369a1;font-weight:bold;font-size:18px">Official Invoice</p>
                     </div>
                     <div class="invoice-meta">
                         <div class="num">#<?php echo esc_html($invoice->invoice_number); ?></div>
-                        <div class="meta-row">تاریخ صدور: <?php echo esc_html($invoice_date_jalali); ?></div>
+                        <div class="meta-row">Issue Date: <?php echo esc_html($invoice_date_jalali); ?></div>
                         <?php if (!empty($due_date_jalali)): ?>
-                            <div class="meta-row">تاریخ سررسید: <?php echo esc_html($due_date_jalali); ?></div>
+                            <div class="meta-row">Due Date: <?php echo esc_html($due_date_jalali); ?></div>
                         <?php endif; ?>
                         <div class="meta-row" style="margin-top:10px">
                             <span class="status-badge status-<?php echo esc_attr($invoice->status); ?>">
@@ -719,36 +719,36 @@ class Invoices
 
                 <div class="two-col">
                     <div class="col">
-                        <div class="section-title">اطلاعات مشتری</div>
+                        <div class="section-title">Client Information</div>
                         <?php if ($client): ?>
-                            <div class="info-row"><span class="lbl">نام و نام خانوادگی:</span><span class="val" style="direction:rtl;font-family:inherit"><?php echo esc_html($client->display_name); ?></span></div>
-                            <div class="info-row"><span class="lbl">ایمیل:</span><span class="val" style="direction:ltr;font-family:inherit"><?php echo esc_html($client->user_email); ?></span></div>
-                            <div class="info-row"><span class="lbl">نام کاربری:</span><span class="val" style="direction:ltr;font-family:inherit"><?php echo esc_html($client->user_login); ?></span></div>
+                            <div class="info-row"><span class="lbl">Full Name:</span><span class="val" style="direction:ltr;font-family:inherit"><?php echo esc_html($client->display_name); ?></span></div>
+                            <div class="info-row"><span class="lbl">Email:</span><span class="val" style="direction:ltr;font-family:inherit"><?php echo esc_html($client->user_email); ?></span></div>
+                            <div class="info-row"><span class="lbl">Username:</span><span class="val" style="direction:ltr;font-family:inherit"><?php echo esc_html($client->user_login); ?></span></div>
                             <?php if ($company_info && !empty($company_info->company_name)): ?>
-                                <div class="info-row"><span class="lbl">نام شرکت:</span><span class="val" style="direction:rtl;font-family:inherit"><?php echo esc_html($company_info->company_name); ?></span></div>
+                                <div class="info-row"><span class="lbl">Company Name:</span><span class="val" style="direction:ltr;font-family:inherit"><?php echo esc_html($company_info->company_name); ?></span></div>
                             <?php endif; ?>
                             <?php if ($company_info && !empty($company_info->phone)): ?>
-                                <div class="info-row"><span class="lbl">تلفن:</span><span class="val" style="direction:ltr;font-family:inherit"><?php echo esc_html($company_info->phone); ?></span></div>
+                                <div class="info-row"><span class="lbl">Phone:</span><span class="val" style="direction:ltr;font-family:inherit"><?php echo esc_html($company_info->phone); ?></span></div>
                             <?php endif; ?>
                             <?php if ($company_info && !empty($company_info->registration_number)): ?>
-                                <div class="info-row"><span class="lbl">شناسه ملی / ثبت:</span><span class="val"><?php echo esc_html($company_info->registration_number); ?></span></div>
+                                <div class="info-row"><span class="lbl">National ID / Registration:</span><span class="val"><?php echo esc_html($company_info->registration_number); ?></span></div>
                             <?php endif; ?>
                         <?php else: ?>
-                            <p style="color:#94a3b8">کاربر پیدا نشد.</p>
+                            <p style="color:#94a3b8">User not found.</p>
                         <?php endif; ?>
                     </div>
                     <div class="col">
-                        <div class="section-title">جزئیات دوره</div>
+                        <div class="section-title">Period Details</div>
                         <?php if (!empty($invoice->year) || !empty($invoice->month)): ?>
-                            <div class="info-row"><span class="lbl">سال مالی:</span><span class="val"><?php echo esc_html($invoice->year ? 'سال ' . $invoice->year : '—'); ?></span></div>
-                            <div class="info-row"><span class="lbl">ماه / دوره:</span><span class="val"><?php echo esc_html($invoice->month ?: '—'); ?></span></div>
+                            <div class="info-row"><span class="lbl">Fiscal Year:</span><span class="val"><?php echo esc_html($invoice->year ? 'Year ' . $invoice->year : '—'); ?></span></div>
+                            <div class="info-row"><span class="lbl">Month / Period:</span><span class="val"><?php echo esc_html($invoice->month ?: '—'); ?></span></div>
                         <?php endif; ?>
-                        <div class="info-row"><span class="lbl">شناسه فاکتور:</span><span class="val"><?php echo (int)$invoice->id; ?></span></div>
+                        <div class="info-row"><span class="lbl">Invoice ID:</span><span class="val"><?php echo (int)$invoice->id; ?></span></div>
                     </div>
                 </div>
 
                 <?php if (!empty($invoice->description)): ?>
-                    <div class="section-title">توضیحات فاکتور</div>
+                    <div class="section-title">Invoice Description</div>
                     <div style="padding:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;color:#0f172a">
                         <?php echo nl2br(esc_html($invoice->description)); ?>
                     </div>
@@ -757,15 +757,15 @@ class Invoices
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>ردیف</th>
-                            <th>شرح</th>
-                            <th>مبلغ (تومان)</th>
+                            <th>No.</th>
+                            <th>Description</th>
+                            <th>Amount (Toman)</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>۱</td>
-                            <td style="text-align:right"><?php echo esc_html($invoice->description ?: 'خدمات مالی دوره ' . ($invoice->month ? $invoice->month . ' ' : '') . ($invoice->year ? $invoice->year : '')); ?></td>
+                            <td>1</td>
+                            <td style="text-align:left"><?php echo esc_html($invoice->description ?: 'Financial services for period ' . ($invoice->month ? $invoice->month . ' ' : '') . ($invoice->year ? $invoice->year : '')); ?></td>
                             <td class="num"><?php echo esc_html(number_format_i18n((float) $invoice->subtotal, 0)); ?></td>
                         </tr>
                     </tbody>
@@ -773,46 +773,46 @@ class Invoices
 
                 <div class="totals-box">
                     <div class="totals-row">
-                        <span class="lbl">جمع کل:</span>
+                        <span class="lbl">Subtotal:</span>
                         <span class="val"><?php echo esc_html(number_format_i18n((float) $invoice->subtotal, 0)); ?></span>
                     </div>
                     <?php if ((float) $invoice->tax > 0): ?>
                         <div class="totals-row">
-                            <span class="lbl">مالیات:</span>
+                            <span class="lbl">Tax:</span>
                             <span class="val"><?php echo esc_html(number_format_i18n((float) $invoice->tax, 0)); ?></span>
                         </div>
                     <?php endif; ?>
                     <?php if ((float) $invoice->discount > 0): ?>
                         <div class="totals-row">
-                            <span class="lbl">تخفیف:</span>
+                            <span class="lbl">Discount:</span>
                             <span class="val" style="color:#dc2626">- <?php echo esc_html(number_format_i18n((float) $invoice->discount, 0)); ?></span>
                         </div>
                     <?php endif; ?>
                     <div class="totals-row total">
-                        <span class="lbl">مبلغ کل فاکتور:</span>
+                        <span class="lbl">Invoice Total:</span>
                         <span class="val"><?php echo esc_html(number_format_i18n((float) $invoice->total_amount, 0)); ?></span>
                     </div>
                     <div class="totals-row" style="color:#059669;margin-top:8px">
-                        <span class="lbl">پرداخت‌شده:</span>
+                        <span class="lbl">Paid:</span>
                         <span class="val"><?php echo esc_html(number_format_i18n((float) $invoice->paid_amount, 0)); ?></span>
                     </div>
                     <div class="totals-row" style="color:<?php echo $outstanding > 0 ? '#dc2626' : '#059669'; ?>;font-weight:bold">
-                        <span class="lbl">مانده قابل پرداخت:</span>
+                        <span class="lbl">Outstanding Balance:</span>
                         <span class="val"><?php echo esc_html(number_format_i18n($outstanding, 0)); ?></span>
                     </div>
                 </div>
 
                 <?php if (!empty($payments)): ?>
                     <div class="payments-box">
-                        <div class="section-title">تاریخچه پرداخت‌ها</div>
+                        <div class="section-title">Payment History</div>
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>تاریخ پرداخت</th>
-                                    <th>روش پرداخت</th>
-                                    <th>شناسه تراکنش</th>
-                                    <th>مبلغ</th>
-                                    <th>توضیحات</th>
+                                    <th>Payment Date</th>
+                                    <th>Payment Method</th>
+                                    <th>Transaction ID</th>
+                                    <th>Amount</th>
+                                    <th>Description</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -834,8 +834,8 @@ class Invoices
                 <?php endif; ?>
 
                 <div class="footer">
-                    <p><?php echo esc_html($site_name); ?> - این فاکتور به صورت خودکار تولید شده است و در صورت وجود سوال با ما تماس بگیرید.</p>
-                    <p style="margin-top:4px">چاپ شده در: <?php echo esc_html(date_i18n('j F Y ساعت H:i')); ?></p>
+                    <p><?php echo esc_html($site_name); ?> - This invoice was generated automatically. If you have any questions, please contact us.</p>
+                    <p style="margin-top:4px">Printed on: <?php echo esc_html(date_i18n('j F Y H:i')); ?></p>
                 </div>
             </div>
         </body>
