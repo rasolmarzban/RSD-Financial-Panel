@@ -35,6 +35,9 @@ class Plugin
         // Load text domain
         add_action('init', [$this, 'load_textdomain']);
 
+        // Ensure portal pages exist (creates pages added in updates, e.g. Edit Profile)
+        add_action('init', [$this, 'ensure_portal_pages'], 20);
+
         // Register all components
         $this->register_components();
 
@@ -93,6 +96,21 @@ class Plugin
         if (Database::needs_update()) {
             Database::create_tables();
         }
+    }
+
+    /**
+     * Ensure all portal pages exist. Creates any page added in an update
+     * (e.g. the Edit Profile page) without requiring plugin re-activation.
+     *
+     * @return void
+     */
+    public function ensure_portal_pages()
+    {
+        $page_ids = get_option('rsd_fp_page_ids', []);
+        if (!empty($page_ids['profile']) && get_post($page_ids['profile'])) {
+            return;
+        }
+        Activator::create_pages();
     }
 
     /**

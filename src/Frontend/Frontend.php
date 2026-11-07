@@ -73,6 +73,7 @@ class Frontend
         add_shortcode('rsd_fp_invoices',     [$this, 'render_invoices']);
         add_shortcode('rsd_fp_services',     [$this, 'render_services']);
         add_shortcode('rsd_fp_calendar',     [$this, 'render_calendar']);
+        add_shortcode('rsd_fp_profile',      [$this, 'render_profile']);
         add_shortcode('rsd_fp_auth',         [$this, 'render_auth']);
     }
 
@@ -133,6 +134,7 @@ class Frontend
                 'rsd_fp_invoices',
                 'rsd_fp_services',
                 'rsd_fp_calendar',
+                'rsd_fp_profile',
                 'rsd_fp_auth'
             ];
             foreach ($shortcodes as $s) {
@@ -697,6 +699,22 @@ class Frontend
         return rsd_fp_get_template('frontend/calendar', [
             'events'    => $events,
             'client_id' => $client_id,
+        ], false);
+    }
+
+    /**
+     * Render the profile / account settings shortcode.
+     *
+     * @param array $atts
+     * @return string
+     */
+    public function render_profile($atts)
+    {
+        if (!$this->can_view()) return $this->no_permission_msg();
+
+        return rsd_fp_get_template('frontend/profile', [
+            'current_user' => wp_get_current_user(),
+            'client_id'    => $this->client_id,
         ], false);
     }
 

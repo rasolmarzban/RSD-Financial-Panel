@@ -48,7 +48,7 @@ class Activator
      *
      * @return void
      */
-    private static function create_pages()
+    public static function create_pages()
     {
         $pages = [
             [
@@ -106,6 +106,13 @@ class Activator
                 'content'   => '[rsd_fp_calendar]',
                 'meta_key'  => '_rsd_fp_page_type',
                 'meta_val'  => 'calendar',
+            ],
+            [
+                'title'     => esc_html__('Edit Profile', 'rsd-finance-panel'),
+                'slug'      => 'finance-profile',
+                'content'   => '[rsd_fp_profile]',
+                'meta_key'  => '_rsd_fp_page_type',
+                'meta_val'  => 'profile',
             ],
             [
                 'title'     => esc_html__('Finance Panel Login & Registration', 'rsd-finance-panel'),

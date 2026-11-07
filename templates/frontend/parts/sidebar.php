@@ -20,6 +20,7 @@ $nav_items = [
     'invoices'     => ['label' => 'Billing',              'icon' => '💰', 'url' => rsd_fp_page_url('invoices')],
     'services'     => ['label' => 'New Services',         'icon' => '⚙️', 'url' => rsd_fp_page_url('services')],
     'calendar'     => ['label' => 'Calendar & Deadlines', 'icon' => '📅', 'url' => rsd_fp_page_url('calendar')],
+    'profile'      => ['label' => 'Edit Profile',         'icon' => '👤', 'url' => rsd_fp_page_url('profile')],
 ];
 ?>
 

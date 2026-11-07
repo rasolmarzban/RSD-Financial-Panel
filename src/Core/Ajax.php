@@ -64,6 +64,10 @@ class Ajax
             'approve_company_changes',
             'reject_company_changes',
 
+            // Profile
+            'update_profile',
+            'change_password',
+
             // Generic
             'dismiss_notification',
             'read_notifications',
@@ -1660,6 +1664,100 @@ class Ajax
         ));
 
         $this->send(true);
+    }
+
+    /**
+     * Update the current user's profile (display name + optional profile image).
+     *
+     * @return void
+     */
+    public function update_profile()
+    {
+        $this->verify();
+        $user_id = get_current_user_id();
+
+        $display_name = sanitize_text_field(wp_unslash($_POST['display_name'] ?? ''));
+        if ($display_name === '') {
+            $this->send(false, ['message' => esc_html__('Please enter your name.', 'rsd-finance-panel')], 400);
+        }
+
+        // Process a new profile image first so an invalid file aborts the request.
+        $new_avatar = null;
+        if (!empty($_FILES['avatar']) && (int) $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+            $uploaded = $this->handle_file_upload('avatar');
+            if (is_wp_error($uploaded)) {
+                $this->send(false, ['message' => $uploaded->get_error_message()], 400);
+            }
+            if (empty($uploaded['url']) || strpos((string) ($uploaded['type'] ?? ''), 'image/') !== 0) {
+                $this->send(false, ['message' => esc_html__('Please choose a valid image file.', 'rsd-finance-panel')], 400);
+            }
+            $new_avatar = $uploaded['url'];
+        }
+
+        $updated = wp_update_user([
+            'ID'           => $user_id,
+            'display_name' => $display_name,
+        ]);
+        if (is_wp_error($updated)) {
+            $this->send(false, ['message' => $updated->get_error_message()], 400);
+        }
+
+        if ($new_avatar !== null) {
+            update_user_meta($user_id, 'rsd_fp_avatar', esc_url_raw($new_avatar));
+        } elseif (!empty($_POST['remove_avatar'])) {
+            delete_user_meta($user_id, 'rsd_fp_avatar');
+        }
+
+        $user = get_userdata($user_id);
+
+        $this->send(true, [
+            'message'      => esc_html__('Your profile has been updated.', 'rsd-finance-panel'),
+            'display_name' => $user ? $user->display_name : $display_name,
+            'avatar_url'   => rsd_fp_user_avatar_url($user_id),
+        ]);
+    }
+
+    /**
+     * Change the current user's password (requires the existing password).
+     *
+     * @return void
+     */
+    public function change_password()
+    {
+        $this->verify();
+        $user_id = get_current_user_id();
+
+        $current = (string) ($_POST['current_password'] ?? '');
+        $new     = (string) ($_POST['new_password'] ?? '');
+        $confirm = (string) ($_POST['confirm_password'] ?? '');
+
+        $min_len = (int) Plugin::get_setting('auth_password_min_length', 8);
+
+        if ($current === '' || $new === '') {
+            $this->send(false, ['message' => esc_html__('Please fill in all password fields.', 'rsd-finance-panel')], 400);
+        }
+        if (mb_strlen($new) < $min_len) {
+            $this->send(false, ['message' => sprintf(
+                esc_html__('Password must be at least %d characters long.', 'rsd-finance-panel'),
+                $min_len
+            )], 400);
+        }
+        if ($new !== $confirm) {
+            $this->send(false, ['message' => esc_html__('The new password and its confirmation do not match.', 'rsd-finance-panel')], 400);
+        }
+
+        $user = get_userdata($user_id);
+        if (!$user || !wp_check_password($current, $user->user_pass, $user_id)) {
+            $this->send(false, ['message' => esc_html__('The current password is incorrect.', 'rsd-finance-panel')], 400);
+        }
+
+        wp_set_password($new, $user_id);
+
+        // Keep the user signed in after the password change.
+        wp_set_current_user($user_id);
+        wp_set_auth_cookie($user_id, true);
+
+        $this->send(true, ['message' => esc_html__('Your password has been changed successfully.', 'rsd-finance-panel')]);
     }
 
     /**

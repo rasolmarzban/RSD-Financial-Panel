@@ -62,6 +62,22 @@ function rsd_fp_currency_symbol()
 }
 
 /**
+ * Get a user's custom profile image URL (empty string when not set).
+ *
+ * @param int|null $user_id
+ * @return string
+ */
+function rsd_fp_user_avatar_url($user_id = null)
+{
+    $user_id = $user_id ? (int) $user_id : get_current_user_id();
+    if (!$user_id) {
+        return '';
+    }
+    $url = get_user_meta($user_id, 'rsd_fp_avatar', true);
+    return $url ? esc_url($url) : '';
+}
+
+/**
  * Get current client ID
  *
  * @return int

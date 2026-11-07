@@ -117,11 +117,18 @@ $notif_meta_fn = function ($n) {
 
 $display_name = $current_user->display_name ?: esc_html('Dear User', 'rsd-finance-panel');
 $initial = mb_substr($display_name, 0, 1);
+$avatar_url = function_exists('rsd_fp_user_avatar_url') ? rsd_fp_user_avatar_url($current_user->ID) : '';
 ?>
 
 <header class="rsd-fp-header">
     <div class="rsd-fp-user-menu">
-        <div class="rsd-fp-avatar"><?php echo esc_html($initial); ?></div>
+        <div class="rsd-fp-avatar">
+            <?php if ($avatar_url) : ?>
+                <img src="<?php echo esc_url($avatar_url); ?>" alt="<?php echo esc_attr($display_name); ?>">
+            <?php else : ?>
+                <?php echo esc_html($initial); ?>
+            <?php endif; ?>
+        </div>
         <div class="rsd-fp-user-info">
             <span class="rsd-fp-user-name"><?php echo esc_html($display_name); ?>
                 <span class="rsd-fp-user-dropdown">▾</span>

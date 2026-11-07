@@ -36,8 +36,8 @@ $categories = \RSD\FinancePanel\Modules\Documents::get_categories();
             <a class="rsd-tab <?php echo $active_tab === 'incomplete' ? 'active' : ''; ?>"
                 href="<?php echo esc_url(add_query_arg('tab', 'incomplete')); ?>">
                 Incomplete Documents (<?php
-                            echo esc_html(count(array_filter($documents, fn($d) => !empty($d->is_incomplete))));
-                            ?>)
+                                        echo esc_html(count(array_filter($documents, fn($d) => !empty($d->is_incomplete))));
+                                        ?>)
             </a>
             <a class="rsd-tab <?php echo $active_tab === 'tax' ? 'active' : ''; ?>"
                 href="<?php echo esc_url(add_query_arg('tab', 'tax')); ?>">
@@ -60,7 +60,7 @@ $categories = \RSD\FinancePanel\Modules\Documents::get_categories();
                                 <div class="rsd-list-main">
                                     <div class="rsd-list-title"><?php echo esc_html($doc->title); ?></div>
                                     <div class="rsd-list-meta">
-                                        Request Date: <?php echo esc_html(date_i18n('j F Y', strtotime($doc->requested_date))); ?>
+                                        Request Date: <?php echo esc_html(!empty($doc->requested_date) ? date_i18n('j F Y', strtotime($doc->requested_date)) : '—'); ?>
                                         <?php if (!empty($doc->period)) : ?>
                                             | Period: <?php echo esc_html($doc->period); ?>
                                         <?php endif; ?>

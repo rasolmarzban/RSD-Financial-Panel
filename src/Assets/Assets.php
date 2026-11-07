@@ -196,7 +196,7 @@ class Assets
     private function is_portal_page()
     {
         if (is_singular('page')) {
-            $types = ['dashboard', 'documents', 'tickets', 'company_info', 'reports', 'invoices', 'services', 'calendar', 'auth'];
+            $types = ['dashboard', 'documents', 'tickets', 'company_info', 'reports', 'invoices', 'services', 'calendar', 'profile', 'auth'];
             foreach ($types as $t) {
                 if (strpos(get_the_content(), "[rsd_fp_{$t}]") !== false) {
                     return true;
