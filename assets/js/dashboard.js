@@ -482,6 +482,60 @@
       });
     });
 
+    // --- Company logo live preview ---
+    $(document).on("change", "#rsd-company-logo-input", function () {
+      var input = this;
+      if (!input.files || !input.files.length) return;
+      var file = input.files[0];
+      if (!/^image\//.test(file.type)) {
+        rsdToast("Please choose an image file (JPG or PNG).", "error");
+        input.value = "";
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function (ev) {
+        $("#rsd-company-logo-preview").html('<img src="' + ev.target.result + '" alt="" style="width:100%;height:100%;object-fit:contain;display:block">');
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // --- Company logo upload ---
+    $(document).on("submit", "#rsd-company-logo-form", function (e) {
+      e.preventDefault();
+      var $form = $(this);
+      var $btn = $form.find('button[type="submit"]');
+      var orig = $btn.html();
+      $btn.prop("disabled", true).html('<span class="rsd-spinner"></span>');
+
+      var formData = new FormData(this);
+      formData.append("action", "rsd_fp_upload_company_logo");
+      formData.append("nonce", RSD_FP.nonce);
+
+      $.ajax({
+        url: RSD_FP.ajax_url,
+        type: "POST",
+        data: formData,
+        dataType: "json",
+        processData: false,
+        contentType: false,
+      })
+        .done(function (res) {
+          $btn.prop("disabled", false).html(orig);
+          if (res.success) {
+            rsdToast(res.data.message || "Logo updated.", "success");
+            setTimeout(function () {
+              location.reload();
+            }, 900);
+          } else {
+            rsdToast(res.data.message || "Error uploading logo.", "error");
+          }
+        })
+        .fail(function () {
+          $btn.prop("disabled", false).html(orig);
+          rsdToast("Error connecting to the server.", "error");
+        });
+    });
+
     // --- Edit profile: avatar live preview ---
     $(document).on("change", "#rsd-avatar-input", function () {
       var input = this;

@@ -11,6 +11,10 @@ defined('ABSPATH') || exit;
 $active = $active ?? 'dashboard';
 $current_user = $current_user ?? wp_get_current_user();
 
+$company_logo = class_exists('\RSD\FinancePanel\Modules\Company_Info')
+    ? \RSD\FinancePanel\Modules\Company_Info::get_logo_url($current_user->ID)
+    : '';
+
 $nav_items = [
     'dashboard'    => ['label' => 'Dashboard',            'icon' => '🏠', 'url' => rsd_fp_page_url('dashboard')],
     'documents'    => ['label' => 'Documents',            'icon' => '📁', 'url' => rsd_fp_page_url('documents')],
@@ -26,7 +30,13 @@ $nav_items = [
 
 <aside class="rsd-fp-sidebar">
     <div class="rsd-fp-sidebar-header">
-        <div class="rsd-fp-logo">R</div>
+        <div class="rsd-fp-logo">
+            <?php if ($company_logo) : ?>
+                <img src="<?php echo esc_url($company_logo); ?>" alt="">
+            <?php else : ?>
+                R
+            <?php endif; ?>
+        </div>
         <h3>Client Portal</h3>
         <p>Accounting &amp; Financial Consulting Company</p>
     </div>
@@ -66,7 +76,7 @@ $nav_items = [
 
     <div class="rsd-fp-sidebar-footer">
         <div class="rsd-fp-version">
-            Version <?php echo esc_html(RSD_FP_VERSION); ?> | Made with ❤️
+            Version <?php echo esc_html(RSD_FP_VERSION); ?> | Made with "RSD"
         </div>
     </div>
 </aside>

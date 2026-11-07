@@ -90,6 +90,14 @@
     box-shadow: 0 4px 14px rgba(59, 130, 246, .35);
 }
 
+.rsd-fp-sidebar-header .rsd-fp-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    border-radius: 14px;
+}
+
 .rsd-fp-sidebar-header h3 {
     font-size: 16px;
     font-weight: 700;

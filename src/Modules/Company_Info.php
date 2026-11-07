@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Company Info module class
  *
@@ -37,6 +38,22 @@ class Company_Info
         global $wpdb;
         $table = Database::table('company_info');
         return $wpdb->get_row($wpdb->prepare("SELECT * FROM {$table} WHERE user_id = %d", $user_id));
+    }
+
+    /**
+     * Get the company logo URL for a user
+     *
+     * @param int $user_id
+     * @return string
+     */
+    public static function get_logo_url($user_id)
+    {
+        $user_id = (int) $user_id;
+        if ($user_id <= 0) {
+            return '';
+        }
+        $info = self::get($user_id);
+        return (!empty($info->logo_url)) ? $info->logo_url : '';
     }
 
     /**

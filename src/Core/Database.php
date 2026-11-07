@@ -18,7 +18,7 @@ class Database
     /**
      * Current database version
      */
-    const DB_VERSION = '1.0';
+    const DB_VERSION = '1.1';
 
     /**
      * Tables that do NOT have updated_at column (so we don't try to set it,
@@ -282,6 +282,7 @@ class Database
             user_id bigint(20) UNSIGNED NOT NULL DEFAULT 0,
             company_name varchar(255) DEFAULT NULL,
             brand_name varchar(255) DEFAULT NULL,
+            logo_url varchar(500) DEFAULT NULL,
             address text DEFAULT NULL,
             registration_number varchar(100) DEFAULT NULL,
             tax_id varchar(100) DEFAULT NULL,

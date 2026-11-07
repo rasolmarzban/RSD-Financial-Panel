@@ -61,6 +61,7 @@ class Ajax
             // Company info
             'save_company_info',
             'submit_company_changes',
+            'upload_company_logo',
             'approve_company_changes',
             'reject_company_changes',
 
@@ -1511,6 +1512,54 @@ class Ajax
 
         $this->send(true, [
             'message' => esc_html__('Your changes were sent to the company for approval.', 'rsd-finance-panel'),
+        ]);
+    }
+
+    /**
+     * Upload (or remove) the client company logo.
+     *
+     * The logo is applied immediately (it is shown in the dashboard sidebar),
+     * unlike the other company info fields which go through admin approval.
+     *
+     * @return void
+     */
+    public function upload_company_logo()
+    {
+        $this->verify();
+        $user_id = get_current_user_id();
+
+        $new_logo = null;
+        if (!empty($_FILES['company_logo']) && (int) $_FILES['company_logo']['error'] === UPLOAD_ERR_OK) {
+            $uploaded = $this->handle_file_upload('company_logo');
+            if (is_wp_error($uploaded)) {
+                $this->send(false, ['message' => $uploaded->get_error_message()], 400);
+            }
+            if (empty($uploaded['url']) || strpos((string) ($uploaded['type'] ?? ''), 'image/') !== 0) {
+                $this->send(false, ['message' => esc_html__('Please choose a valid image file.', 'rsd-finance-panel')], 400);
+            }
+            $new_logo = esc_url_raw($uploaded['url']);
+        } elseif (empty($_POST['remove_logo'])) {
+            $this->send(false, ['message' => esc_html__('Please choose a logo image to upload.', 'rsd-finance-panel')], 400);
+        }
+
+        global $wpdb;
+        $table   = Database::table('company_info');
+        $row_id  = $wpdb->get_var($wpdb->prepare("SELECT id FROM {$table} WHERE user_id = %d", $user_id));
+
+        if ($row_id) {
+            Database::update('company_info', ['logo_url' => $new_logo], ['id' => (int) $row_id]);
+        } else {
+            Database::insert('company_info', [
+                'user_id'  => $user_id,
+                'logo_url' => $new_logo,
+            ]);
+        }
+
+        $this->send(true, [
+            'message'  => $new_logo
+                ? esc_html__('Your company logo has been updated.', 'rsd-finance-panel')
+                : esc_html__('Your company logo has been removed.', 'rsd-finance-panel'),
+            'logo_url' => $new_logo ? $new_logo : '',
         ]);
     }
 
