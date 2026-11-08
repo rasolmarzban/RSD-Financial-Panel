@@ -6,6 +6,9 @@
  * @var array $documents
  * @var int $client_id
  * @var string $active_tab
+ * @var int $count_all
+ * @var int $count_incomplete
+ * @var int $count_tax
  */
 defined('ABSPATH') || exit;
 
@@ -31,17 +34,15 @@ $categories = \RSD\FinancePanel\Modules\Documents::get_categories();
         <div class="rsd-tabs">
             <a class="rsd-tab <?php echo $active_tab === 'all' ? 'active' : ''; ?>"
                 href="<?php echo esc_url(add_query_arg('tab', 'all')); ?>">
-                All Documents (<?php echo esc_html(count($documents)); ?>)
+                All Documents (<?php echo esc_html($count_all); ?>)
             </a>
             <a class="rsd-tab <?php echo $active_tab === 'incomplete' ? 'active' : ''; ?>"
                 href="<?php echo esc_url(add_query_arg('tab', 'incomplete')); ?>">
-                Incomplete Documents (<?php
-                                        echo esc_html(count(array_filter($documents, fn($d) => !empty($d->is_incomplete))));
-                                        ?>)
+                Incomplete Documents (<?php echo esc_html($count_incomplete); ?>)
             </a>
             <a class="rsd-tab <?php echo $active_tab === 'tax' ? 'active' : ''; ?>"
                 href="<?php echo esc_url(add_query_arg('tab', 'tax')); ?>">
-                Tax Authority Letters
+                Tax Authority Letters (<?php echo esc_html($count_tax); ?>)
             </a>
         </div>
 

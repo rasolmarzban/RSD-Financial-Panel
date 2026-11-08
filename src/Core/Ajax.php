@@ -72,6 +72,7 @@ class Ajax
             // Generic
             'dismiss_notification',
             'read_notifications',
+            'search',
 
             // Reports (admin)
             'save_report',
@@ -1713,6 +1714,85 @@ class Ajax
         ));
 
         $this->send(true);
+    }
+
+    /**
+     * Global search across the current client's documents, invoices, tickets
+     * and reports. Returns a flat list of results for the header search box.
+     *
+     * @return void
+     */
+    public function search()
+    {
+        $this->verify();
+        $user_id = get_current_user_id();
+
+        $q = isset($_POST['q']) ? sanitize_text_field(wp_unslash($_POST['q'])) : '';
+        $q = trim($q);
+
+        if (mb_strlen($q) < 2) {
+            $this->send(true, ['results' => [], 'total' => 0, 'query' => $q]);
+        }
+
+        global $wpdb;
+        $like    = '%' . $wpdb->esc_like($q) . '%';
+        $per     = 5;
+        $results = [];
+
+        // Documents
+        $t    = Database::table('documents');
+        $rows = $wpdb->get_results($wpdb->prepare(
+            "SELECT id, title FROM {$t} WHERE user_id = %d AND title LIKE %s ORDER BY created_at DESC LIMIT %d",
+            $user_id,
+            $like,
+            $per
+        ));
+        foreach ($rows as $r) {
+            $results[] = ['type' => 'document', 'icon' => '📁', 'label' => 'Document', 'title' => $r->title, 'url' => Plugin::get_page_url('documents')];
+        }
+
+        // Invoices
+        $t    = Database::table('invoices');
+        $rows = $wpdb->get_results($wpdb->prepare(
+            "SELECT id, invoice_number FROM {$t} WHERE user_id = %d AND invoice_number LIKE %s ORDER BY created_at DESC LIMIT %d",
+            $user_id,
+            $like,
+            $per
+        ));
+        foreach ($rows as $r) {
+            $results[] = ['type' => 'invoice', 'icon' => '💰', 'label' => 'Invoice', 'title' => $r->invoice_number, 'url' => add_query_arg(['view' => 'single', 'id' => (int) $r->id], Plugin::get_page_url('invoices'))];
+        }
+
+        // Tickets (subject or ticket number)
+        $t    = Database::table('tickets');
+        $rows = $wpdb->get_results($wpdb->prepare(
+            "SELECT id, ticket_number, subject FROM {$t} WHERE user_id = %d AND (subject LIKE %s OR ticket_number LIKE %s) ORDER BY created_at DESC LIMIT %d",
+            $user_id,
+            $like,
+            $like,
+            $per
+        ));
+        foreach ($rows as $r) {
+            $results[] = ['type' => 'ticket', 'icon' => '💬', 'label' => 'Ticket', 'title' => ($r->subject !== '' ? $r->subject : $r->ticket_number), 'url' => add_query_arg(['view' => 'single', 'id' => (int) $r->id], Plugin::get_page_url('tickets'))];
+        }
+
+        // Reports
+        $t    = Database::table('reports');
+        $rows = $wpdb->get_results($wpdb->prepare(
+            "SELECT id, title FROM {$t} WHERE user_id = %d AND title LIKE %s ORDER BY created_at DESC LIMIT %d",
+            $user_id,
+            $like,
+            $per
+        ));
+        foreach ($rows as $r) {
+            $results[] = ['type' => 'report', 'icon' => '📊', 'label' => 'Report', 'title' => $r->title, 'url' => Plugin::get_page_url('reports')];
+        }
+
+        $this->send(true, [
+            'results' => $results,
+            'total'   => count($results),
+            'query'   => $q,
+        ]);
     }
 
     /**

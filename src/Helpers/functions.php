@@ -99,6 +99,25 @@ function rsd_fp_page_url($type = 'dashboard')
 }
 
 /**
+ * Build a reliable logout URL (includes the log-out nonce + action).
+ *
+ * @return string
+ */
+function rsd_fp_logout_url()
+{
+    $url = function_exists('wp_logout_url') ? wp_logout_url() : '';
+
+    if ($url === '' || strpos($url, 'action=logout') === false) {
+        $base = function_exists('wp_login_url') ? wp_login_url() : home_url('/wp-login.php');
+        $url  = add_query_arg('action', 'logout', $base);
+    }
+    if (strpos($url, '_wpnonce') === false && function_exists('wp_create_nonce')) {
+        $url = add_query_arg('_wpnonce', wp_create_nonce('log-out'), $url);
+    }
+    return $url;
+}
+
+/**
  * Check if user has admin access
  *
  * @return bool

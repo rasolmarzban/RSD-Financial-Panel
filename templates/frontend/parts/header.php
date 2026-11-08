@@ -121,26 +121,65 @@ $avatar_url = function_exists('rsd_fp_user_avatar_url') ? rsd_fp_user_avatar_url
 ?>
 
 <header class="rsd-fp-header">
-    <div class="rsd-fp-user-menu">
-        <div class="rsd-fp-avatar">
-            <?php if ($avatar_url) : ?>
-                <img src="<?php echo esc_url($avatar_url); ?>" alt="<?php echo esc_attr($display_name); ?>">
-            <?php else : ?>
-                <?php echo esc_html($initial); ?>
-            <?php endif; ?>
+    <div class="rsd-fp-user-menu-wrap">
+        <div class="rsd-fp-user-menu" id="rsd-user-menu-trigger" role="button" tabindex="0"
+            aria-haspopup="true" aria-expanded="false">
+            <div class="rsd-fp-avatar">
+                <?php if ($avatar_url) : ?>
+                    <img src="<?php echo esc_url($avatar_url); ?>" alt="<?php echo esc_attr($display_name); ?>">
+                <?php else : ?>
+                    <?php echo esc_html($initial); ?>
+                <?php endif; ?>
+            </div>
+            <div class="rsd-fp-user-info">
+                <span class="rsd-fp-user-name"><?php echo esc_html($display_name); ?>
+                    <span class="rsd-fp-user-dropdown">▾</span>
+                </span>
+                <span class="rsd-fp-user-role">Financial Manager</span>
+            </div>
         </div>
-        <div class="rsd-fp-user-info">
-            <span class="rsd-fp-user-name"><?php echo esc_html($display_name); ?>
-                <span class="rsd-fp-user-dropdown">▾</span>
-            </span>
-            <span class="rsd-fp-user-role">Financial Manager</span>
+
+        <div class="rsd-fp-user-dropdown-menu" id="rsd-user-dropdown" role="menu" style="display:none">
+            <div class="rsd-fp-user-dd-head">
+                <div class="rsd-fp-avatar">
+                    <?php if ($avatar_url) : ?>
+                        <img src="<?php echo esc_url($avatar_url); ?>" alt="<?php echo esc_attr($display_name); ?>">
+                    <?php else : ?>
+                        <?php echo esc_html($initial); ?>
+                    <?php endif; ?>
+                </div>
+                <div class="rsd-fp-user-dd-id">
+                    <div class="rsd-fp-user-dd-name"><?php echo esc_html($display_name); ?></div>
+                    <div class="rsd-fp-user-dd-email"><?php echo esc_html($current_user->user_email); ?></div>
+                </div>
+            </div>
+            <div class="rsd-fp-user-dd-links">
+                <a role="menuitem" href="<?php echo esc_url(rsd_fp_page_url('profile')); ?>">
+                    <span class="rsd-fp-ud-ico">👤</span><span>Edit Profile</span>
+                </a>
+                <a role="menuitem" href="<?php echo esc_url(rsd_fp_page_url('dashboard')); ?>">
+                    <span class="rsd-fp-ud-ico">🏠</span><span>Dashboard</span>
+                </a>
+                <a role="menuitem" href="<?php echo esc_url(rsd_fp_page_url('company_info')); ?>">
+                    <span class="rsd-fp-ud-ico">🏢</span><span>Company Information</span>
+                </a>
+                <a role="menuitem" href="<?php echo esc_url(rsd_fp_page_url('invoices')); ?>">
+                    <span class="rsd-fp-ud-ico">💰</span><span>Billing</span>
+                </a>
+            </div>
+            <div class="rsd-fp-user-dd-foot">
+                <a role="menuitem" class="rsd-fp-user-dd-logout" href="<?php echo esc_url(rsd_fp_logout_url()); ?>">
+                    <span class="rsd-fp-ud-ico">🚪</span><span><?php esc_html_e('Logout', 'rsd-finance-panel'); ?></span>
+                </a>
+            </div>
         </div>
     </div>
 
     <div class="rsd-fp-header-actions">
         <div class="rsd-fp-search">
-            <input type="text" placeholder="Search the system ...">
+            <input type="text" id="rsd-global-search" placeholder="Search the system ..." autocomplete="off" aria-label="Search">
             <span class="search-icon">🔍</span>
+            <div class="rsd-fp-search-results" id="rsd-search-results" style="display:none"></div>
         </div>
         <div class="rsd-fp-notif-wrapper">
             <button type="button"

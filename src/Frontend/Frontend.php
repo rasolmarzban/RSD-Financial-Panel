@@ -464,6 +464,19 @@ class Frontend
 
         $tab = $_GET['tab'] ?? 'all';
 
+        // Global counts for the tab labels (independent of the active tab filter).
+        $counts = $wpdb->get_row($wpdb->prepare(
+            "SELECT
+                COUNT(*) AS total,
+                SUM(is_incomplete = 1) AS incomplete,
+                SUM(category IN ('tax_document','other')) AS tax
+             FROM {$docs_table} WHERE user_id = %d",
+            $client_id
+        ), ARRAY_A);
+        $count_all        = (int) ($counts['total'] ?? 0);
+        $count_incomplete = (int) ($counts['incomplete'] ?? 0);
+        $count_tax        = (int) ($counts['tax'] ?? 0);
+
         $where = [$wpdb->prepare('user_id = %d', $client_id)];
         if ($tab === 'incomplete') {
             $where[] = 'is_incomplete = 1';
@@ -498,9 +511,12 @@ class Frontend
         wp_add_inline_script('rsd-fp-dashboard', $this->docs_by_id_js($docs_for_js));
 
         return rsd_fp_get_template('frontend/documents', [
-            'documents'  => $documents,
-            'client_id'  => $client_id,
-            'active_tab' => $tab,
+            'documents'        => $documents,
+            'client_id'        => $client_id,
+            'active_tab'       => $tab,
+            'count_all'        => $count_all,
+            'count_incomplete' => $count_incomplete,
+            'count_tax'        => $count_tax,
         ], false);
     }
 

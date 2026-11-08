@@ -53,19 +53,7 @@ $nav_items = [
     </nav>
 
     <div class="rsd-fp-sidebar-logout">
-        <?php
-        $logout_url = '';
-        if (function_exists('wp_logout_url')) {
-            $logout_url = wp_logout_url();
-        }
-        if ($logout_url === '' || strpos($logout_url, 'action=logout') === false) {
-            $base = function_exists('wp_login_url') ? wp_login_url() : home_url('/wp-login.php');
-            $logout_url = add_query_arg('action', 'logout', $base);
-        }
-        if (strpos($logout_url, '_wpnonce') === false && function_exists('wp_create_nonce')) {
-            $logout_url = add_query_arg('_wpnonce', wp_create_nonce('log-out'), $logout_url);
-        }
-        ?>
+        <?php $logout_url = rsd_fp_logout_url(); ?>
         <a href="<?php echo esc_url($logout_url); ?>"
             class="rsd-fp-nav-item rsd-fp-logout"
             title="<?php esc_attr_e('Log out of account', 'rsd-finance-panel'); ?>">
